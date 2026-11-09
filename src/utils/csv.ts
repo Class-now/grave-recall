@@ -27,7 +27,8 @@ function parseCell(cell: string, _delimiter: string): string {
     // Unescape double-quoted cells: "" becomes "
     return cell.slice(1, -1).replace(/""/g, '"');
   }
-  return cell.trim();
+  // Don't trim unquoted cells to preserve meaningful whitespace
+  return cell;
 }
 
 /**

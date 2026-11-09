@@ -69,16 +69,16 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 1*
 *Refs: US-08 (CSV), US-29, AC-29.4*
 
-- [ ] Implement `src/utils/id.ts`: `generateId()` using `crypto.randomUUID()` with a nano-ID fallback
-- [ ] Implement `src/utils/date.ts`: `daysBetween(a: Date, b: Date)`, `startOfDay(d: Date)`, `addDays(d: Date, n: number)`
-- [ ] Implement `src/utils/csv.ts`: `parseTsvCsv(text: string): ParseResult` auto-detecting tab vs. comma delimiter, skipping malformed rows, returning `{rows, skippedCount}`
-- [ ] Define `TranslationKey` union type in `src/i18n/types.ts` (all keys as string literals)
-- [ ] Create `src/i18n/en.ts` with complete English strings (UI labels, validation errors, caption keys, a11y labels)
-- [ ] Create `src/i18n/ja.ts` mirroring every key in `en.ts` with Japanese translations
-- [ ] Implement `src/i18n/index.ts`: `t(key: TranslationKey): string` helper reading the locale signal from `store/prefs`
-- [ ] Write unit tests for `parseTsvCsv` covering: tab delimiter, comma delimiter, mixed-quote CSV, malformed rows, empty input
-- [ ] **[property-test]** Property: `∀ rows: parseTsvCsv(toTsv(rows)).rows deepEquals rows` (round-trip for well-formed input)
-- [ ] Write unit test: missing key in active locale falls back to English and logs a warning
+- [x] Implement `src/utils/id.ts`: `generateId()` using `crypto.randomUUID()` with a nano-ID fallback
+- [x] Implement `src/utils/date.ts`: `daysBetween(a: Date, b: Date)`, `startOfDay(d: Date)`, `addDays(d: Date, n: number)`
+- [x] Implement `src/utils/csv.ts`: `parseTsvCsv(text: string): ParseResult` auto-detecting tab vs. comma delimiter, skipping malformed rows, returning `{rows, skippedCount}`
+- [x] Define `TranslationKey` union type in `src/i18n/types.ts` (all keys as string literals)
+- [x] Create `src/i18n/en.ts` with complete English strings (UI labels, validation errors, caption keys, a11y labels)
+- [x] Create `src/i18n/ja.ts` mirroring every key in `en.ts` with Japanese translations
+- [x] Implement `src/i18n/index.ts`: `t(key: TranslationKey): string` helper reading the locale signal from `store/prefs`
+- [x] Write unit tests for `parseTsvCsv` covering: tab delimiter, comma delimiter, mixed-quote CSV, malformed rows, empty input
+- [x] **[property-test]** Property: `∀ rows: parseTsvCsv(toTsv(rows)).rows deepEquals rows` (round-trip for well-formed input)
+- [x] Write unit test: missing key in active locale falls back to English and logs a warning
 
 ---
 
