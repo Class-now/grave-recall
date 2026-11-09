@@ -86,18 +86,18 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 3, 4*
 *Refs: US-01–04, US-21–23, AC-21.1–21.3, AC-22.1–22.2, AC-23.1–23.4*
 
-- [ ] Define `UserPrefs`, `Deck`, `Card`, `AppExport`, `DeckExport` types in `src/store/` type files
-- [ ] Implement `src/store/prefs.ts`: signals for `locale`, `cowardMode`, `volume`, `dailyGoal`, `reducedMotion`, `showCaptions`; read `prefers-reduced-motion` via `matchMedia` on init and subscribe to changes
-- [ ] Implement `src/store/decks.ts`: `decks` signal; actions `createDeck`, `renameDeck`, `deleteDeck`
-- [ ] Implement `src/store/cards.ts`: `cards` signal; actions `addCard`, `editCard`, `deleteCard`; derived signals `dueCards`, `overdueCards`, `overdueCount`
-- [ ] Implement `src/store/session.ts`: session queue, current card, `startSession`, `flipCard`, `gradeCard` actions (calls `scheduler.schedule()`)
-- [ ] Implement `src/store/stats.ts`: derived signals `reviewsDoneToday`, `moonPhasePct`, `streakDays`, `retentionRate`, `fogOpacity`; review log append
-- [ ] Implement `src/store/persistence.ts`: `saveState()` / `loadState()` for localStorage; `exportJson()` / `importJson(text)` with `isAppExport` type-guard validation
-- [ ] Implement `src/store/index.ts` as re-export barrel
-- [ ] Load starter crypts from `public/starter-crypts/` on first launch (empty localStorage)
-- [ ] Write store unit tests: each action mutates signals correctly; mock `persistence.ts`
-- [ ] **[property-test]** Implement P-13 (JSON round-trip: `deserialize(serialize(state)) deepEquals state`)
-- [ ] Test: malformed JSON import leaves state unchanged
+- [x] Define `UserPrefs`, `Deck`, `Card`, `AppExport`, `DeckExport` types in `src/store/` type files
+- [x] Implement `src/store/prefs.ts`: signals for `locale`, `cowardMode`, `volume`, `dailyGoal`, `reducedMotion`, `showCaptions`; read `prefers-reduced-motion` via `matchMedia` on init and subscribe to changes
+- [x] Implement `src/store/decks.ts`: `decks` signal; actions `createDeck`, `renameDeck`, `deleteDeck`
+- [x] Implement `src/store/cards.ts`: `cards` signal; actions `addCard`, `editCard`, `deleteCard`; derived signals `dueCards`, `overdueCards`, `overdueCount`
+- [x] Implement `src/store/session.ts`: session queue, current card, `startSession`, `flipCard`, `gradeCard` actions (calls `scheduler.schedule()`)
+- [x] Implement `src/store/stats.ts`: derived signals `reviewsDoneToday`, `moonPhasePct`, `streakDays`, `retentionRate`, `fogOpacity`; review log append
+- [x] Implement `src/store/persistence.ts`: `saveState()` / `loadState()` for localStorage; `exportJson()` / `importJson(text)` with `isAppExport` type-guard validation
+- [x] Implement `src/store/index.ts` as re-export barrel
+- [x] Load starter crypts from `public/starter-crypts/` on first launch (empty localStorage)
+- [x] Write store unit tests: each action mutates signals correctly; mock `persistence.ts`
+- [x] **[property-test]** Implement P-13 (JSON round-trip: `deserialize(serialize(state)) deepEquals state`)
+- [x] Test: malformed JSON import leaves state unchanged
 
 ---
 
@@ -105,8 +105,8 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 5*
 *Refs: US-04, AC-04.1–04.4*
 
-- [ ] Create `public/starter-crypts/english-100.json` with 100 original English vocabulary entries conforming to `DeckExport` schema (no copyrighted lists)
-- [ ] Create `public/starter-crypts/french-50.json` with 50 original French–English vocabulary entries conforming to `DeckExport` schema
+- [x] Create `public/starter-crypts/english-100.json` with 100 original English vocabulary entries conforming to `DeckExport` schema (no copyrighted lists)
+- [x] Create `public/starter-crypts/french-50.json` with 50 original French–English vocabulary entries conforming to `DeckExport` schema
 - [ ] Write a schema-validation test that loads both JSON files and asserts they conform to `DeckExport` (version, name, language, cards array, each card has non-empty front + back)
 
 ---

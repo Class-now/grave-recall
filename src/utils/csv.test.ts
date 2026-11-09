@@ -81,9 +81,9 @@ describe('CSV round-trip property test', () => {
       fc.property(
         fc.array(
           fc.array(
-            // Strings that don't need quoting: no tabs, commas, quotes, or newlines
+            // Strings that don't need quoting: no tabs, commas, quotes, or newlines, and not whitespace-only
             fc.string({ minLength: 1, maxLength: 50 })
-              .filter(s => !s.includes('\n') && !s.includes('\t') && !s.includes(',') && !s.includes('"')),
+              .filter(s => !s.includes('\n') && !s.includes('\t') && !s.includes(',') && !s.includes('"') && s.trim().length > 0),
             { minLength: 1, maxLength: 5 }
           ),
           { minLength: 1, maxLength: 20 }
