@@ -1,0 +1,92 @@
+/* Grave Recall — Global Design Tokens
+   All CSS custom properties are defined here and mirror src/design/tokens.ts.
+   Components reference these tokens; no hard-coded values in component CSS.
+*/
+
+:root {
+  /* -------------------------------------------------------------------------
+     Color tokens — base palette
+     ------------------------------------------------------------------------- */
+  --color-void:           #0a0a0f;
+  --color-grave-soil:     #1a1410;
+  --color-stone-dark:     #2e2a26;
+  --color-stone-mid:      #4a4540;
+  --color-stone-worn:     #6b635a;
+  --color-stone-crumbled: #8c7f72;
+  --color-moss:           #2d4a2e;
+  --color-fog-base:       #c8d4e0;
+  --color-ghost-body:     #dce8f5;
+  --color-ghost-glow:     #a0c4ff;
+  --color-candle-flame:   #ffb347;
+  --color-candle-wax:     #f5e6c8;
+  --color-moon-full:      #f0e8d0;
+  --color-moon-new:       #1e1e2a;
+  --color-crow:           #1a1a1f;
+  --color-crow-eye:       #ff4444;
+  --color-danger:         #c0392b;
+  --color-warning:        #e67e22;
+  --color-success:        #27ae60;
+  --color-text-primary:   #e8e0d4;
+  --color-text-secondary: #9e9488;
+  --color-text-inverse:   #0a0a0f;
+  --color-surface-card:   #1e1a16;
+  --color-surface-panel:  #151210;
+  --color-border:         #3a342e;
+  --color-focus-ring:     #7eb8f7;
+
+  /* -------------------------------------------------------------------------
+     Typography — font stacks
+     ------------------------------------------------------------------------- */
+  --font-display: 'UnifrakturMaguntia', 'MedievalSharp', serif;
+  --font-body:    'IM Fell English', 'Palatino Linotype', Georgia, serif;
+  --font-mono:    'Courier Prime', 'Courier New', monospace;
+  --font-ui:      system-ui, -apple-system, sans-serif;
+
+  /* -------------------------------------------------------------------------
+     Typography — type scale
+     ------------------------------------------------------------------------- */
+  --text-display:       2.5rem;
+  --text-crypt-name:    1.75rem;
+  --text-card-front:    2rem;
+  --text-card-back:     1.25rem;
+  --text-card-example:  1rem;
+  --text-label:         0.875rem;
+  --text-caption:       0.75rem;
+  --text-stat:          1.5rem;
+
+  /* -------------------------------------------------------------------------
+     Motion timing tokens
+     ------------------------------------------------------------------------- */
+  --motion-instant:   0ms;
+  --motion-fast:      150ms;
+  --motion-normal:    350ms;
+  --motion-slow:      600ms;
+  --motion-ambient:   8000ms;
+}
+
+/* -------------------------------------------------------------------------
+   Base reset
+   ------------------------------------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+body {
+  margin: 0;
+  background-color: var(--color-void);
+  color: var(--color-text-primary);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Focus ring — all interactive elements */
+:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}

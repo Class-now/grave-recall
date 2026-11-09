@@ -1,7 +1,3 @@
----
-inclusion: always
----
-
 # Grave Recall — Implementation Tasks
 
 Tasks are ordered for incremental, always-buildable delivery. Each task leaves the project in a working (or intentionally stub-complete) state. Complete tasks in order; later tasks assume earlier ones are done.
@@ -14,13 +10,13 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: none*
 *Refs: NFR-01, NFR-02 (CI infrastructure)*
 
-- [ ] Initialise Vite + Preact + TypeScript project at workspace root (`npm create vite@latest`)
-- [ ] Configure `tsconfig.json`: `"strict": true`, `"noUncheckedIndexedAccess": true`
-- [ ] Configure `vitest.config.ts` with jsdom environment and coverage provider
-- [ ] Install exact-pinned dependencies: `preact`, `@preact/signals`, `vitest`, `fast-check`, `@testing-library/preact`, `@testing-library/user-event`
-- [ ] Create `src/` directory tree matching structure steering (empty barrel `index.ts` files as placeholders)
-- [ ] Add `npm run typecheck`, `npm run test -- --run`, `npm run build` scripts to `package.json`
-- [ ] Verify CI pipeline: all three commands pass with empty stubs
+- [x] Initialise Vite + Preact + TypeScript project at workspace root (`npm create vite@latest`)
+- [x] Configure `tsconfig.json`: `"strict": true`, `"noUncheckedIndexedAccess": true`
+- [x] Configure `vitest.config.ts` with jsdom environment and coverage provider
+- [x] Install exact-pinned dependencies: `preact`, `@preact/signals`, `vitest`, `fast-check`, `@testing-library/preact`, `@testing-library/user-event`
+- [x] Create `src/` directory tree matching structure steering (empty barrel `index.ts` files as placeholders)
+- [x] Add `npm run typecheck`, `npm run test -- --run`, `npm run build` scripts to `package.json`
+- [x] Verify CI pipeline: all three commands pass with empty stubs
 
 ---
 
@@ -28,11 +24,11 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 1*
 *Refs: spooky-design-system §1, §2, §3.3*
 
-- [ ] Create `src/design/tokens.ts` exporting every base palette colour token as a TypeScript constant (`COLOR_VOID`, etc.) mirroring the CSS hex values
-- [ ] Create `src/index.css` declaring all `--color-*`, `--font-*`, `--text-*`, and `--motion-*` custom properties on `:root`
-- [ ] Add Google Fonts `<link>` tags for UnifrakturMaguntia, IM Fell English, Courier Prime to `index.html` with `font-display: swap`
-- [ ] Verify `tokens.ts` has zero imports from any other `src/` module (leaf constraint)
-- [ ] Write a type-level test asserting every CSS token name has a corresponding TS constant (use a mapped type or object literal check)
+- [x] Create `src/design/tokens.ts` exporting every base palette colour token as a TypeScript constant (`COLOR_VOID`, etc.) mirroring the CSS hex values
+- [x] Create `src/index.css` declaring all `--color-*`, `--font-*`, `--text-*`, and `--motion-*` custom properties on `:root`
+- [x] Add Google Fonts `<link>` tags for UnifrakturMaguntia, IM Fell English, Courier Prime to `index.html` with `font-display: swap`
+- [x] Verify `tokens.ts` has zero imports from any other `src/` module (leaf constraint)
+- [x] Write a type-level test asserting every CSS token name has a corresponding TS constant (use a mapped type or object literal check)
 
 ---
 
@@ -40,10 +36,10 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 1*
 *Refs: US-09, US-10, AC-09.1, AC-10.1–10.9, NFR-02*
 
-- [ ] Define `CardState`, `Grade`, `ScheduleResult`, `CardSRSState` types in `src/scheduler/types.ts`
-- [ ] Implement `initCard(id: CardId): CardState` in `src/scheduler/fsrs.ts`
-- [ ] Implement `retrievability(state: CardState, now: Date): number` using the forgetting curve formula `R = exp(−λ·t/S)`
-- [ ] Implement `schedule(state: CardState, grade: Grade, now: Date): ScheduleResult` with:
+- [x] Define `CardState`, `Grade`, `ScheduleResult`, `CardSRSState` types in `src/scheduler/types.ts`
+- [x] Implement `initCard(id: CardId): CardState` in `src/scheduler/fsrs.ts`
+- [x] Implement `retrievability(state: CardState, now: Date): number` using the forgetting curve formula `R = exp(−λ·t/S)`
+- [x] Implement `schedule(state: CardState, grade: Grade, now: Date): ScheduleResult` with:
   - Stability update formula for success (§4.4)
   - Stability update formula for failure (§4.5)
   - Post-lapse stability formula (§4.4)
@@ -51,21 +47,21 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
   - Interval and due-date computation (§4.7)
   - SRS state machine transitions (§4.7)
   - Reps increment
-- [ ] Export public API from `src/scheduler/index.ts`
-- [ ] Verify zero imports outside `scheduler/` in the module
-- [ ] **[property-test]** Implement P-01 (monotone interval growth on success)
-- [ ] **[property-test]** Implement P-02 (failure resets to interval=1, lapses++)
-- [ ] **[property-test]** Implement P-03 (difficulty clamped to [1,10])
-- [ ] **[property-test]** Implement P-04 (difficulty direction per grade)
-- [ ] **[property-test]** Implement P-05 (stability always positive)
-- [ ] **[property-test]** Implement P-06 (retrievability in [0,1])
-- [ ] **[property-test]** Implement P-07 (retrievability monotone decreasing in t)
-- [ ] **[property-test]** Implement P-08 (retrievability at t=0 is 1.0)
-- [ ] **[property-test]** Implement P-09 (due date in future after successful review)
-- [ ] **[property-test]** Implement P-10 (valid SRS state transitions)
-- [ ] **[property-test]** Implement P-11 (reps always increments)
-- [ ] **[property-test]** Implement P-12 (determinism)
-- [ ] Achieve ≥ 95% line coverage on `src/scheduler/`
+- [x] Export public API from `src/scheduler/index.ts`
+- [x] Verify zero imports outside `scheduler/` in the module
+- [x] **[property-test]** Implement P-01 (monotone interval growth on success)
+- [x] **[property-test]** Implement P-02 (failure resets to interval=1, lapses++)
+- [x] **[property-test]** Implement P-03 (difficulty clamped to [1,10])
+- [x] **[property-test]** Implement P-04 (difficulty direction per grade)
+- [x] **[property-test]** Implement P-05 (stability always positive)
+- [x] **[property-test]** Implement P-06 (retrievability in [0,1])
+- [x] **[property-test]** Implement P-07 (retrievability monotone decreasing in t)
+- [x] **[property-test]** Implement P-08 (retrievability at t=0 is 1.0)
+- [x] **[property-test]** Implement P-09 (due date in future after successful review)
+- [x] **[property-test]** Implement P-10 (valid SRS state transitions)
+- [x] **[property-test]** Implement P-11 (reps always increments)
+- [x] **[property-test]** Implement P-12 (determinism)
+- [x] Achieve ≥ 95% line coverage on `src/scheduler/`
 
 ---
 
