@@ -1,2 +1,131 @@
-// TranslationKey union type. Implemented in Task 4.
-export type TranslationKey = string;
+/**
+ * TranslationKey union type - all UI strings must use these keys.
+ * Adding a new key requires updating both en.ts and ja.ts.
+ */
+
+// App-wide
+export type TranslationKey =
+  // Navigation and views
+  | 'nav.graveyard'
+  | 'nav.seance'
+  | 'nav.stats'
+  | 'nav.settings'
+  | 'nav.crypts'
+
+  // Graveyard view
+  | 'graveyard.title'
+  | 'graveyard.noCards'
+  | 'graveyard.cardDue'
+  | 'graveyard.cardOverdue'
+  | 'graveyard.cardNew'
+
+  // Crypt list (deck management)
+  | 'crypt.listTitle'
+  | 'crypt.newCrypt'
+  | 'crypt.rename'
+  | 'crypt.delete'
+  | 'crypt.deleteConfirm'
+  | 'crypt.empty'
+  | 'crypt.cardsCount'
+
+  // Card editor
+  | 'card.front'
+  | 'card.back'
+  | 'card.example'
+  | 'card.save'
+  | 'card.cancel'
+  | 'card.frontRequired'
+  | 'card.backRequired'
+  | 'card.addCard'
+  | 'card.editCard'
+  | 'card.deleteCard'
+  | 'card.exampleOptional'
+
+  // Bulk import
+  | 'import.title'
+  | 'import.paste'
+  | 'import.submit'
+  | 'import.success'
+  | 'import.skipped'
+  | 'import.error'
+  | 'import.tooMany'
+
+  // Séance (review session)
+  | 'seance.title'
+  | 'seance.noCards'
+  | 'seance.noCardsDesc'
+  | 'seance.flip'
+  | 'seance.again'
+  | 'seance.hard'
+  | 'seance.good'
+  | 'seance.easy'
+  | 'seance.remaining'
+  | 'seance.complete'
+  | 'seance.completeDesc'
+  | 'seance.pressSpace'
+
+  // Stats (Ledger of the Dead)
+  | 'stats.title'
+  | 'stats.retention'
+  | 'stats.reviewsToday'
+  | 'stats.streak'
+  | 'stats.forecast'
+  | 'stats.retentionRate'
+  | 'stats.noData'
+  | 'stats.days'
+  | 'stats.cards'
+
+  // Settings
+  | 'settings.title'
+  | 'settings.audio'
+  | 'settings.volume'
+  | 'settings.cowardMode'
+  | 'settings.cowardModeDesc'
+  | 'settings.captions'
+  | 'settings.captionsDesc'
+  | 'settings.appearance'
+  | 'settings.reducedMotion'
+  | 'settings.reducedMotionDesc'
+  | 'settings.language'
+  | 'settings.data'
+  | 'settings.export'
+  | 'settings.import'
+  | 'settings.exportSuccess'
+  | 'settings.importSuccess'
+  | 'settings.importError'
+
+  // Audio captions
+  | 'caption.ghostScream'
+  | 'caption.softChime'
+  | 'caption.candleSeal'
+  | 'caption.hardThud'
+  | 'caption.pageTurn'
+  | 'caption.crowCaw'
+  | 'caption.sessionEndToll'
+  | 'caption.importSuccess'
+
+  // Accessibility
+  | 'a11y.tombstone'
+  | 'a11y.ghost'
+  | 'a11y.fog'
+  | 'a11y.moon'
+  | 'a11y.crow'
+  | 'a11y.flipCard'
+  | 'a11y.gradeAgain'
+  | 'a11y.gradeHard'
+  | 'a11y.gradeGood'
+  | 'a11y.gradeEasy'
+  | 'a11y.closeDialog'
+
+  // Validation errors
+  | 'error.required'
+  | 'error.invalidJson'
+  | 'error.importFailed'
+
+  // Misc
+  | 'app.name'
+  | 'common.yes'
+  | 'common.no'
+  | 'common.cancel'
+  | 'common.confirm'
+  | 'common.loading';

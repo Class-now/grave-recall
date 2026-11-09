@@ -1,2 +1,131 @@
-// English strings. Implemented in Task 4.
-export const en: Record<string, string> = {};
+/**
+ * English strings.
+ */
+import type { TranslationKey } from './types';
+
+export const en: Record<TranslationKey, string> = {
+  // Navigation and views
+  'nav.graveyard': 'The Graveyard',
+  'nav.seance': 'Séance',
+  'nav.stats': 'Ledger of the Dead',
+  'nav.settings': 'Settings',
+  'nav.crypts': 'Crypts',
+
+  // Graveyard view
+  'graveyard.title': 'The Graveyard',
+  'graveyard.noCards': 'No graves yet. Add cards to a crypt to begin.',
+  'graveyard.cardDue': 'Due for review',
+  'graveyard.cardOverdue': 'Overdue',
+  'graveyard.cardNew': 'New',
+
+  // Crypt list (deck management)
+  'crypt.listTitle': 'Your Crypts',
+  'crypt.newCrypt': 'New Crypt',
+  'crypt.rename': 'Rename',
+  'crypt.delete': 'Delete',
+  'crypt.deleteConfirm': 'Are you sure you want to delete this crypt? All cards will be lost.',
+  'crypt.empty': 'No crypts yet. Create one to get started.',
+  'crypt.cardsCount': '{count} cards',
+
+  // Card editor
+  'card.front': 'Front',
+  'card.back': 'Back',
+  'card.example': 'Example (optional)',
+  'card.save': 'Save Card',
+  'card.cancel': 'Cancel',
+  'card.frontRequired': 'Front is required',
+  'card.backRequired': 'Back is required',
+  'card.addCard': 'Add Card',
+  'card.editCard': 'Edit Card',
+  'card.deleteCard': 'Delete Card',
+  'card.exampleOptional': 'Example sentence',
+
+  // Bulk import
+  'import.title': 'Bulk Import',
+  'import.paste': 'Paste TSV or CSV data',
+  'import.submit': 'Import',
+  'import.success': 'Imported {count} cards',
+  'import.skipped': 'Skipped {count} malformed rows',
+  'import.error': 'Import failed: {error}',
+  'import.tooMany': 'Maximum 500 cards per import',
+
+  // Séance (review session)
+  'seance.title': 'Séance',
+  'seance.noCards': 'No cards to review',
+  'seance.noCardsDesc': 'All souls are at rest. Return later.',
+  'seance.flip': 'Press Space or tap to reveal',
+  'seance.again': 'Again',
+  'seance.hard': 'Hard',
+  'seance.good': 'Good',
+  'seance.easy': 'Easy',
+  'seance.remaining': '{count} remaining',
+  'seance.complete': 'Séance Complete',
+  'seance.completeDesc': 'The spirits have been appeased. Well done.',
+  'seance.pressSpace': 'Press Space to begin',
+
+  // Stats (Ledger of the Dead)
+  'stats.title': 'Ledger of the Dead',
+  'stats.retention': 'Retention',
+  'stats.reviewsToday': 'Reviews Today',
+  'stats.streak': 'Streak',
+  'stats.forecast': 'Forecast',
+  'stats.retentionRate': '{percent}% retention',
+  'stats.noData': 'No data yet',
+  'stats.days': 'days',
+  'stats.cards': 'cards',
+
+  // Settings
+  'settings.title': 'Settings',
+  'settings.audio': 'Audio',
+  'settings.volume': 'Volume',
+  'settings.cowardMode': 'Coward Mode',
+  'settings.cowardModeDesc': 'Replace scary sounds with gentle chimes',
+  'settings.captions': 'Show Captions',
+  'settings.captionsDesc': 'Display text captions for sounds',
+  'settings.appearance': 'Appearance',
+  'settings.reducedMotion': 'Reduced Motion',
+  'settings.reducedMotionDesc': 'Disable animations',
+  'settings.language': 'Language',
+  'settings.data': 'Data',
+  'settings.export': 'Export Data',
+  'settings.import': 'Import Data',
+  'settings.exportSuccess': 'Data exported successfully',
+  'settings.importSuccess': 'Data imported successfully',
+  'settings.importError': 'Import failed: {error}',
+
+  // Audio captions
+  'caption.ghostScream': 'A ghost screams as memory fails',
+  'caption.softChime': 'A gentle chime',
+  'caption.candleSeal': 'A candle seal burns bright',
+  'caption.hardThud': 'A heavy thud',
+  'caption.pageTurn': 'Pages turn',
+  'caption.crowCaw': 'A crow caws',
+  'caption.sessionEndToll': 'A bell tolls',
+  'caption.importSuccess': 'New souls have entered',
+
+  // Accessibility
+  'a11y.tombstone': 'Grave for {front}',
+  'a11y.ghost': 'Ghost of forgotten word',
+  'a11y.fog': 'Fog of forgotten words',
+  'a11y.moon': 'Moon phase: {percent}%',
+  'a11y.crow': 'Crow keeper',
+  'a11y.flipCard': 'Card front',
+  'a11y.gradeAgain': 'Grade Again',
+  'a11y.gradeHard': 'Grade Hard',
+  'a11y.gradeGood': 'Grade Good',
+  'a11y.gradeEasy': 'Grade Easy',
+  'a11y.closeDialog': 'Close dialog',
+
+  // Validation errors
+  'error.required': 'This field is required',
+  'error.invalidJson': 'Invalid JSON format',
+  'error.importFailed': 'Import failed',
+
+  // Misc
+  'app.name': 'Grave Recall',
+  'common.yes': 'Yes',
+  'common.no': 'No',
+  'common.cancel': 'Cancel',
+  'common.confirm': 'Confirm',
+  'common.loading': 'Loading...',
+};
