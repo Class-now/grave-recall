@@ -191,13 +191,21 @@
   fill: var(--color-void);
 }
 
+.gr-ghost__halo-stop {
+  stop-color: var(--color-ghost-glow);
+}
+
+/* The sway pivots about the bottom centre of the ghost, so the head swings and
+   the hem stays over the grave. Transform only. */
 .gr-ghost--drift {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
   animation: ghost-drift var(--ghost-drift-speed, 12s) ease-in-out infinite;
 }
 
 @keyframes ghost-drift {
-  0%, 100% { transform: translate(-4px, 0); }
-  50%      { transform: translate(4px, -8px); }
+  0%, 100% { transform: translate(-4px, 0) rotate(-3deg); }
+  50%      { transform: translate(4px, -8px) rotate(3deg); }
 }
 
 /* Fog ---------------------------------------------------------------------- */
@@ -206,6 +214,8 @@
   pointer-events: none;
 }
 
+/* The wrapper owns the fog density. The wisps and banks inside draw at full
+   strength and add no opacity of their own. */
 .gr-fog__layer {
   fill: var(--color-fog-base);
   opacity: var(--fog-opacity, 0.05);
@@ -220,8 +230,48 @@
   50%      { opacity: calc(var(--fog-opacity, 0.05) * 0.7); }
 }
 
+/* Static wisps: the only filtered group. Their source alpha is lowered through
+   fill-opacity (not opacity), so the banks carry the visible body of the fog. */
+.gr-fog__wisps {
+  fill-opacity: 0.35;
+}
+
+.gr-fog__stop {
+  stop-color: var(--color-fog-base);
+}
+
+/* Banks fade to alpha 0 at the edge (radial gradient fill). They drift sideways
+   by transform only; A and C go left, B goes right. */
+.gr-fog__bank--drift-a {
+  animation: fog-drift-a calc(var(--motion-ambient) * 6) ease-in-out infinite alternate;
+}
+
+.gr-fog__bank--drift-b {
+  animation: fog-drift-b calc(var(--motion-ambient) * 8) ease-in-out infinite alternate;
+}
+
+.gr-fog__bank--drift-c {
+  animation: fog-drift-c calc(var(--motion-ambient) * 7) ease-in-out infinite alternate;
+}
+
+@keyframes fog-drift-a {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-90px); }
+}
+
+@keyframes fog-drift-b {
+  from { transform: translateX(0); }
+  to   { transform: translateX(90px); }
+}
+
+@keyframes fog-drift-c {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-60px); }
+}
+
 /* Infinite animations stop while the tab is hidden. */
 .gr-fog__layer--paused,
+.gr-fog__layer--paused .gr-fog__bank,
 .gr-scene--hidden .gr-ghost,
 .gr-scene--hidden .gr-crow {
   animation-play-state: paused;

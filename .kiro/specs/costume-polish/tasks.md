@@ -102,17 +102,17 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Task 3*
 *Refs: CP-30 to CP-38, CP-26, CP-60, CP-62, CP-66*
 
-- [ ] Steering: add the new fog-drift and ghost-sway animations to the Animation Catalogue (section 3.2) of `spooky-design-system.md`, with their data meaning and reduced-motion substitute, as in design section 7.
-- [ ] Rewrite `FogLayer.tsx` (same props and the same `FOG_FILTER_ID`):
+- [x] Steering: add the new fog-drift and ghost-sway animations to the Animation Catalogue (section 3.2) of `spooky-design-system.md`, with their data meaning and reduced-motion substitute, as in design section 7.
+- [x] Rewrite `FogLayer.tsx` (same props and the same `FOG_FILTER_ID`):
   - The root keeps `class="gr-fog"`, `role="img"` and the `a11y.fog` label.
   - The wrapper `.gr-fog__layer` keeps the inline `--fog-opacity` and the `--pulse` and `--paused` classes, and owns the opacity.
   - Inside: a static `.gr-fog__wisps` group using the existing filter (keep `feTurbulence` and `feDisplacementMap`, add a small `feGaussianBlur`), and three `.gr-fog__bank` shapes filled with `radialGradient`s whose alpha reaches 0 at the edge. Banks draw at full strength and carry no opacity of their own.
   - When motion is allowed, the banks get `gr-fog__bank--drift-a`, `--drift-b`, `--drift-c`. A and C drift left, B drifts right, with durations of 6, 8 and 7 times `--motion-ambient`, `alternate`, `transform` only.
   - Under reduced motion none of the drift or pulse classes is applied. While hidden, the paused rule covers the banks too.
-- [ ] Update `GraveyardScene.tsx` paint order: graves of rows 0 to R-3, `FogLayer`, graves of the last two rows (the last row when fewer than four rows), `BackdropFront`, ghosts. Keep DOM order of graves equal to card order.
-- [ ] Redraw `Ghost.tsx`: body at least as tall as a tombstone and at least 0.9 times as wide (export `GHOST_WIDTH`, `GHOST_HEIGHT`), with a wavy hem and two eyes. Anchor it above its tombstone using `x`, `y` and `scale` from `layoutYard`. Add a `radialGradient` halo ellipse in `--color-ghost-glow` inside the same group, so the group opacity scales body and glow together. No SVG `filter` on the ghost. Keep `role="img"`, `aria-label`, `data-ghost-for`, `--ghost-opacity`, `--ghost-drift-speed`, and the class `gr-ghost--drift` as the motion switch.
-- [ ] CSS: extend `ghost-drift` with a small `rotate` sway about the bottom centre (`transform-box: fill-box; transform-origin: 50% 100%`); `transform` only. Keep `pointer-events: none`. Paused while the scene is hidden.
-- [ ] Tests in `graveyard.test.ts`:
+- [x] Update `GraveyardScene.tsx` paint order: graves of rows 0 to R-3, `FogLayer`, graves of the last two rows (the last row when fewer than four rows), `BackdropFront`, ghosts. Keep DOM order of graves equal to card order.
+- [x] Redraw `Ghost.tsx`: body at least as tall as a tombstone and at least 0.9 times as wide (export `GHOST_WIDTH`, `GHOST_HEIGHT`), with a wavy hem and two eyes. Anchor it above its tombstone using `x`, `y` and `scale` from `layoutYard`. Add a `radialGradient` halo ellipse in `--color-ghost-glow` inside the same group, so the group opacity scales body and glow together. No SVG `filter` on the ghost. Keep `role="img"`, `aria-label`, `data-ghost-for`, `--ghost-opacity`, `--ghost-drift-speed`, and the class `gr-ghost--drift` as the motion switch.
+- [x] CSS: extend `ghost-drift` with a small `rotate` sway about the bottom centre (`transform-box: fill-box; transform-origin: 50% 100%`); `transform` only. Keep `pointer-events: none`. Paused while the scene is hidden.
+- [x] Tests in `graveyard.test.ts`:
   - Fog has at least three `.gr-fog__bank` elements; each fill is a `url(#…)` gradient; the first `.gr-fog__layer` still carries `--fog-opacity` equal to `fogOpacity` for 0, 1 of 10 and 10 of 10 overdue (the existing assertions).
   - Full motion: the banks have `--drift-a`, `--drift-b` and `--drift-c`; reduced motion: no `--drift-*` and no `--pulse`; hidden: `.gr-fog__layer--paused` present.
   - CSS text: the drift keyframes contain only `transform`; their durations are `calc(var(--motion-ambient) * N)` with N at least 5; a drift-a/c and a drift-b keyframe have opposite signs.
@@ -120,9 +120,9 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
   - Ghost constants: `GHOST_HEIGHT >= TOMBSTONE height` and `GHOST_WIDTH >= 0.9 * TOMBSTONE width`; no `[filter]` attribute inside `.gr-ghost`.
   - `contrast.test.ts`: the focus ring (`#7eb8f7`) blended over `--color-grave-soil` under the maximum fog (0.60 of `--color-fog-base`) is at least 3:1 against `--color-grave-soil`. Add a small `blend` helper to the test file.
   - Existing fog, ghost and a11y tests pass unchanged (a11y `[data-ghost-for]` label checks included).
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes (including the 200-card perf tests).
-- [ ] Gate: `npm run build` passes.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes (including the 200-card perf tests).
+- [x] Gate: `npm run build` passes.
 
 *Owner check: with some overdue cards, fog banks drift slowly in opposite directions and have soft edges; ghosts are as large as the stones, glow faintly and sway; front rows stay clear of fog. With reduced motion on, nothing moves.*
 

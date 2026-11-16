@@ -126,6 +126,8 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 |---|---|---|---|---|---|
 | `ghost-drift` | `<Ghost>` | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness | Hidden entirely (ghost still shown as static icon) |
 | `fog-pulse` | `<FogLayer>` | `8s` | `ease-in-out`, infinite | Ambient overdue load | Static fog at computed opacity |
+| `fog-drift-a`, `fog-drift-b`, `fog-drift-c` | Fog banks inside `<FogLayer>` | 6, 8 and 7 times `--motion-ambient`, `alternate`, infinite | `ease-in-out` | Ambient overdue load (banks A and C drift left, B drifts right; the wrapper opacity is still `fogOpacity`, so drift carries no extra data) | Not applied; banks stay at rest at the computed opacity |
+| `ghost-sway` | `<Ghost>` (a `rotate` of about 2 degrees about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
 | `candle-flicker` | Candle SVG | `0.3s` | `steps(3)` | Active review session | Solid glow, no flicker |
 | `tombstone-crack-appear` | Crack SVG paths | `600ms` | `ease-out` | Stability decrease after failed review | Instant opacity change |
 | `ghost-materialize` | `<Ghost>` | `400ms` | `ease-in` | Card becomes overdue | Instant opacity change |
@@ -149,7 +151,7 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 
 - No animation may cause layout shift (use `transform` and `opacity` only for animated properties).
 - `will-change: transform, opacity` may be added to animated elements but must be removed after the animation ends.
-- Infinite animations (`ghost-drift`, `fog-pulse`) must be paused via `animation-play-state: paused` when the tab is hidden (`document.visibilityState === 'hidden'`).
+- Infinite animations (`ghost-drift`, `ghost-sway`, `fog-pulse`, `fog-drift-a`, `fog-drift-b`, `fog-drift-c`) must be paused via `animation-play-state: paused` when the tab is hidden (`document.visibilityState === 'hidden'`).
 - Jumpscares (`jumpscare-flash`) are suppressed by both reduced-motion mode AND Coward mode independently.
 - All duration values must reference the `--motion-*` tokens above; no hard-coded `ms` values in component CSS.
 

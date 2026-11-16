@@ -7,10 +7,11 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
-import { contrastRatio, relativeLuminance } from './contrast';
+import { contrastRatio, parseHex, relativeLuminance } from './contrast';
 import {
   COLOR_DANGER,
   COLOR_FOCUS_RING,
+  COLOR_FOG_BASE,
   COLOR_GRAVE_SOIL,
   COLOR_GROUND_FORE,
   COLOR_HILL_FAR,
@@ -167,5 +168,33 @@ describe('known failing pair stays unused', () => {
     const deckCss = readFileSync(resolve(SRC, 'components/deck/deck.css'), 'utf8');
     const danger = /\.gr-btn--danger\s*\{([^}]*)\}/.exec(deckCss)?.[1] ?? '';
     expect(danger).not.toMatch(/background:\s*var\(--color-danger\)/);
+  });
+});
+
+/** 	op laid over ottom at lpha (0 to 1), as '#rrggbb'. */
+function blend(top: string, bottom: string, alpha: number): string {
+  const t = parseHex(top);
+  const b = parseHex(bottom);
+  return (
+    '#' +
+    t
+      .map((channel, i) => Math.round(channel * alpha + (b[i] ?? 0) * (1 - alpha)))
+      .map((channel) => channel.toString(16).padStart(2, '0'))
+      .join('')
+  );
+}
+
+describe('fog over grave focus (costume-polish CP-26)', () => {
+  const MAX_FOG_OPACITY = 0.6;
+
+  it('blend mixes two colours by alpha', () => {
+    expect(blend('#ffffff', '#000000', 0.5)).toBe('#808080');
+    expect(blend('#123456', '#abcdef', 1)).toBe('#123456');
+    expect(blend('#123456', '#abcdef', 0)).toBe('#abcdef');
+  });
+
+  it('the focus ring under maximum fog stays at least 3:1 against grave-soil', () => {
+    const fogged = blend(COLOR_FOG_BASE, COLOR_FOCUS_RING, MAX_FOG_OPACITY);
+    expect(contrastRatio(fogged, COLOR_GRAVE_SOIL)).toBeGreaterThanOrEqual(3);
   });
 });

@@ -17,7 +17,7 @@ import { BackdropBack, BackdropFront } from './Backdrop';
 import { CardDetailPanel } from './CardDetailPanel';
 import { CrowKeeper } from './CrowKeeper';
 import { FogLayer } from './FogLayer';
-import { Ghost } from './Ghost';
+import { Ghost, GhostDefs } from './Ghost';
 import { MoonPhase } from './MoonPhase';
 import { Tombstone } from './Tombstone';
 import { useDocumentHidden } from './useDocumentHidden';
@@ -104,6 +104,30 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
     if (target !== undefined) focusGrave(target.id);
   }
 
+  // Fog sits in front of the back and middle rows and behind the last two rows
+  // (the last row when there are fewer than four rows). DOM order of the graves
+  // stays equal to card order: the back set is a prefix of `visible`.
+  const frontRows = layout.rows >= 4 ? 2 : 1;
+  const frontStart = Math.max(0, layout.rows - frontRows) * layout.columns;
+
+  function renderGrave(card: Card, i: number): h.JSX.Element | null {
+    const pos = layout.positions[i];
+    return pos === undefined ? null : (
+      <Tombstone
+        key={card.id}
+        card={card}
+        x={pos.x}
+        y={pos.y}
+        scale={pos.scale}
+        tilt={pos.tilt}
+        shade={pos.shade}
+        tabStop={i === stopIndex}
+        onFocus={(c) => setStopId(c.id)}
+        onOpen={(c) => setSelectedId(c.id)}
+      />
+    );
+  }
+
   return (
     <section class="gr-graveyard">
       <h2 class="gr-graveyard__title">{t('graveyard.title')}</h2>
@@ -125,26 +149,13 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
             aria-describedby={visible.length > 0 ? 'gr-graveyard-hint' : undefined}
             onKeyDown={onSceneKeyDown}
           >
+            <GhostDefs />
             <BackdropBack />
             <MoonPhase cx={MOON_CX} cy={MOON_CY} r={MOON_RADIUS} />
             <CrowKeeper x={GATE_X} y={GATE_Y} />
-            {visible.map((card, i) => {
-              const pos = layout.positions[i];
-              return pos === undefined ? null : (
-                <Tombstone
-                  key={card.id}
-                  card={card}
-                  x={pos.x}
-                  y={pos.y}
-                  scale={pos.scale}
-                  tilt={pos.tilt}
-                  shade={pos.shade}
-                  tabStop={i === stopIndex}
-                  onFocus={(c) => setStopId(c.id)}
-                  onOpen={(c) => setSelectedId(c.id)}
-                />
-              );
-            })}
+            {visible.map((card, i) => (i < frontStart ? renderGrave(card, i) : null))}
+            <FogLayer width={YARD_WIDTH} height={YARD_HEIGHT} />
+            {visible.map((card, i) => (i < frontStart ? null : renderGrave(card, i)))}
             <BackdropFront />
             {visible.map((card, i) => {
               const pos = layout.positions[i];
@@ -152,7 +163,6 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
                 <Ghost key={card.id} card={card} x={pos.x} y={pos.y} scale={pos.scale} now={now} />
               );
             })}
-            <FogLayer width={YARD_WIDTH} height={YARD_HEIGHT} />
           </svg>
         </div>
       </div>

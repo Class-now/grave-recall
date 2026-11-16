@@ -34,7 +34,7 @@ import { addDays } from '../../utils/date';
 import { CrowKeeper, resetCrowKeeperMemory } from './CrowKeeper';
 import { FogLayer } from './FogLayer';
 import { GraveyardScene } from './GraveyardScene';
-import { Ghost } from './Ghost';
+import { Ghost, GHOST_HEIGHT, GHOST_WIDTH } from './Ghost';
 import { MoonPhase } from './MoonPhase';
 import {
   clamp,
@@ -575,7 +575,9 @@ describe('<FogLayer>', () => {
     expect(layer?.style.getPropertyValue('--fog-opacity')).toBe('0.5');
     expect(container.querySelector('filter feTurbulence')).not.toBeNull();
     expect(container.querySelector('filter feDisplacementMap')).not.toBeNull();
-    expect(layer?.getAttribute('filter')).toBe('url(#gr-fog-filter)');
+    // The filter moved from the wrapper to the static wisps group (costume-polish Task 4),
+    // so the drifting banks are never filtered.
+    expect(layer?.querySelector('.gr-fog__wisps')?.getAttribute('filter')).toBe('url(#gr-fog-filter)');
   });
 
   it('clamps to the 0.05 floor and 0.6 ceiling', () => {
@@ -932,5 +934,281 @@ describe('card detail panel', () => {  function openFirstGrave(container: Elemen
       cards.value = [];
     });
     expect(screen.queryByRole('dialog')).toBeNull();
+  });
+});
+
+describe('soft layered fog and larger ghosts (costume-polish Task 4)', () => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const css = readFileSync(resolve(here, 'graveyard.css'), 'utf8');
+
+  function fogLayer(container: Element): SVGElement | null {
+    return container.querySelector<SVGElement>('.gr-fog__layer');
+  }
+
+  function banks(container: Element): SVGElement[] {
+    return Array.from(container.querySelectorAll<SVGElement>('.gr-fog__bank'));
+  }
+
+  /** The body of @keyframes name { ... }, found by matching braces. */
+  function keyframes(name: string): string {
+    const start = css.indexOf('@keyframes ' + name);
+    expect(start, name + ' keyframes exist').toBeGreaterThanOrEqual(0);
+    const open = css.indexOf('{', start);
+    let depth = 0;
+    for (let i = open; i < css.length; i++) {
+      if (css[i] === '{') depth++;
+      if (css[i] === '}' && --depth === 0) return css.slice(open + 1, i);
+    }
+    throw new Error('unterminated keyframes ' + name);
+  }
+
+  /** Every CSS property name declared inside a keyframes body. */
+  function animatedProperties(body: string): Set<string> {
+    return new Set(Array.from(body.matchAll(/([a-z-]+)\s*:/g), (m) => m[1] ?? ''));
+  }
+
+  /** Sign of the translateX distance reached by the keyframe's last frame. */
+  function driftSign(name: string): number {
+    const body = keyframes(name);
+    const to = /(?:to|100%)\s*\{[^}]*translateX\((-?\d+(?:\.\d+)?)px\)/.exec(body);
+    expect(to, name + ' ends in a translateX').not.toBeNull();
+    return Math.sign(Number(to?.[1]));
+  }
+
+  function populateFor150(): void {
+    const deck = createDeck('Many');
+    for (let i = 0; i < 150; i++) {
+      const card = addCard(deck.id, 'w' + i, 'x', null);
+      if (i % 3 === 0) {
+        updateCardSrs(card.id, {
+          ...card.srs,
+          stability: 2,
+          dueDate: addDays(new Date(), -3),
+          lastReviewed: addDays(new Date(), -5),
+        });
+      }
+    }
+  }
+
+  function follows(reference: Element, other: Element): boolean {
+    return (reference.compareDocumentPosition(other) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+  }
+
+  describe('fog banks', () => {
+    it('has at least three banks, each filled with a gradient that fades to alpha 0', () => {
+      const { container } = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      const all = banks(container);
+      expect(all.length).toBeGreaterThanOrEqual(3);
+      for (const bank of all) {
+        const fill = bank.getAttribute('fill') ?? '';
+        const id = /^url\(#([^)]+)\)$/.exec(fill)?.[1];
+        expect(id, 'bank fill is a url(#id) reference').toBeDefined();
+        const gradient = container.querySelector('radialGradient[id="' + id + '"]');
+        expect(gradient).not.toBeNull();
+        const stops = Array.from(gradient?.querySelectorAll('stop') ?? []);
+        const last = stops[stops.length - 1];
+        expect(last?.getAttribute('offset')).toBe('1');
+        expect(Number(last?.getAttribute('stop-opacity'))).toBe(0);
+      }
+    });
+
+    it('owns its opacity on the wrapper only and filters only the static wisps', () => {
+      makeOverdueCard('late');
+      const { container } = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      const layer = fogLayer(container);
+      expect(layer?.style.getPropertyValue('--fog-opacity')).toBe('0.6');
+      for (const bank of banks(container)) {
+        expect(bank.getAttribute('filter')).toBeNull();
+        expect(bank.getAttribute('opacity')).toBeNull();
+        expect(bank.getAttribute('style')).toBeNull();
+        expect(bank.closest('.gr-fog__wisps')).toBeNull();
+      }
+      expect(container.querySelector('.gr-fog__wisps')?.getAttribute('filter')).toBe('url(#gr-fog-filter)');
+      expect(container.querySelector('filter feGaussianBlur')).not.toBeNull();
+    });
+
+    it('keeps --fog-opacity at 0.05 with nothing overdue, 0.1 with 1 of 10 and 0.6 with 10 of 10', () => {
+      const empty = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      expect(fogLayer(empty.container)?.style.getPropertyValue('--fog-opacity')).toBe('0.05');
+      empty.unmount();
+
+      const deck = createDeck('Ten');
+      for (let i = 0; i < 10; i++) addCard(deck.id, 'w' + i, 'x', null);
+      const first = cards.value[0] as Card;
+      updateCardSrs(first.id, { ...first.srs, dueDate: addDays(new Date(), -2), lastReviewed: addDays(new Date(), -4) });
+      const one = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      expect(fogLayer(one.container)?.style.getPropertyValue('--fog-opacity')).toBe('0.1');
+      one.unmount();
+
+      for (const card of cards.value) {
+        updateCardSrs(card.id, { ...card.srs, dueDate: addDays(new Date(), -2), lastReviewed: addDays(new Date(), -4) });
+      }
+      const all = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      expect(fogLayer(all.container)?.style.getPropertyValue('--fog-opacity')).toBe('0.6');
+    });
+
+    it('drifts the banks under full motion, applies nothing under reduced motion, pauses when hidden', async () => {
+      const { container } = render(inSvg(h(FogLayer, { width: 1200, height: 600 })));
+      for (const suffix of ['a', 'b', 'c']) {
+        expect(container.querySelector('.gr-fog__bank--drift-' + suffix)).not.toBeNull();
+      }
+      expect(container.querySelector('.gr-fog__layer--pulse')).not.toBeNull();
+
+      await act(() => {
+        reducedMotion.value = true;
+      });
+      expect(container.querySelector('[class*="--drift-"]')).toBeNull();
+      expect(container.querySelector('.gr-fog__layer--pulse')).toBeNull();
+      expect(banks(container).length).toBeGreaterThanOrEqual(3);
+
+      await act(() => {
+        reducedMotion.value = false;
+      });
+      expect(container.querySelector('.gr-fog__layer--paused')).toBeNull();
+      Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => 'hidden' });
+      await act(() => {
+        document.dispatchEvent(new Event('visibilitychange'));
+      });
+      expect(container.querySelector('.gr-fog__layer--paused')).not.toBeNull();
+    });
+
+    it('pauses the bank animations in CSS while hidden', () => {
+      expect(css).toMatch(/\.gr-fog__layer--paused \.gr-fog__bank[^{]*\{[^}]*animation-play-state:\s*paused/);
+    });
+  });
+
+  describe('fog CSS', () => {
+    it.each(['fog-drift-a', 'fog-drift-b', 'fog-drift-c'])('%s animates transform only', (name) => {
+      expect(Array.from(animatedProperties(keyframes(name)))).toEqual(
+        expect.arrayContaining(['transform']),
+      );
+      const props = animatedProperties(keyframes(name));
+      props.delete('from');
+      props.delete('to');
+      expect(Array.from(props)).toEqual(['transform']);
+    });
+
+    it('takes drift durations as calc(var(--motion-ambient) * N) with N of at least 5', () => {
+      for (const suffix of ['a', 'b', 'c']) {
+        const rule = new RegExp('\\.gr-fog__bank--drift-' + suffix + '\\s*\\{([^}]*)\\}').exec(css)?.[1] ?? '';
+        const n = /animation:\s*fog-drift-[abc]\s+calc\(var\(--motion-ambient\)\s*\*\s*(\d+)\)/.exec(rule)?.[1];
+        expect(n, 'duration of drift-' + suffix).toBeDefined();
+        expect(Number(n)).toBeGreaterThanOrEqual(5);
+        expect(rule).toContain('alternate');
+        expect(rule).toContain('infinite');
+      }
+    });
+
+    it('drifts a and c one way and b the other way', () => {
+      expect(driftSign('fog-drift-a')).toBe(-1);
+      expect(driftSign('fog-drift-c')).toBe(driftSign('fog-drift-a'));
+      expect(driftSign('fog-drift-b')).toBe(-driftSign('fog-drift-a'));
+    });
+
+    it('extends ghost-drift with a rotate sway about the bottom centre, transform only', () => {
+      const props = animatedProperties(keyframes('ghost-drift'));
+      expect(Array.from(props)).toEqual(['transform']);
+      expect(keyframes('ghost-drift')).toContain('rotate(');
+      const rule = /\.gr-ghost--drift\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+      expect(rule).toContain('transform-box: fill-box');
+      expect(rule).toContain('transform-origin: 50% 100%');
+      expect(/\.gr-ghost\s*\{([^}]*)\}/.exec(css)?.[1]).toContain('pointer-events: none');
+    });
+  });
+
+  describe('paint order', () => {
+    it('draws the fog after the first 150 - 2 * columns graves and before every grave of the last two rows', () => {
+      populateFor150();
+      const { container } = render(h(GraveyardScene, null));
+      const { columns, rows } = layoutYard(150);
+      const fog = container.querySelector('.gr-fog');
+      expect(fog).not.toBeNull();
+      const all = graves(container);
+      expect(all).toHaveLength(150);
+
+      // Rows are whole: with 150 cards the last two rows hold 150 - (rows - 2) * columns graves.
+      const frontStart = (rows - 2) * columns;
+      expect(frontStart).toBeGreaterThanOrEqual(150 - 2 * columns);
+      all.forEach((grave, i) => {
+        expect(follows(grave, fog as Element), 'grave ' + i + ' before fog').toBe(i < frontStart);
+      });
+      for (const grave of all.slice(0, 150 - 2 * columns)) {
+        expect(follows(grave, fog as Element)).toBe(true);
+      }
+    });
+
+    it('keeps the DOM order of graves equal to card order', () => {
+      populateFor150();
+      const { container } = render(h(GraveyardScene, null));
+      expect(graves(container).map((g) => g.getAttribute('data-card-id'))).toEqual(
+        cards.value.map((c) => c.id),
+      );
+    });
+
+    it('puts the fog behind only the last row when there are fewer than four rows', () => {
+      const deck = createDeck('Few');
+      for (let i = 0; i < 20; i++) addCard(deck.id, 'w' + i, 'x', null);
+      const { rows, columns } = layoutYard(20);
+      expect(rows).toBeLessThan(4);
+      const { container } = render(h(GraveyardScene, null));
+      const fog = container.querySelector('.gr-fog') as Element;
+      graves(container).forEach((grave, i) => {
+        expect(follows(grave, fog)).toBe(i < (rows - 1) * columns);
+      });
+    });
+
+    it('draws every ghost after the fog and after the last graves', () => {
+      populateFor150();
+      const { container } = render(h(GraveyardScene, null));
+      const fog = container.querySelector('.gr-fog') as Element;
+      const found = Array.from(container.querySelectorAll('[data-ghost-for]'));
+      expect(found.length).toBe(50);
+      for (const ghost of found) expect(follows(fog, ghost)).toBe(true);
+      const lastGrave = graves(container).at(-1) as Element;
+      for (const ghost of found) expect(follows(lastGrave, ghost)).toBe(true);
+    });
+  });
+
+  describe('ghosts', () => {
+    it('are at least as tall as a tombstone and 0.9 times as wide', () => {
+      expect(GHOST_HEIGHT).toBeGreaterThanOrEqual(TOMBSTONE_HEIGHT);
+      expect(GHOST_WIDTH).toBeGreaterThanOrEqual(0.9 * TOMBSTONE_WIDTH);
+    });
+
+    it('draw their body, two eyes and a halo inside the ghost group, with no filter', () => {
+      makeOverdueCard('haunted');
+      const { container } = render(h(GraveyardScene, null));
+      const ghost = ghosts(container)[0] as HTMLElement;
+      expect(ghost.querySelector('.gr-ghost__body')).not.toBeNull();
+      expect(ghost.querySelectorAll('.gr-ghost__eye')).toHaveLength(2);
+      const halo = ghost.querySelector('.gr-ghost__halo');
+      expect(halo?.getAttribute('fill')).toMatch(/^url\(#[^)]+\)$/);
+      expect(ghost.querySelectorAll('[filter]')).toHaveLength(0);
+      expect(ghost.hasAttribute('filter')).toBe(false);
+      expect(ghost.getAttribute('role')).toBe('img');
+      expect(ghost.getAttribute('data-ghost-for')).not.toBeNull();
+    });
+
+    it('refer to a halo gradient that exists once in the scene, in the ghost glow colour', () => {
+      makeOverdueCard('one');
+      makeOverdueCard('two');
+      const { container } = render(h(GraveyardScene, null));
+      const ids = Array.from(container.querySelectorAll('.gr-ghost__halo'), (el) =>
+        /^url\(#([^)]+)\)$/.exec(el.getAttribute('fill') ?? '')?.[1],
+      );
+      expect(new Set(ids).size).toBe(1);
+      expect(container.querySelectorAll('[id="' + ids[0] + '"]')).toHaveLength(1);
+      expect(css).toMatch(/\.gr-ghost__halo-stop\s*\{[^}]*stop-color:\s*var\(--color-ghost-glow\)/);
+    });
+
+    it('sit above the stone, scaled with their row', () => {
+      makeOverdueCard('haunted');
+      const { container } = render(h(GraveyardScene, null));
+      const pos = layoutYard(1).positions[0];
+      const outer = ghosts(container)[0]?.parentElement;
+      const [tx, ty] = /translate\(([-\d.]+) ([-\d.]+)\)/.exec(outer?.getAttribute('transform') ?? '')?.slice(1).map(Number) ?? [];
+      expect(tx).toBe(pos?.x);
+      expect(ty).toBeLessThan((pos?.y ?? 0) - TOMBSTONE_HEIGHT * (pos?.scale ?? 1));
+    });
   });
 });

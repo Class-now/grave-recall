@@ -1,6 +1,10 @@
 /**
  * Ghost of an overdue card. Opacity comes from `1 - retrievability`, drift
  * speed from days past due. With reduced motion the ghost stays as a static icon.
+ *
+ * The ghost is drawn at least as large as a tombstone, with a faint halo drawn
+ * inside its own group: the group opacity scales body and halo together, so the
+ * glow is not a second data channel. There is no SVG filter on a ghost.
  */
 import { h } from 'preact';
 
@@ -11,8 +15,33 @@ import { daysPastDue, ghostDriftSeconds, ghostOpacity, round, TOMBSTONE_HEIGHT }
 
 import './graveyard.css';
 
-/** Gap between the top of the stone and the ghost's origin, in scale-1 units. */
-const GHOST_LIFT = 18;
+/** Ghost size in scene units at scale 1, hem included. A stone is 40 by 52. */
+export const GHOST_WIDTH = 44;
+export const GHOST_HEIGHT = 60;
+
+/** Gap between the top of the stone and the ghost's hem, in scale-1 units. */
+const GHOST_LIFT = 4;
+
+/** Id of the shared halo gradient; the scene renders `GhostDefs` once. */
+export const GHOST_HALO_ID = 'gr-ghost-halo';
+
+/**
+ * Local coordinates: x = 0 is the centre, y = 0 the hem line, the head dome
+ * reaches y = -GHOST_HEIGHT. The hem is five scallops (Q then T segments).
+ */
+const BODY_PATH = 'M-22 -4 V-38 A22 22 0 0 1 22 -38 V-4 Q16.5 6 11 -4 T0 -4 T-11 -4 T-22 -4 Z';
+
+/** The radial gradient the halo of every ghost refers to. Render once per scene. */
+export function GhostDefs(): h.JSX.Element {
+  return (
+    <defs>
+      <radialGradient id={GHOST_HALO_ID}>
+        <stop class="gr-ghost__halo-stop" offset="0" stop-opacity="0.45" />
+        <stop class="gr-ghost__halo-stop" offset="1" stop-opacity="0" />
+      </radialGradient>
+    </defs>
+  );
+}
 
 export interface GhostProps {
   card: Card;
@@ -31,12 +60,12 @@ export function Ghost(props: GhostProps): h.JSX.Element {
   const opacity = ghostOpacity(getCardRetrievability(card, now));
   const driftSeconds = ghostDriftSeconds(daysPastDue(card.srs.dueDate, now));
   const drifting = !reducedMotion.value;
-  const originY = y - (TOMBSTONE_HEIGHT + GHOST_LIFT) * scale;
+  const hemY = y - (TOMBSTONE_HEIGHT + GHOST_LIFT) * scale;
 
   return (
     // The outer group positions and scales the ghost (SVG attribute); the inner group
     // carries the CSS animation, which would otherwise override the positioning transform.
-    <g transform={`translate(${x} ${round(originY, 2)}) scale(${scale})`}>
+    <g transform={`translate(${x} ${round(hemY, 2)}) scale(${scale})`}>
       <g
         class={drifting ? 'gr-ghost gr-ghost--drift' : 'gr-ghost'}
         role="img"
@@ -47,12 +76,17 @@ export function Ghost(props: GhostProps): h.JSX.Element {
           '--ghost-drift-speed': `${round(driftSeconds)}s`,
         }}
       >
-        <path
-          class="gr-ghost__body"
-          d="M-14 20 V-2 A14 14 0 0 1 14 -2 V20 L9 15 L4.5 20 L0 15 L-4.5 20 L-9 15 Z"
+        <ellipse
+          class="gr-ghost__halo"
+          cx="0"
+          cy={-GHOST_HEIGHT / 2}
+          rx={GHOST_WIDTH * 0.85}
+          ry={GHOST_HEIGHT * 0.78}
+          fill={`url(#${GHOST_HALO_ID})`}
         />
-        <circle class="gr-ghost__eye" cx="-5" cy="-1" r="2" />
-        <circle class="gr-ghost__eye" cx="5" cy="-1" r="2" />
+        <path class="gr-ghost__body" d={BODY_PATH} />
+        <ellipse class="gr-ghost__eye" cx="-8" cy="-38" rx="3" ry="4.5" />
+        <ellipse class="gr-ghost__eye" cx="8" cy="-38" rx="3" ry="4.5" />
       </g>
     </g>
   );
