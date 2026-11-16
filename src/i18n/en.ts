@@ -17,6 +17,11 @@ export const en: Record<TranslationKey, string> = {
   'graveyard.cardDue': 'Due for review',
   'graveyard.cardOverdue': 'Overdue',
   'graveyard.cardNew': 'New',
+  'graveyard.detailTitle': 'Grave details',
+  'graveyard.stability': 'Stability',
+  'graveyard.retrievability': 'Retrievability',
+  'graveyard.dueDate': 'Due date',
+  'graveyard.close': 'Close',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'Your Crypts',
@@ -134,6 +139,10 @@ export const en: Record<TranslationKey, string> = {
   'a11y.gradeGood': 'Grade Good',
   'a11y.gradeEasy': 'Grade Easy',
   'a11y.closeDialog': 'Close dialog',
+  'a11y.tombstoneDue': 'Grave for {front}, due {date}',
+  'a11y.ghostOf': 'Ghost of {front}',
+  'a11y.moonProgress': 'Moon phase: {done} of {goal} daily reviews done ({percent}%)',
+  'a11y.crowStreak': 'Crow keeper: {days}-day streak',
 
   // Validation errors
   'error.required': 'This field is required',

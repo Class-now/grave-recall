@@ -18,6 +18,11 @@ export type TranslationKey =
   | 'graveyard.cardDue'
   | 'graveyard.cardOverdue'
   | 'graveyard.cardNew'
+  | 'graveyard.detailTitle'
+  | 'graveyard.stability'
+  | 'graveyard.retrievability'
+  | 'graveyard.dueDate'
+  | 'graveyard.close'
 
   // Crypt list (deck management)
   | 'crypt.listTitle'
@@ -135,6 +140,10 @@ export type TranslationKey =
   | 'a11y.gradeGood'
   | 'a11y.gradeEasy'
   | 'a11y.closeDialog'
+  | 'a11y.tombstoneDue'
+  | 'a11y.ghostOf'
+  | 'a11y.moonProgress'
+  | 'a11y.crowStreak'
 
   // Validation errors
   | 'error.required'

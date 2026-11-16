@@ -17,6 +17,11 @@ export const ja: Record<TranslationKey, string> = {
   'graveyard.cardDue': '復習予定',
   'graveyard.cardOverdue': '期限切れ',
   'graveyard.cardNew': '新規',
+  'graveyard.detailTitle': '墓の詳細',
+  'graveyard.stability': '安定度',
+  'graveyard.retrievability': '想起確率',
+  'graveyard.dueDate': '復習期限',
+  'graveyard.close': '閉じる',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'あなたの墓所',
@@ -134,6 +139,10 @@ export const ja: Record<TranslationKey, string> = {
   'a11y.gradeGood': '良いと評価',
   'a11y.gradeEasy': '簡単と評価',
   'a11y.closeDialog': 'ダイアログを閉じる',
+  'a11y.tombstoneDue': '{front}の墓、期限 {date}',
+  'a11y.ghostOf': '{front}の幽霊',
+  'a11y.moonProgress': '月相: 今日の復習 {goal} 回中 {done} 回完了 ({percent}%)',
+  'a11y.crowStreak': 'カラスの番人: {days} 日連続',
 
   // Validation errors
   'error.required': 'この項目は必須です',

@@ -40,6 +40,7 @@ export {
   newCards,
   reviewCards,
   getCardsForDeck,
+  getCardRetrievability,
   addCard,
   editCard,
   deleteCard,

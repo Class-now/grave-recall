@@ -3,6 +3,7 @@
  */
 import { signal, computed } from '@preact/signals';
 import type { CardId, DeckId, CardState } from '../scheduler/types';
+import { retrievability } from '../scheduler';
 import { generateId } from '../utils/id';
 import { startOfDay } from '../utils/date';
 
@@ -57,6 +58,15 @@ export const reviewCards = computed(() =>
     card.srs.srsState === 'relearning'
   )
 );
+
+/**
+ * Live retrievability of a card at `now` (0-1). The value stored on `card.srs`
+ * is only refreshed at review time, so views that show current memory state
+ * (graveyard ghosts, detail panel) call this instead.
+ */
+export function getCardRetrievability(card: Card, now: Date = new Date()): number {
+  return retrievability(card.srs, now);
+}
 
 /**
  * Gets all cards for a specific deck.

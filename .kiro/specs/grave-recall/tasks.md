@@ -140,14 +140,14 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 5, 2*
 *Refs: US-16, US-17, AC-16.1–16.7, AC-17.1–17.3*
 
-- [ ] Implement `<GraveyardScene>`: SVG viewport; lays out tombstones in a grid/staggered arrangement for up to 200 cards; reads card signals reactively
-- [ ] Implement `<Tombstone>`: SVG shape; runtime CSS custom properties `--tombstone-fill`, `--tombstone-crack-opacity`, `--tombstone-moss-opacity` derived from `card.stability` using spooky-design-system formulas; `aria-label` with front text + due date; keyboard Enter → open detail panel
-- [ ] Implement `<Ghost>`: SVG shape; `--ghost-opacity` from `1 - retrievability`; `--ghost-drift-speed` from days-past-due; `ghost-drift` animation; static icon (no animation) when `reducedMotion = true`
-- [ ] Implement `<FogLayer>`: SVG `<feTurbulence>` + `<feDisplacementMap>` filter; `--fog-opacity` from `fogOpacity` signal; paused when tab hidden
-- [ ] Implement `<MoonPhase>`: SVG arc path computed from `moonPhasePct` signal; `moon-wax` transition; `aria-label` describing progress
-- [ ] Implement `<CrowKeeper>`: SVG crow; eye glow when `streakDays ≥ 3`; `crow-hop` animation on streak increment; plays `crowCaw()` on hop
-- [ ] Implement card detail panel: shows front, back, example, stability, retrievability, due date; dismissible with Escape or close button; focus restored to tombstone on close
-- [ ] Write graveyard component tests: tombstone count matches card count; ghost rendered only for overdue cards; `reducedMotion=true` removes drift animation class; Escape closes detail panel and restores focus
+- [x] Implement `<GraveyardScene>`: SVG viewport; lays out tombstones in a grid/staggered arrangement for up to 200 cards; reads card signals reactively
+- [x] Implement `<Tombstone>`: SVG shape; runtime CSS custom properties `--tombstone-fill`, `--tombstone-crack-opacity`, `--tombstone-moss-opacity` derived from `card.stability` using spooky-design-system formulas; `aria-label` with front text + due date; keyboard Enter → open detail panel
+- [x] Implement `<Ghost>`: SVG shape; `--ghost-opacity` from `1 - retrievability`; `--ghost-drift-speed` from days-past-due; `ghost-drift` animation; static icon (no animation) when `reducedMotion = true`
+- [x] Implement `<FogLayer>`: SVG `<feTurbulence>` + `<feDisplacementMap>` filter; `--fog-opacity` from `fogOpacity` signal; paused when tab hidden
+- [x] Implement `<MoonPhase>`: SVG arc path computed from `moonPhasePct` signal; `moon-wax` transition; `aria-label` describing progress
+- [x] Implement `<CrowKeeper>`: SVG crow; eye glow when `streakDays ≥ 3`; `crow-hop` animation on streak increment; plays `crowCaw()` on hop
+- [x] Implement card detail panel: shows front, back, example, stability, retrievability, due date; dismissible with Escape or close button; focus restored to tombstone on close
+- [x] Write graveyard component tests: tombstone count matches card count; ghost rendered only for overdue cards; `reducedMotion=true` removes drift animation class; Escape closes detail panel and restores focus
 
 ---
 

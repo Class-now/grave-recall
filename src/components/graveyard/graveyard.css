@@ -1,0 +1,266 @@
+/* Graveyard scene. Every colour and duration comes from the tokens in src/index.css.
+   Animated properties are transform and opacity only (no layout shift).
+   Runtime values arrive as inline custom properties:
+     --tombstone-fill, --tombstone-crack-opacity, --tombstone-moss-opacity,
+     --ghost-opacity, --ghost-drift-speed, --fog-opacity. */
+
+.gr-graveyard {
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+}
+
+.gr-graveyard__title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-display);
+  line-height: 1.1;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.gr-graveyard__empty {
+  color: var(--color-text-secondary);
+  margin: 0 0 0.5rem;
+}
+
+.gr-scene {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+}
+
+.gr-scene__sky {
+  fill: var(--color-void);
+}
+
+.gr-scene__ground {
+  fill: var(--color-grave-soil);
+}
+
+/* Tombstone ---------------------------------------------------------------- */
+
+.gr-tombstone {
+  cursor: pointer;
+}
+
+.gr-tombstone__stone {
+  fill: var(--tombstone-fill, var(--color-stone-crumbled));
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.gr-tombstone__moss {
+  fill: var(--color-moss);
+  opacity: var(--tombstone-moss-opacity, 0);
+}
+
+.gr-tombstone__crack {
+  fill: none;
+  stroke: var(--color-void);
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+  opacity: var(--tombstone-crack-opacity, 1);
+}
+
+.gr-tombstone:focus {
+  outline: none;
+}
+
+.gr-tombstone:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Outlines on SVG elements are not drawn everywhere, so the stone is stroked too. */
+.gr-tombstone:focus-visible .gr-tombstone__stone {
+  stroke: var(--color-focus-ring);
+  stroke-width: 3;
+}
+
+/* Ghost -------------------------------------------------------------------- */
+
+.gr-ghost {
+  opacity: var(--ghost-opacity, 0.15);
+  pointer-events: none;
+}
+
+.gr-ghost__body {
+  fill: var(--color-ghost-body);
+  stroke: var(--color-ghost-glow);
+  stroke-width: 1.5;
+}
+
+.gr-ghost__eye {
+  fill: var(--color-void);
+}
+
+.gr-ghost--drift {
+  animation: ghost-drift var(--ghost-drift-speed, 12s) ease-in-out infinite;
+}
+
+@keyframes ghost-drift {
+  0%, 100% { transform: translate(-4px, 0); }
+  50%      { transform: translate(4px, -8px); }
+}
+
+/* Fog ---------------------------------------------------------------------- */
+
+.gr-fog {
+  pointer-events: none;
+}
+
+.gr-fog__layer {
+  fill: var(--color-fog-base);
+  opacity: var(--fog-opacity, 0.05);
+}
+
+.gr-fog__layer--pulse {
+  animation: fog-pulse var(--motion-ambient) ease-in-out infinite;
+}
+
+@keyframes fog-pulse {
+  0%, 100% { opacity: var(--fog-opacity, 0.05); }
+  50%      { opacity: calc(var(--fog-opacity, 0.05) * 0.7); }
+}
+
+/* Infinite animations stop while the tab is hidden. */
+.gr-fog__layer--paused,
+.gr-scene--hidden .gr-ghost,
+.gr-scene--hidden .gr-crow {
+  animation-play-state: paused;
+}
+
+/* Moon --------------------------------------------------------------------- */
+
+.gr-moon__disc {
+  fill: var(--color-moon-new);
+  stroke: var(--color-border);
+  stroke-width: 1;
+}
+
+.gr-moon__lit {
+  fill: var(--color-moon-full);
+}
+
+/* moon-wax is 800ms: 4/3 of --motion-slow, so it stays tied to the motion tokens. */
+.gr-moon__lit--wax {
+  animation: moon-wax calc(var(--motion-slow) * 4 / 3) ease-in-out;
+}
+
+@keyframes moon-wax {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+/* Gate and crow ------------------------------------------------------------ */
+
+.gr-gate__post {
+  fill: var(--color-stone-dark);
+}
+
+.gr-crow__body {
+  fill: var(--color-crow);
+  stroke: var(--color-stone-worn);
+  stroke-width: 0.75;
+}
+
+.gr-crow__eye {
+  fill: var(--color-stone-worn);
+}
+
+.gr-crow__eye--glow {
+  fill: var(--color-crow-eye);
+}
+
+.gr-crow__glow {
+  fill: var(--color-crow-eye);
+  opacity: 0.35;
+}
+
+/* crow-hop is 400ms: 2/3 of --motion-slow. */
+.gr-crow--hop {
+  animation: crow-hop calc(var(--motion-slow) * 2 / 3) ease-in-out;
+}
+
+@keyframes crow-hop {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-8px); }
+}
+
+/* Detail panel ------------------------------------------------------------- */
+
+.gr-detail {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 10;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+  padding: 1rem;
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+  background: var(--color-surface-panel);
+  border: 1px solid var(--color-border);
+}
+
+.gr-detail__title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-crypt-name);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.gr-detail__list {
+  margin: 0 0 1rem;
+}
+
+.gr-detail__list dt {
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  margin-top: 0.5rem;
+}
+
+.gr-detail__list dd {
+  margin: 0;
+}
+
+.gr-detail__front {
+  font-family: var(--font-body);
+  font-size: var(--text-card-back);
+}
+
+.gr-detail__back {
+  font-family: var(--font-body);
+  font-size: var(--text-card-example);
+}
+
+.gr-detail__example {
+  font-family: var(--font-body);
+  font-size: var(--text-card-example);
+  font-style: italic;
+}
+
+.gr-detail__stat {
+  font-family: var(--font-mono);
+}
+
+.gr-detail__close {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+}
+
+.gr-detail__close:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
