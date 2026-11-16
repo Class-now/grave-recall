@@ -132,7 +132,7 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 | `ghost-drift` | `<Ghost>` | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness | Hidden entirely (ghost still shown as static icon) |
 | `fog-pulse` | `<FogLayer>` | `8s` | `ease-in-out`, infinite | Ambient overdue load | Static fog at computed opacity |
 | `fog-drift-a`, `fog-drift-b`, `fog-drift-c` | Fog banks inside `<FogLayer>` | 6, 8 and 7 times `--motion-ambient`, `alternate`, infinite | `ease-in-out` | Ambient overdue load (banks A and C drift left, B drifts right; the wrapper opacity is still `fogOpacity`, so drift carries no extra data) | Not applied; banks stay at rest at the computed opacity |
-| `ghost-sway` | `<Ghost>` (a `rotate` of about 2 degrees about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
+| `ghost-sway` | `<Ghost>` (a `rotate` of 3 degrees either way about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
 | `candle-flicker` | Candle SVG | `0.3s` | `steps(3)` | While the flames are lit | Solid glow, no flicker |
 | `candle-flare` | Candle flame in `<Candle>` | `--motion-slow` | `ease-out` | Good or Easy grade | Solid glow, no flare |
 | `tombstone-crack-appear` | Crack SVG paths | `600ms` | `ease-out` | Stability decrease after failed review | Instant opacity change |

@@ -28,6 +28,8 @@ grave-recall/
 ├── src/
 │   ├── main.ts                  # App entry point; mounts Preact root
 │   ├── app.tsx                  # Root component; router / view switcher
+│   ├── motion-rules.test.ts     # Cross-cutting: CSS motion rules and the reduced-motion sweep
+│   ├── backdrop-purity.test.ts  # Cross-cutting: every backdrop group is identical and inert
 │   │
 │   ├── scheduler/               # PURE module — no DOM, no localStorage, no signals
 │   │   ├── index.ts             # Public API: schedule(), retrievability(), initCard()

@@ -11,12 +11,14 @@ import { contrastRatio, parseHex, relativeLuminance } from './contrast';
 import {
   COLOR_CHART_BLOOD,
   COLOR_CHART_BONE,
+  COLOR_CANDLE_FLAME,
   COLOR_CHART_MOSS,
   COLOR_DANGER,
   COLOR_FOCUS_RING,
   COLOR_FOG_BASE,
   COLOR_GRAVE_SOIL,
   COLOR_GROUND_FORE,
+  COLOR_HALO,
   COLOR_HILL_FAR,
   COLOR_HILL_NEAR,
   COLOR_INK_SECONDARY,
@@ -41,6 +43,7 @@ import {
   COLOR_WARNING,
   TOKEN_MAP,
 } from './tokens';
+import { MOON_HALO_RADIUS, MOON_RADIUS } from '../components/graveyard/visuals';
 
 interface Pair {
   name: string;
@@ -249,5 +252,56 @@ describe('fog over grave focus (costume-polish CP-26)', () => {
   it('the focus ring under maximum fog stays at least 3:1 against grave-soil', () => {
     const fogged = blend(COLOR_FOG_BASE, COLOR_FOCUS_RING, MAX_FOG_OPACITY);
     expect(contrastRatio(fogged, COLOR_GRAVE_SOIL)).toBeGreaterThanOrEqual(3);
+  });
+});
+/**
+ * Sweep of Tasks 1 to 7 (costume-polish Task 8, CP-63): pairs the component CSS introduced
+ * that the groups above do not already list.
+ */
+const SWEEP_PAIRS: Pair[] = [
+  // The parchment card is the boundary of the card; it sits on the table gradient
+  // (stone-dark at the centre, grave-soil at the edge).
+  { name: 'parchment card on stone-dark (table centre)', fg: COLOR_PARCHMENT, bg: COLOR_STONE_DARK, min: 3 },
+  { name: 'parchment card on grave-soil (table edge)', fg: COLOR_PARCHMENT, bg: COLOR_GRAVE_SOIL, min: 3 },
+  { name: 'ink-secondary card border on parchment', fg: COLOR_INK_SECONDARY, bg: COLOR_PARCHMENT, min: 3 },
+  // A lit flame must read against the table whether or not the glow is drawn.
+  { name: 'candle-flame on stone-dark (table centre)', fg: COLOR_CANDLE_FLAME, bg: COLOR_STONE_DARK, min: 3 },
+  { name: 'candle-flame on grave-soil (table edge)', fg: COLOR_CANDLE_FLAME, bg: COLOR_GRAVE_SOIL, min: 3 },
+  // The unlit moon disc is told apart from the sky by its rim.
+  { name: 'moon rim on moon-new (inner edge)', fg: COLOR_STONE_CRUMBLED, bg: COLOR_MOON_NEW, min: 3 },
+];
+
+describe.each([['sweep of tasks 1 to 7', SWEEP_PAIRS]])('WCAG AA: %s', (_label, pairs) => {
+  it.each(pairs)('$name is at least $min:1', ({ fg, bg, min }) => {
+    expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(min);
+  });
+});
+
+describe('sweep pairs that sit on a blended backdrop', () => {
+  /** Halo opacity at the moon rim: linear between the 0.45 stop (0.18) and the centre stop (0.35). */
+  const HALO_AT_RIM = 0.35 - ((0.35 - 0.18) * (MOON_RADIUS / MOON_HALO_RADIUS)) / 0.45;
+
+  it('the halo opacity at the moon rim is the value the gradient gives', () => {
+    expect(HALO_AT_RIM).toBeGreaterThan(0.18);
+    expect(HALO_AT_RIM).toBeLessThan(0.35);
+  });
+
+  it('the moon rim is at least 3:1 against the halo at the rim, over the brightest sky', () => {
+    const behind = blend(COLOR_HALO, COLOR_SKY_HORIZON, HALO_AT_RIM);
+    expect(contrastRatio(COLOR_STONE_CRUMBLED, behind)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('the crow outline is at least 3:1 against the sky at the top of the crow, and against the far hill', () => {
+    // The crow perches at y = 258 and reaches 22 units above; the sky gradient runs over 340 units.
+    const skyAtCrowTop = blend(COLOR_SKY_HORIZON, COLOR_SKY_TOP, (258 - 22) / 340);
+    expect(contrastRatio(COLOR_STONE_CRUMBLED, skyAtCrowTop)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(COLOR_STONE_CRUMBLED, COLOR_HILL_FAR)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(COLOR_STONE_CRUMBLED, COLOR_SKY_HORIZON)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('graveyard.css keeps the crow outline on stone-crumbled, the colour audited above', () => {
+    const css = readFileSync(resolve(SRC, 'components/graveyard/graveyard.css'), 'utf8');
+    const body = /\.gr-crow__body\s*\{([^}]*)\}/.exec(css)?.[1] ?? '';
+    expect(body).toMatch(/stroke:\s*var\(--color-stone-crumbled\)/);
   });
 });

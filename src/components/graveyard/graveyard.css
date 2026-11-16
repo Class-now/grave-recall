@@ -233,7 +233,7 @@
 .gr-ghost--drift {
   transform-box: fill-box;
   transform-origin: 50% 100%;
-  animation: ghost-drift var(--ghost-drift-speed, 12s) ease-in-out infinite;
+  animation: ghost-drift var(--ghost-drift-speed, calc(var(--motion-ambient) * 3 / 2)) ease-in-out infinite;
 }
 
 @keyframes ghost-drift {
@@ -358,7 +358,7 @@
 
 .gr-crow__body {
   fill: var(--color-crow);
-  stroke: var(--color-stone-worn);
+  stroke: var(--color-stone-crumbled);
   stroke-width: 0.75;
 }
 

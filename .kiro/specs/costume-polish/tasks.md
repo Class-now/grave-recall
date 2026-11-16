@@ -209,19 +209,21 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Tasks 1 to 7*
 *Refs: CP-01 to CP-04, CP-60 to CP-68*
 
-- [ ] Add `src/motion-rules.test.ts` (reads the CSS files under `src/`):
+- [x] Add `src/motion-rules.test.ts` (reads the CSS files under `src/`):
   - Every `@keyframes` block animates only `transform` and `opacity`.
   - No `animation` or `transition` declaration contains a literal `ms` or `s` duration; durations come from `var(--motion-*)` or `calc()` over them. If this finds an existing violation, fix the CSS (not the test) and name the file in the commit message.
   - Every class that applies an infinite animation has a matching `animation-play-state: paused` rule for the hidden state.
-- [ ] Add a reduced-motion sweep (in the same file or `graveyard.test.ts`/`review.test.ts`): with `reducedMotion` true, render the Graveyard (with overdue ghosts and fog), the Séance mid-session after a Good grade, and the app header, then assert that none of these classes appears: `gr-fog__layer--pulse`, `gr-fog__bank--drift-*`, `gr-ghost--drift`, `gr-candle__flame--flare`, `gr-candle__flame--flicker`, `gr-flipcard__inner--flip`, `gr-flipcard__back--flip`, `gr-moon__lit--wax`, `gr-crow--hop`, `gr-jumpscare`.
-- [ ] Add a backdrop-purity sweep: re-run the "identical markup" check across every backdrop group in the app (graveyard back and front, séance table props, page frame ornaments) for an empty store, a populated store and locale `ja`; assert `aria-hidden="true"`, no focusable element and no `role` inside each.
-- [ ] Contrast sweep: confirm every colour pair introduced in Tasks 1 to 7 appears in `contrast.test.ts` and passes. Add `docs/accessibility-audit.md` rows for the new pairs and the parchment two-tone focus ring.
-- [ ] Budget and perf: run `npm run build` and record the gzipped JavaScript and CSS sizes in the task notes; confirm JavaScript is well under 150 KB and `perf.test.ts` passes.
-- [ ] Mapping freeze: confirm `mapping-freeze.test.ts` and all mapping tests are unmodified since Task 2 (`git diff` against the Task 2 commit for those files shows nothing).
-- [ ] Steering consistency: confirm `structure.md` lists every new file, `spooky-design-system.md` has the master-table, catalogue and token rows added in Tasks 4 to 7, and section 6 still matches what shipped. Update `README.md` only if it describes the old visuals.
-- [ ] Clean up: no temporary files, no stray screenshots, no `.only`/`.skip` in tests.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes (all tests, 411 existing plus every addition).
-- [ ] Gate: `npm run build` passes.
+- [x] Add a reduced-motion sweep (in the same file or `graveyard.test.ts`/`review.test.ts`): with `reducedMotion` true, render the Graveyard (with overdue ghosts and fog), the Séance mid-session after a Good grade, and the app header, then assert that none of these classes appears: `gr-fog__layer--pulse`, `gr-fog__bank--drift-*`, `gr-ghost--drift`, `gr-candle__flame--flare`, `gr-candle__flame--flicker`, `gr-flipcard__inner--flip`, `gr-flipcard__back--flip`, `gr-moon__lit--wax`, `gr-crow--hop`, `gr-jumpscare`.
+- [x] Add a backdrop-purity sweep: re-run the "identical markup" check across every backdrop group in the app (graveyard back and front, séance table props, page frame ornaments) for an empty store, a populated store and locale `ja`; assert `aria-hidden="true"`, no focusable element and no `role` inside each.
+- [x] Contrast sweep: confirm every colour pair introduced in Tasks 1 to 7 appears in `contrast.test.ts` and passes. Add `docs/accessibility-audit.md` rows for the new pairs and the parchment two-tone focus ring.
+- [x] Budget and perf: run `npm run build` and record the gzipped JavaScript and CSS sizes in the task notes; confirm JavaScript is well under 150 KB and `perf.test.ts` passes.
+- [x] Mapping freeze: confirm `mapping-freeze.test.ts` and all mapping tests are unmodified since Task 2 (`git diff` against the Task 2 commit for those files shows nothing).
+- [x] Steering consistency: confirm `structure.md` lists every new file, `spooky-design-system.md` has the master-table, catalogue and token rows added in Tasks 4 to 7, and section 6 still matches what shipped. Update `README.md` only if it describes the old visuals.
+- [x] Clean up: no temporary files, no stray screenshots, no `.only`/`.skip` in tests.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes (all tests, 411 existing plus every addition).
+- [x] Gate: `npm run build` passes.
+
+*Notes (Task 8): build output is 31.96 KB gzipped JavaScript (budget 150 KB) and 5.28 KB gzipped CSS. 633 tests pass (411 baseline). Fixes found by the sweep: the ghost-drift fallback duration in graveyard.css was a literal 12s and is now calc(var(--motion-ambient) * 3 / 2); the crow outline was stone-worn (2.96:1 on the sky) and is now stone-crumbled. Steering: ghost-sway row now says 3 degrees, structure.md lists the two new cross-cutting tests.*
 
 *Owner check: the full walk-through at 1280 by 720 in English and Japanese: first run with starter crypts, a séance of five cards, the Graveyard with fog and ghosts after back-dating some cards, the Ledger, Settings with Reduced Motion on, Coward mode on.*
