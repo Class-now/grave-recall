@@ -51,6 +51,7 @@
     { "front": "temps", "back": "weather; time", "example": "Quel temps fait-il aujourd'hui?" },
     { "front": "pluie", "back": "rain", "example": "Il y a de la pluie aujourd'hui." },
     { "front": "neige", "back": "snow", "example": "La neige tombe en hiver." },
-    { "front": "froid", "back": "cold; coldness", "example": "Il fait très froid en décembre." }
+    { "front": "froid", "back": "cold; coldness", "example": "Il fait très froid en décembre." },
+    { "front": "ville", "back": "city; town", "example": "J'habite dans une grande ville." }
   ]
 }

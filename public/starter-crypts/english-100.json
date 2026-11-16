@@ -97,6 +97,11 @@
     { "front": "animal", "back": "a living creature that is not a plant", "example": "Lions are fierce animals." },
     { "front": "ankle", "back": "the joint between the foot and leg", "example": "She twisted her ankle playing soccer." },
     { "front": "announce", "back": "to make something known publicly", "example": "They announced the winner." },
-    { "front": "announcement", "back": "a public statement", "example": "The announcement will be made tomorrow." }
+    { "front": "announcement", "back": "a public statement", "example": "The announcement will be made tomorrow." },
+    { "front": "answer", "back": "a reply to a question; to reply", "example": "Do you know the answer to this question?" },
+    { "front": "anxious", "back": "worried or nervous about something uncertain", "example": "He felt anxious before the exam." },
+    { "front": "any", "back": "one or some, no matter which", "example": "Do you have any questions?" },
+    { "front": "anyone", "back": "any person at all", "example": "Anyone can learn to swim." },
+    { "front": "anything", "back": "any thing at all", "example": "I will do anything to help you." }
   ]
 }

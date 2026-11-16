@@ -107,7 +107,7 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 
 - [x] Create `public/starter-crypts/english-100.json` with 100 original English vocabulary entries conforming to `DeckExport` schema (no copyrighted lists)
 - [x] Create `public/starter-crypts/french-50.json` with 50 original French–English vocabulary entries conforming to `DeckExport` schema
-- [ ] Write a schema-validation test that loads both JSON files and asserts they conform to `DeckExport` (version, name, language, cards array, each card has non-empty front + back)
+- [x] Write a schema-validation test that loads both JSON files and asserts they conform to `DeckExport` (version, name, language, cards array, each card has non-empty front + back)
 
 ---
 
