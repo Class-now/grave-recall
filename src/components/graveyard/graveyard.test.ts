@@ -1,6 +1,10 @@
 /**
  * Graveyard scene tests (Task 9): pure visual mappings plus component behaviour.
  */
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { h } from 'preact';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as fc from 'fast-check';
@@ -37,13 +41,22 @@ import {
   daysPastDue,
   ghostDriftSeconds,
   ghostOpacity,
-  layoutGraves,
+  layoutYard,
   moonArcPath,
   round,
   tombstoneCrackOpacity,
   tombstoneFill,
   tombstoneMossOpacity,
+  BACK_SCALE,
+  CLEAR_STRIP_HEIGHT,
+  FRONT_SCALE,
   MAX_COLUMNS,
+  MAX_DEPTH_SHADE,
+  MAX_TILT_DEGREES,
+  TOMBSTONE_HEIGHT,
+  TOMBSTONE_WIDTH,
+  YARD_HEIGHT,
+  YARD_WIDTH,
 } from './visuals';
 
 vi.mock('../../audio/sounds', () => ({ crowCaw: vi.fn() }));
@@ -190,18 +203,23 @@ describe('visual mappings (spooky-design-system master table)', () => {
   it('layout gives every grave a distinct in-bounds position (up to 250 cards)', () => {
     fc.assert(
       fc.property(fc.nat({ max: 250 }), (n) => {
-        const layout = layoutGraves(n);
+        const layout = layoutYard(n);
         const keys = new Set(layout.positions.map((p) => `${p.x},${p.y}`));
         return (
           layout.positions.length === n &&
           keys.size === n &&
           layout.columns <= MAX_COLUMNS &&
-          layout.positions.every((p) => p.x >= 0 && p.x + 40 <= layout.width && p.y + 52 <= layout.height)
+          layout.positions.every(
+            (p) =>
+              p.x - (TOMBSTONE_WIDTH * p.scale) / 2 >= 0 &&
+              p.x + (TOMBSTONE_WIDTH * p.scale) / 2 <= YARD_WIDTH &&
+              p.y - TOMBSTONE_HEIGHT * p.scale >= 0 &&
+              p.y <= YARD_HEIGHT,
+          )
         );
       }),
     );
   });
-
   it('clamp and round behave', () => {
     expect(clamp(5, 0, 3)).toBe(3);
     expect(clamp(-1, 0, 3)).toBe(0);
@@ -209,6 +227,194 @@ describe('visual mappings (spooky-design-system master table)', () => {
   });
 });
 
+describe('layoutYard', () => {
+  /** Vertical overlap of each row with the row behind it, as a fraction of the rear grave's height. */
+  function worstRowOverlap(count: number): number {
+    const { positions } = layoutYard(count);
+    const firstOfRow = new Map<number, (typeof positions)[number]>();
+    for (const p of positions) if (!firstOfRow.has(p.row)) firstOfRow.set(p.row, p);
+    let worst = 0;
+    for (const [row, front] of firstOfRow) {
+      const rear = firstOfRow.get(row - 1);
+      if (rear === undefined) continue;
+      const overlap = rear.y - (front.y - TOMBSTONE_HEIGHT * front.scale);
+      worst = Math.max(worst, overlap / (TOMBSTONE_HEIGHT * rear.scale));
+    }
+    return worst;
+  }
+
+  it('lays out counts 0 to 250 inside the viewBox, in rows, within the steering limits', () => {
+    fc.assert(
+      fc.property(fc.nat({ max: 250 }), (n) => {
+        const { positions, columns, rows } = layoutYard(n);
+        expect(positions).toHaveLength(n);
+        expect(rows).toBe(Math.ceil(n / columns));
+        expect(new Set(positions.map((p) => `${p.x},${p.y}`)).size).toBe(n);
+
+        const rowScale = new Map<number, number>();
+        const byRow = new Map<number, typeof positions[number][]>();
+        positions.forEach((p, i) => {
+          // Index maps to row and column, so arrow-key movement by `columns` stays a grid move.
+          expect(p.row).toBe(Math.floor(i / columns));
+          expect(p.col).toBe(i % columns);
+
+          const halfWidth = (TOMBSTONE_WIDTH * p.scale) / 2;
+          expect(p.x - halfWidth).toBeGreaterThanOrEqual(0);
+          expect(p.x + halfWidth).toBeLessThanOrEqual(YARD_WIDTH);
+          expect(p.y - TOMBSTONE_HEIGHT * p.scale).toBeGreaterThanOrEqual(0);
+          // Nothing in the clear strip at the bottom of the stage.
+          expect(p.y).toBeLessThanOrEqual(YARD_HEIGHT - CLEAR_STRIP_HEIGHT);
+
+          expect(p.scale).toBeGreaterThanOrEqual(BACK_SCALE);
+          expect(p.scale).toBeLessThanOrEqual(FRONT_SCALE);
+          expect(Math.abs(p.tilt)).toBeLessThanOrEqual(MAX_TILT_DEGREES);
+          expect(p.shade).toBeGreaterThanOrEqual(0);
+          expect(p.shade).toBeLessThanOrEqual(MAX_DEPTH_SHADE);
+
+          rowScale.set(p.row, p.scale);
+          byRow.set(p.row, [...(byRow.get(p.row) ?? []), p]);
+        });
+
+        // Scale does not shrink toward the front.
+        const scales = [...rowScale.entries()].sort((a, b) => a[0] - b[0]).map(([, s]) => s);
+        scales.forEach((s, i) => {
+          if (i > 0) expect(s).toBeGreaterThanOrEqual(scales[i - 1] ?? 0);
+        });
+
+        // No horizontal overlap within a row.
+        for (const row of byRow.values()) {
+          const sorted = [...row].sort((a, b) => a.x - b.x);
+          sorted.forEach((p, i) => {
+            const next = sorted[i + 1];
+            if (next === undefined) return;
+            const gap = next.x - p.x - (TOMBSTONE_WIDTH * (p.scale + next.scale)) / 2;
+            expect(gap).toBeGreaterThanOrEqual(0);
+          });
+        }
+      }),
+    );
+  });
+
+  it('runs scale from 0.7 at the back row to 1.0 at the front row', () => {
+    const { positions, rows } = layoutYard(150);
+    expect(rows).toBeGreaterThan(1);
+    expect(positions[0]?.scale).toBe(BACK_SCALE);
+    expect(positions[positions.length - 1]?.scale).toBe(FRONT_SCALE);
+  });
+
+  it('is deterministic and depends only on the count', () => {
+    fc.assert(
+      fc.property(fc.nat({ max: 250 }), (n) => {
+        expect(layoutYard(n)).toEqual(layoutYard(n));
+      }),
+    );
+  });
+
+  it('keeps vertical overlap with the row behind at most 30% up to 150 cards', () => {
+    for (let n = 1; n <= 150; n++) expect(worstRowOverlap(n)).toBeLessThanOrEqual(0.3);
+  });
+
+  it('keeps vertical overlap with the row behind at most 45% up to 200 cards', () => {
+    for (let n = 1; n <= 200; n++) expect(worstRowOverlap(n)).toBeLessThanOrEqual(0.45);
+  });
+
+  it('keeps every grave at least 24 px wide on the 720p stage (1040 px for 1200 units)', () => {
+    const pxPerUnit = 1040 / YARD_WIDTH;
+    for (let n = 1; n <= 200; n++) {
+      const narrowest = Math.min(...layoutYard(n).positions.map((p) => TOMBSTONE_WIDTH * p.scale));
+      expect(narrowest * pxPerUnit).toBeGreaterThanOrEqual(24);
+    }
+  });
+
+  it('stays inside the viewBox and free of horizontal overlap beyond 250 cards', () => {
+    for (const n of [251, 400, 1000]) {
+      const { positions } = layoutYard(n);
+      expect(positions).toHaveLength(n);
+      for (const p of positions) {
+        expect(p.x - (TOMBSTONE_WIDTH * p.scale) / 2).toBeGreaterThanOrEqual(0);
+        expect(p.x + (TOMBSTONE_WIDTH * p.scale) / 2).toBeLessThanOrEqual(YARD_WIDTH);
+        expect(p.y).toBeLessThanOrEqual(YARD_HEIGHT - CLEAR_STRIP_HEIGHT);
+      }
+    }
+  });
+});
+
+describe('graveyard stage', () => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const stageCss = readFileSync(resolve(here, 'graveyard.css'), 'utf8');
+  const frameCss = readFileSync(resolve(here, '../frame/frame.css'), 'utf8');
+  const indexCss = readFileSync(resolve(here, '../../index.css'), 'utf8');
+
+  function viewBoxFor(count: number): string | null {
+    const deck = createDeck(`Crypt ${count}`);
+    for (let i = 0; i < count; i++) addCard(deck.id, `w${i}`, 'x', null);
+    const { container, unmount } = render(h(GraveyardScene, null));
+    const viewBox = container.querySelector('svg.gr-scene')?.getAttribute('viewBox') ?? null;
+    unmount();
+    decks.value = [];
+    cards.value = [];
+    activeDeckId.value = null;
+    return viewBox;
+  }
+
+  it('renders the same fixed viewBox for 0, 1, 150 and 200 cards', () => {
+    const boxes = [0, 1, 150, 200].map(viewBoxFor);
+    expect(boxes[0]).toBe(`0 0 ${YARD_WIDTH} ${YARD_HEIGHT}`);
+    expect(new Set(boxes).size).toBe(1);
+  });
+
+  it('wraps the svg in a scrolling wrapper and a stage, with meet scaling', () => {
+    makeCard('one');
+    const { container } = render(h(GraveyardScene, null));
+    const svg = container.querySelector('.gr-stage-scroll > .gr-stage > svg.gr-scene');
+    expect(svg).not.toBeNull();
+    expect(svg?.getAttribute('preserveAspectRatio')).toBe('xMidYMid meet');
+  });
+
+  it('draws a depth-shade overlay on each grave without touching the mapped fill', () => {
+    const deck = createDeck('Shade');
+    for (let i = 0; i < 40; i++) addCard(deck.id, `w${i}`, 'x', null);
+    const { container } = render(h(GraveyardScene, null));
+    const all = graves(container);
+    expect(all.every((g) => g.querySelector('.gr-tombstone__shade') !== null)).toBe(true);
+    all.forEach((g, i) => {
+      const stability = cards.value[i]?.srs.stability ?? Number.NaN;
+      expect(g.style.getPropertyValue('--tombstone-fill')).toBe(tombstoneFill(stability));
+    });
+    const shades = all.map((g) => Number(g.style.getPropertyValue('--depth-shade')));
+    expect(Math.max(...shades)).toBeLessThanOrEqual(MAX_DEPTH_SHADE);
+    expect(Math.min(...shades)).toBe(0);
+  });
+
+  it('sizes the stage from aspect-ratio and the dynamic viewport height', () => {
+    expect(stageCss).toContain('aspect-ratio');
+    expect(stageCss).toMatch(/width:\s*min\([^;]*100dvh[^;]*\)/);
+    expect(stageCss).not.toContain('80vh');
+    expect(stageCss).toMatch(/\.gr-stage-scroll\s*\{[^}]*overflow-x:\s*auto/);
+    expect(stageCss).toMatch(/\.gr-stage\s*\{[^}]*min-width:\s*45rem/);
+  });
+
+  it('sets no min-height above 100vh on the root, the frame or the graveyard', () => {
+    const selectors: ReadonlyArray<readonly [string, string]> = [
+      ['#grave-recall-root', indexCss + frameCss + stageCss],
+      ['.gr-frame', indexCss + frameCss + stageCss],
+      ['.gr-graveyard', indexCss + frameCss + stageCss],
+    ];
+    for (const [selector, css] of selectors) {
+      const escaped = selector.replace(/[.#]/g, '\\$&');
+      const blocks = [...css.matchAll(new RegExp(`(?:^|[\\n}])\\s*${escaped}\\s*\\{([^}]*)\\}`, 'g'))];
+      for (const block of blocks) {
+        for (const decl of (block[1] ?? '').matchAll(/min-height:\s*([^;]+);/g)) {
+          const value = decl[1]?.trim() ?? '';
+          const vh = /^(\d+(?:\.\d+)?)(?:vh|dvh|svh|lvh)$/.exec(value);
+          // Any min-height here must be a viewport fraction of at most 100.
+          expect(vh, `${selector} min-height: ${value}`).not.toBeNull();
+          expect(Number(vh?.[1])).toBeLessThanOrEqual(100);
+        }
+      }
+    }
+  });
+});
 describe('<GraveyardScene>', () => {
   it('renders one tombstone per card', () => {
     const deck = createDeck('A');

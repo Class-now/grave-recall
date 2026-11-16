@@ -20,9 +20,11 @@ import { Ghost } from './Ghost';
 import { MoonPhase } from './MoonPhase';
 import { Tombstone } from './Tombstone';
 import { useDocumentHidden } from './useDocumentHidden';
-import { layoutGraves, SKY_HEIGHT } from './visuals';
+import { HORIZON_Y, layoutYard, YARD_HEIGHT, YARD_WIDTH } from './visuals';
 
 import './graveyard.css';
+
+const SKY_GRADIENT_ID = 'gr-sky-gradient';
 
 export interface GraveyardSceneProps {
   /** Crypt to show. Omit to follow the active crypt (all cards when none is active). */
@@ -35,7 +37,7 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
     scopeId === null ? cards.value : cards.value.filter((c) => c.deckId === scopeId);
   const overdueIds = new Set(overdueCards.value.map((c) => c.id));
 
-  const layout = layoutGraves(visible.length);
+  const layout = layoutYard(visible.length);
   const now = new Date();
   const hidden = useDocumentHidden();
 
@@ -103,47 +105,68 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
           {t('graveyard.keyboardHint')}
         </p>
       )}
-      <svg
-        ref={svgRef}
-        class={hidden ? 'gr-scene gr-scene--hidden' : 'gr-scene'}
-        viewBox={`0 0 ${layout.width} ${layout.height}`}
-        role="group"
-        aria-label={t('graveyard.title')}
-        aria-describedby={visible.length > 0 ? 'gr-graveyard-hint' : undefined}
-        onKeyDown={onSceneKeyDown}
-      >
-        <rect class="gr-scene__sky" x="0" y="0" width={layout.width} height={layout.height} />
-        <rect
-          class="gr-scene__ground"
-          x="0"
-          y={SKY_HEIGHT}
-          width={layout.width}
-          height={layout.height - SKY_HEIGHT}
-        />
-        <MoonPhase />
-        <CrowKeeper x={layout.width - 80} y={SKY_HEIGHT - 66} />
-        {visible.map((card, i) => {
-          const pos = layout.positions[i];
-          return pos === undefined ? null : (
-            <Tombstone
-              key={card.id}
-              card={card}
-              x={pos.x}
-              y={pos.y}
-              tabStop={i === stopIndex}
-              onFocus={(c) => setStopId(c.id)}
-              onOpen={(c) => setSelectedId(c.id)}
+      <div class="gr-stage-scroll">
+        <div class="gr-stage">
+          <svg
+            ref={svgRef}
+            class={hidden ? 'gr-scene gr-scene--hidden' : 'gr-scene'}
+            viewBox={`0 0 ${YARD_WIDTH} ${YARD_HEIGHT}`}
+            preserveAspectRatio="xMidYMid meet"
+            role="group"
+            aria-label={t('graveyard.title')}
+            aria-describedby={visible.length > 0 ? 'gr-graveyard-hint' : undefined}
+            onKeyDown={onSceneKeyDown}
+          >
+            <defs>
+              <linearGradient id={SKY_GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
+                <stop class="gr-scene__sky-stop gr-scene__sky-stop--top" offset="0" />
+                <stop class="gr-scene__sky-stop gr-scene__sky-stop--horizon" offset="1" />
+              </linearGradient>
+            </defs>
+            <rect
+              class="gr-scene__sky"
+              x="0"
+              y="0"
+              width={YARD_WIDTH}
+              height={HORIZON_Y}
+              fill={`url(#${SKY_GRADIENT_ID})`}
             />
-          );
-        })}
-        {visible.map((card, i) => {
-          const pos = layout.positions[i];
-          return pos === undefined || !overdueIds.has(card.id) ? null : (
-            <Ghost key={card.id} card={card} x={pos.x} y={pos.y} now={now} />
-          );
-        })}
-        <FogLayer width={layout.width} height={layout.height} />
-      </svg>
+            <rect
+              class="gr-scene__ground"
+              x="0"
+              y={HORIZON_Y}
+              width={YARD_WIDTH}
+              height={YARD_HEIGHT - HORIZON_Y}
+            />
+            <MoonPhase cx={230} cy={130} r={40} />
+            <CrowKeeper x={1060} y={270} />
+            {visible.map((card, i) => {
+              const pos = layout.positions[i];
+              return pos === undefined ? null : (
+                <Tombstone
+                  key={card.id}
+                  card={card}
+                  x={pos.x}
+                  y={pos.y}
+                  scale={pos.scale}
+                  tilt={pos.tilt}
+                  shade={pos.shade}
+                  tabStop={i === stopIndex}
+                  onFocus={(c) => setStopId(c.id)}
+                  onOpen={(c) => setSelectedId(c.id)}
+                />
+              );
+            })}
+            {visible.map((card, i) => {
+              const pos = layout.positions[i];
+              return pos === undefined || !overdueIds.has(card.id) ? null : (
+                <Ghost key={card.id} card={card} x={pos.x} y={pos.y} scale={pos.scale} now={now} />
+              );
+            })}
+            <FogLayer width={YARD_WIDTH} height={YARD_HEIGHT} />
+          </svg>
+        </div>
+      </div>
       {selected !== null && <CardDetailPanel card={selected} now={now} onClose={closePanel} />}
     </section>
   );

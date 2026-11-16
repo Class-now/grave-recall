@@ -12,37 +12,68 @@
 .gr-graveyard__title {
   font-family: var(--font-display);
   letter-spacing: 0.05em;
-  font-size: var(--text-display);
-  line-height: 1.1;
+  font-size: var(--text-crypt-name);
+  line-height: 1.2;
   font-weight: 700;
-  margin: 0 0 0.5rem;
+  margin: 0 0 0.25rem;
 }
 
 .gr-graveyard__empty,
 .gr-graveyard__hint {
   color: var(--color-text-secondary);
   margin: 0 0 0.5rem;
+  line-height: 1.3;
 }
 
 .gr-graveyard__hint {
   font-size: var(--text-label);
 }
 
+/* Stage: a fixed 2:1 box. The height follows the viewport height minus the
+   chrome above it (--gr-chrome in src/index.css), so the whole view fits
+   without page scroll; wider viewports are limited by the available width.
+   On narrow screens the stage scrolls inside its own wrapper. */
+.gr-stage-scroll {
+  overflow-x: auto;
+}
+
+.gr-stage {
+  position: relative;
+  aspect-ratio: 2 / 1;
+  width: min(100%, calc((100vh - var(--gr-chrome)) * 2));
+  width: min(100%, calc((100dvh - var(--gr-chrome)) * 2));
+  min-width: 45rem;
+  margin-inline: auto;
+  border: 1px solid var(--color-border);
+  background: var(--color-void);
+}
+
+/* Vignette: a frame ornament over the scene, never data. */
+.gr-stage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  box-shadow: inset 0 0 4rem var(--color-void);
+}
+
 .gr-scene {
   display: block;
   width: 100%;
-  height: auto;
-  max-height: 80vh;
+  height: 100%;
 }
 
-.gr-scene__sky {
-  fill: var(--color-void);
+.gr-scene__sky-stop--top {
+  stop-color: var(--color-sky-top);
+}
+
+.gr-scene__sky-stop--horizon {
+  stop-color: var(--color-sky-horizon);
 }
 
 .gr-scene__ground {
   fill: var(--color-grave-soil);
 }
-
 /* Tombstone ---------------------------------------------------------------- */
 
 .gr-tombstone {
@@ -52,7 +83,8 @@
 .gr-tombstone__stone {
   fill: var(--tombstone-fill, var(--color-stone-crumbled));
   stroke: var(--color-border);
-  stroke-width: 1;
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
 }
 
 .gr-tombstone__moss {
@@ -68,6 +100,14 @@
   opacity: var(--tombstone-crack-opacity, 1);
 }
 
+/* Depth shade: a void-coloured overlay set by row only. It sits above the stone,
+   so --tombstone-fill is never altered. */
+.gr-tombstone__shade {
+  fill: var(--color-void);
+  opacity: var(--depth-shade, 0);
+  pointer-events: none;
+}
+
 .gr-tombstone:focus {
   outline: none;
 }
@@ -80,7 +120,7 @@
 /* Outlines on SVG elements are not drawn everywhere, so the stone is stroked too. */
 .gr-tombstone:focus-visible .gr-tombstone__stone {
   stroke: var(--color-focus-ring);
-  stroke-width: 3;
+  stroke-width: 3px;
 }
 
 /* Ghost -------------------------------------------------------------------- */

@@ -46,24 +46,24 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Task 1*
 *Refs: CP-16 to CP-26, CP-60, CP-62, CP-66, CP-67*
 
-- [ ] Before changing anything, add `src/components/graveyard/mapping-freeze.test.ts` with golden values for `tombstoneFill`, `tombstoneCrackOpacity`, `tombstoneMossOpacity` (stability 0, 15, 30, 60, 90), `ghostOpacity` (R 0, 0.5, 1), `ghostDriftSeconds` (days 0, 2, 6, 10), `moonArcPath` (progress 0, 0.25, 0.5, 1 at 64, 64, 28) and `fogOpacity` (0 cards, 1 of 10, 5 of 10, 10 of 10 overdue). Run it green first.
-- [ ] In `visuals.ts`, add `layoutYard(count)` as specified in design section 4 (columns, rows, per-grave `x`, `y`, `scale`, `tilt`, `shade`, `row`, `col`), with exported constants for the `viewBox` size (`YARD_WIDTH = 1200`, `YARD_HEIGHT = 600`), `FRONT_Y`, `BACK_Y`, the scale range and the clear-strip height. Remove `layoutGraves` and the unused cell constants. Do not touch the mapping functions.
-- [ ] Update `Tombstone.tsx`: props `x`, `y` (centre and baseline), `scale`, `tilt`, `shade`. Outer group `translate(x y) rotate(tilt) scale(scale)` with the stone drawn from `(-20, -52)`. Add a `.gr-tombstone__shade` path over the stone whose opacity is `var(--depth-shade)`, set inline from `shade`. Keep the class `gr-tombstone`, the role, label, `tabindex`, `data-card-id`, handlers and the three inline mapping variables.
-- [ ] Update `GraveyardScene.tsx`: wrap the SVG in `.gr-stage-scroll > .gr-stage`; fixed `viewBox="0 0 1200 600"`; `preserveAspectRatio="xMidYMid meet"`; keep sky and ground rects for now (gradient sky from the new tokens); use `layoutYard`; keep arrow-key navigation on `columns`. Reposition `MoonPhase` and `CrowKeeper` by props for the new `viewBox`; leave the `MoonPhase` defaults alone (a test pins them). Pass the fixed `YARD_WIDTH` and `YARD_HEIGHT` to `FogLayer`.
-- [ ] Minimal `Ghost.tsx` change so the app stays shippable: place each ghost from the new grave anchor (`x`, `y`, `scale`) with its present drawing. The redesign is Task 4.
-- [ ] CSS in `graveyard.css`: `.gr-stage` with `aspect-ratio: 2 / 1`, `width: min(100%, calc((100vh - var(--gr-chrome)) * 2))` followed by the same line with `dvh`, `margin-inline: auto`, a thin border and an inset vignette; `.gr-scene` fills the stage; remove `max-height: 80vh`. `.gr-stage-scroll` gets `overflow-x: auto` and `.gr-stage` gets `min-width: 45rem`. Compact the view heading and hint so they fit the `--gr-chrome` budget. Keep tombstone focus styling.
-- [ ] Update the one existing test "layout gives every grave a distinct in-bounds position (up to 250 cards)" in `graveyard.test.ts` to use `layoutYard`. This is the only existing test edited in this task.
-- [ ] New tests in `graveyard.test.ts`:
+- [x] Before changing anything, add `src/components/graveyard/mapping-freeze.test.ts` with golden values for `tombstoneFill`, `tombstoneCrackOpacity`, `tombstoneMossOpacity` (stability 0, 15, 30, 60, 90), `ghostOpacity` (R 0, 0.5, 1), `ghostDriftSeconds` (days 0, 2, 6, 10), `moonArcPath` (progress 0, 0.25, 0.5, 1 at 64, 64, 28) and `fogOpacity` (0 cards, 1 of 10, 5 of 10, 10 of 10 overdue). Run it green first.
+- [x] In `visuals.ts`, add `layoutYard(count)` as specified in design section 4 (columns, rows, per-grave `x`, `y`, `scale`, `tilt`, `shade`, `row`, `col`), with exported constants for the `viewBox` size (`YARD_WIDTH = 1200`, `YARD_HEIGHT = 600`), `FRONT_Y`, `BACK_Y`, the scale range and the clear-strip height. Remove `layoutGraves` and the unused cell constants. Do not touch the mapping functions.
+- [x] Update `Tombstone.tsx`: props `x`, `y` (centre and baseline), `scale`, `tilt`, `shade`. Outer group `translate(x y) rotate(tilt) scale(scale)` with the stone drawn from `(-20, -52)`. Add a `.gr-tombstone__shade` path over the stone whose opacity is `var(--depth-shade)`, set inline from `shade`. Keep the class `gr-tombstone`, the role, label, `tabindex`, `data-card-id`, handlers and the three inline mapping variables.
+- [x] Update `GraveyardScene.tsx`: wrap the SVG in `.gr-stage-scroll > .gr-stage`; fixed `viewBox="0 0 1200 600"`; `preserveAspectRatio="xMidYMid meet"`; keep sky and ground rects for now (gradient sky from the new tokens); use `layoutYard`; keep arrow-key navigation on `columns`. Reposition `MoonPhase` and `CrowKeeper` by props for the new `viewBox`; leave the `MoonPhase` defaults alone (a test pins them). Pass the fixed `YARD_WIDTH` and `YARD_HEIGHT` to `FogLayer`.
+- [x] Minimal `Ghost.tsx` change so the app stays shippable: place each ghost from the new grave anchor (`x`, `y`, `scale`) with its present drawing. The redesign is Task 4.
+- [x] CSS in `graveyard.css`: `.gr-stage` with `aspect-ratio: 2 / 1`, `width: min(100%, calc((100vh - var(--gr-chrome)) * 2))` followed by the same line with `dvh`, `margin-inline: auto`, a thin border and an inset vignette; `.gr-scene` fills the stage; remove `max-height: 80vh`. `.gr-stage-scroll` gets `overflow-x: auto` and `.gr-stage` gets `min-width: 45rem`. Compact the view heading and hint so they fit the `--gr-chrome` budget. Keep tombstone focus styling.
+- [x] Update the one existing test "layout gives every grave a distinct in-bounds position (up to 250 cards)" in `graveyard.test.ts` to use `layoutYard`. This is the only existing test edited in this task.
+- [x] New tests in `graveyard.test.ts`:
   - `layoutYard` for counts 0 to 250 (property test): positions equal the count, distinct, inside the `viewBox` taking scale into account; no horizontal overlap within a row; scale between 0.7 and 1.0 and non-decreasing by row; `|tilt| <= 3`; `0 <= shade <= 0.30`; no grave below the clear strip; deterministic for equal input.
   - For 150 cards: the vertical overlap with the row behind is at most 30 percent of the rear grave's height. For 200 cards: at most 45 percent.
   - At the 720p stage width (1040 px for 1200 units) the narrowest grave is at least 24 px wide for counts up to 200.
   - The rendered `viewBox` is identical for 0, 1, 150 and 200 cards.
   - Stage CSS text checks: `aspect-ratio`, a `dvh` width rule, no `80vh`, no `min-height` above `100vh` on `#grave-recall-root`, the frame container or `.gr-graveyard`.
   - Existing arrow-key, Home, End and Enter tests still pass unchanged.
-- [ ] Steering: add `mapping-freeze.test.ts` to the graveyard folder in `structure.md`.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes (including `perf.test.ts` at 200 cards).
-- [ ] Gate: `npm run build` passes.
+- [x] Steering: add `mapping-freeze.test.ts` to the graveyard folder in `structure.md`.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes (including `perf.test.ts` at 200 cards).
+- [x] Gate: `npm run build` passes.
 
 *Owner check: at 1280 by 720 with the starter crypts (150 cards) the whole Graveyard view fits with no scrollbar; graves sit in perspective rows, smaller and darker toward the back, slightly tilted; Tab and the arrow keys move through the rows.*
 

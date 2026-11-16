@@ -58,6 +58,7 @@ grave-recall/
 │   │   │   ├── FogLayer.tsx     # Fog SVG filter, intensity from overdue count
 │   │   │   ├── MoonPhase.tsx    # Moon SVG, phase from daily progress
 │   │   │   ├── CrowKeeper.tsx   # Crow SVG, visible/animated by streak
+│   │   │   ├── mapping-freeze.test.ts  # Golden outputs of the data-to-visual mappings
 │   │   │   └── graveyard.test.ts
 │   │   │
 │   │   ├── review/              # Séance review session
