@@ -1,0 +1,63 @@
+/*
+ * Function-First Horror: token template.
+ *
+ * Copy into your stylesheet entry point. Keep the roles, rename the example
+ * data tokens, and change values to fit your theme. Mirror every value in a
+ * TypeScript constants file if SVG attributes need them at runtime, and add a
+ * test that the two agree.
+ *
+ * Contrast to keep (WCAG AA):
+ *   --color-text-primary   on --color-bg and --color-surface-card  >= 4.5:1
+ *   --color-text-secondary on --color-bg                           >= 3:1
+ *   --color-focus-ring     on every background it appears on       >= 3:1
+ */
+:root {
+  /* 1. Base surfaces and text */
+  --color-bg: #0a0a0f;
+  --color-surface-card: #1e1a16;
+  --color-surface-panel: #151210;
+  --color-border: #3a342e;
+  --color-text-primary: #e8e0d4;
+  --color-text-secondary: #9e9488;
+  --color-text-inverse: #0a0a0f;
+  --color-focus-ring: #7eb8f7;
+
+  /* 2. Data-reserved colours: only an effect that shows data may use these.
+        Decoration and the backdrop must not. Rename to your own effects. */
+  --color-data-danger: #c0392b;   /* failure state */
+  --color-data-warning: #e67e22;  /* partial state */
+  --color-data-success: #27ae60;  /* success state */
+  --color-data-glow: #a0c4ff;     /* example: presence glow */
+  --color-data-haze: #c8d4e0;     /* example: backlog haze */
+  --color-data-flame: #ffb347;    /* example: success flash */
+
+  /* 3. Data-mapped semantic tokens.
+        Set at runtime on the styled element. The value here is only the
+        fallback. Every one needs a row in the Effect-to-Data Master Table. */
+  --haze-opacity: 0.05;           /* example: clamp(backlog / total, 0.05, 0.60) */
+  --spirit-opacity: 0.15;         /* example: clamp(1 - recall, 0.15, 0.95) */
+  --spirit-drift-speed: 12s;      /* example: max(3, 12 - daysLate * 1.5) seconds */
+
+  /* 4. Backdrop palette (static, data-free). Each must be darker than the
+        darkest data-mapped surface and must not reuse a data-reserved colour. */
+  --color-backdrop-top: #05060c;
+  --color-backdrop-horizon: #1a2238;
+  --color-backdrop-far: #121826;
+  --color-backdrop-near: #0d1019;
+  --color-backdrop-silhouette: #07080d;
+
+  /* 5. Motion timing. Component CSS references these and never uses a
+        millisecond literal. */
+  --motion-instant: 0ms;
+  --motion-fast: 150ms;
+  --motion-normal: 350ms;
+  --motion-slow: 600ms;
+  --motion-ambient: 8000ms;
+
+  /* 6. Type */
+  --font-display: 'MedievalSharp', serif;                       /* headings only */
+  --font-body: 'Palatino Linotype', Georgia, serif;
+  --font-ui: system-ui, -apple-system, sans-serif;               /* controls */
+  --text-label: 0.875rem;
+  --text-caption: 0.75rem;                                       /* smallest allowed */
+}

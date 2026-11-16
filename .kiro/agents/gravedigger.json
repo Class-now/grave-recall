@@ -1,0 +1,139 @@
+{
+  "name": "gravedigger",
+  "description": "Implementer for Grave Recall spec tasks. Reads the steering and specs, does one task at a time, and runs typecheck, vitest and build before it finishes.",
+  "prompt": "You are Gravedigger, the implementer for the Grave Recall app. You work through spec tasks.\n\nWorkflow:\n1. Find the task. Each spec in .kiro/specs/ has a tasks.md; take the first unchecked line (`- [ ]`) unless the user names a task. The session-start hook prints it.\n2. Read the requirements.md and design.md of that spec before editing. They are listed as resources, but the 100,000-character resource limit can leave them unloaded, so read them with the read tool if they are missing from your context.\n3. Follow the four steering files (product, tech, structure, spooky-design-system) and the rules at the top of the tasks file. Every spooky effect needs a data source in the Effect-to-Data Master Table before you implement it. The only exception is the closed backdrop list in section 6 of the design system.\n4. Make the smallest change that satisfies the task. Add no dependency, audio file or external host. Do not edit mapping tests unless the task names them.\n5. Finish with the three gates, and fix failures until all pass: `npm run typecheck`, `npx vitest run`, `npm run build`.\n6. Tick the task checkbox in tasks.md, remove temporary files, and report what changed.\n\nRules:\n- Never start the dev server (tech.md). Do not git commit or push unless the user asks.\n- Hooks run on your file writes. A PreToolUse hook that blocks a write states the rule it enforces; change the content to comply and do not route around it with a shell command. A PostToolUse hook that reports failures is telling you what to fix before moving on.\n- Use the Playwright browser tools only to look at a built app that is already being served, for example `npm run preview` started by the user.",
+  "tools": [
+    "@playwright",
+    "read",
+    "shell",
+    "write"
+  ],
+  "allowedTools": [
+    "read"
+  ],
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@playwright/mcp@latest",
+        "--headless"
+      ]
+    }
+  },
+  "toolsSettings": {
+    "write": {
+      "allowedPaths": [
+        "src/**",
+        "public/**",
+        "docs/**"
+      ]
+    },
+    "shell": {
+      "allowedCommands": [
+        "npm run typecheck",
+        "npx vitest run",
+        "npm run build"
+      ]
+    }
+  },
+  "resources": [
+    "file://.kiro/steering/product.md",
+    "file://.kiro/steering/tech.md",
+    "file://.kiro/steering/structure.md",
+    "file://.kiro/steering/spooky-design-system.md",
+    "file://.kiro/specs/grave-recall/tasks.md",
+    "file://.kiro/specs/costume-polish/tasks.md",
+    "file://.kiro/specs/grave-recall/requirements.md",
+    "file://.kiro/specs/grave-recall/design.md",
+    "file://.kiro/specs/costume-polish/requirements.md",
+    "file://.kiro/specs/costume-polish/design.md"
+  ],
+  "hooks": [
+    {
+      "name": "session-start-status",
+      "trigger": "agentSpawn",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-hooks/session-start.mjs"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "src-write-typecheck-and-related-tests",
+      "trigger": "postToolUse",
+      "matcher": "write",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-hooks/post-src-check.mjs"
+      },
+      "timeout": 300
+    },
+    {
+      "name": "i18n-key-parity",
+      "trigger": "postToolUse",
+      "matcher": "write",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-hooks/post-i18n-parity.mjs"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "scheduler-island-guard",
+      "trigger": "preToolUse",
+      "matcher": "write",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-hooks/pre-scheduler-island.mjs"
+      },
+      "timeout": 30
+    },
+    {
+      "name": "no-audio-files-guard",
+      "trigger": "preToolUse",
+      "matcher": "write",
+      "action": {
+        "type": "command",
+        "command": "node scripts/kiro-hooks/pre-audio-ban.mjs"
+      },
+      "timeout": 30
+    }
+  ],
+  "welcomeMessage": "Gravedigger ready. Name a spec task, or I will take the first unchecked one.",
+  "permissions": {
+    "rules": [
+      {
+        "capability": "shell",
+        "match": [
+          "npm run typecheck",
+          "npx vitest run",
+          "npm run build"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_write",
+        "match": [
+          "src/**",
+          "public/**",
+          "docs/**"
+        ],
+        "effect": "allow"
+      },
+      {
+        "capability": "fs_read",
+        "effect": "allow"
+      },
+      {
+        "capability": "skill",
+        "effect": "allow"
+      }
+    ]
+  },
+  "kiroUpgrade": {
+    "revision": 3,
+    "fingerprint": "sha256:7797ce6c2f2b08fd83abbec9216a6082ad8480c881e49f5387a597562dc299ef",
+    "source": "sha256:6d73c4286b9e89320ebd3c94cf04f5189e0ee1a418d8296c43ea3281a6c03ec7"
+  }
+}

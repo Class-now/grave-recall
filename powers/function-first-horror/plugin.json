@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "function-first-horror",
+  "version": "1.0.0",
+  "description": "Design rule for expressive UIs: every effect declares the data it shows. Steering, a CSS token template and a read-only design-warden reviewer agent.",
+  "author": {
+    "name": "Grave Recall"
+  },
+  "keywords": [
+    "function-first",
+    "effect-to-data",
+    "data source",
+    "spooky",
+    "horror",
+    "atmosphere",
+    "animation catalogue",
+    "sound catalogue",
+    "design tokens",
+    "reduced motion",
+    "design-warden"
+  ],
+  "license": "MIT"
+}

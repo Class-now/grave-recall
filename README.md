@@ -92,6 +92,45 @@ An automated version of this is in `src/roundtrip.test.ts`. To check it in a rea
 4. Open Settings, choose Import Data and select the exported file.
 5. Open The Graveyard again. It should match the screenshot, apart from the ghost opacities, which drift slowly with the clock.
 
+## Kiro tooling
+
+Custom agents, hooks, an MCP server and a power for working on this repository with Kiro CLI (`kiro-cli agent validate --path <file>` checks an agent file).
+
+| What | Path |
+|---|---|
+| Implementer agent (steering and specs as resources, hooks below) | `.kiro/agents/gravedigger.json` |
+| Read-only design reviewer agent | `.kiro/agents/design-warden.json` |
+| Hook scripts (plain Node, no dependencies) | `scripts/kiro-hooks/*.mjs`, tests in `scripts/kiro-hooks/*.test.ts` (part of `npx vitest run`) |
+| Playwright MCP server | declared in `mcpServers` of both agent files (`npx -y @playwright/mcp@latest --headless`) |
+| Power (steering, token template, reviewer agent) | `powers/function-first-horror/` (`POWER.md`, `plugin.json`) |
+
+Run an agent from the repository root:
+
+```bash
+kiro-cli chat --agent gravedigger      # implements the first unchecked spec task
+kiro-cli chat --agent design-warden    # reviews a diff or file list; give it a preview URL to look at the build
+```
+
+Hooks run on the V3 agent engine, which is the default for interactive `kiro-cli chat`. For a headless run add `--agent-engine v3 --trust-workspace`. Both agent files are in the universal format written by `kiro-cli agent upgrade` (they carry the CLI 2.x fields `allowedTools` and `toolsSettings` next to the V3 `permissions`), so edit them, then run `kiro-cli agent upgrade .kiro/agents --no-backup` to regenerate the derived fields.
+
+Hooks in `gravedigger.json`, all inline Kiro CLI hooks:
+
+| Hook | Trigger, matcher | Script | Effect |
+|---|---|---|---|
+| `session-start-status` | `SessionStart` | `session-start.mjs` | Prints `git status --short` and the first unchecked task of each spec |
+| `src-write-typecheck-and-related-tests` | `PostToolUse`, `write` | `post-src-check.mjs` | After a write under `src/`: `npm run typecheck` and `npx vitest related <file> --run`; failures go back to the agent |
+| `i18n-key-parity` | `PostToolUse`, `write` | `post-i18n-parity.mjs` | After a write to `src/i18n/en.ts` or `ja.ts`: fails with the keys one table lacks |
+| `scheduler-island-guard` | `PreToolUse`, `write` | `pre-scheduler-island.mjs` | Blocks a write under `src/scheduler/` that imports from outside it |
+| `no-audio-files-guard` | `PreToolUse`, `write` | `pre-audio-ban.mjs` | Blocks `.mp3`, `.wav`, `.ogg`, `.m4a` and `.flac` files under `src/audio/` and `public/` |
+
+The same entry is in the workspace MCP config `.kiro/settings/mcp.json`, so other agents and the IDE can use the Playwright server too:
+
+```json
+{ "mcpServers": { "playwright": { "command": "npx", "args": ["-y", "@playwright/mcp@latest", "--headless"] } } }
+```
+
+The reviewer saves screenshots to `.playwright-mcp/`, which is git-ignored. The browser tools need a served build, so start `npm run preview` yourself first.
+
 ## Project layout
 
 ```
