@@ -80,6 +80,17 @@ describe('view switcher', () => {
     ]);
   });
 
+  it('shows the app name as the page h1 and marks the active tab', () => {
+    render(h(App, null));
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(en['app.name']);
+    const nav = screen.getByRole('navigation', { name: 'Main navigation' });
+    const buttons = Array.from(nav.querySelectorAll('button'));
+    expect(buttons).toHaveLength(5);
+    expect(buttons.filter((b) => b.getAttribute('aria-current') === 'page').map((b) => b.textContent)).toEqual([
+      'Crypts',
+    ]);
+  });
+
   it('shows the Ledger of the Dead with its charts', () => {
     render(h(App, null));
     fireEvent.click(screen.getByRole('button', { name: 'Ledger of the Dead' }));

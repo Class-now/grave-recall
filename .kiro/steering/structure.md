@@ -45,6 +45,12 @@ grave-recall/
 │   │   └── persistence.ts       # localStorage read/write, JSON export/import
 │   │
 │   ├── components/
+│   │   ├── frame/               # Page frame: header, logo, stone-slab tabs
+│   │   │   ├── SiteHeader.tsx
+│   │   │   ├── TombstoneLogo.tsx
+│   │   │   ├── frame.css
+│   │   │   └── frame.test.ts
+│   │   │
 │   │   ├── graveyard/           # The main graveyard SVG scene
 │   │   │   ├── GraveyardScene.tsx
 │   │   │   ├── Tombstone.tsx    # Per-card grave, visual state from stability

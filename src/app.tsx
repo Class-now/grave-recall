@@ -4,27 +4,18 @@ import { useEffect, useState } from 'preact/hooks';
 import { activeDeckId, locale } from './store';
 import { markGestureOccurred } from './audio/context';
 import { t } from './i18n';
-import type { TranslationKey } from './i18n/types';
 
 import { CaptionBar } from './components/captions/CaptionBar';
 import { CryptEditor } from './components/deck/CryptEditor';
 import { CryptList } from './components/deck/CryptList';
+import { SiteHeader } from './components/frame/SiteHeader';
+import type { View } from './components/frame/SiteHeader';
 import { GraveyardScene } from './components/graveyard/GraveyardScene';
 import { SeanceSession } from './components/review/SeanceSession';
 import { SettingsPanel } from './components/settings/SettingsPanel';
 import { LedgerView } from './components/stats/LedgerView';
 
 import './index.css';
-
-type View = 'graveyard' | 'seance' | 'ledger' | 'crypts' | 'settings';
-
-const VIEWS: ReadonlyArray<{ view: View; label: TranslationKey }> = [
-  { view: 'graveyard', label: 'nav.graveyard' },
-  { view: 'seance', label: 'nav.seance' },
-  { view: 'ledger', label: 'nav.stats' },
-  { view: 'crypts', label: 'nav.crypts' },
-  { view: 'settings', label: 'nav.settings' },
-];
 
 /** Events that count as the first user gesture for the lazy AudioContext. */
 const GESTURE_EVENTS = ['pointerdown', 'keydown', 'touchstart'] as const;
@@ -68,36 +59,25 @@ export function App(): h.JSX.Element {
   const inCrypt = activeDeckId.value !== null;
   return (
     <div id="grave-recall-root">
-      <h1>{t('app.name')}</h1>
-      <nav aria-label={t('nav.main')}>
-        {VIEWS.map((item) => (
-          <button
-            key={item.view}
-            type="button"
-            class="gr-btn"
-            aria-current={view === item.view ? 'page' : undefined}
-            onClick={() => show(item.view)}
-          >
-            {t(item.label)}
-          </button>
-        ))}
-      </nav>
-      <div role="status">
-        {seanceDone && view === 'graveyard' && (
-          <p>
-            <strong>{t('seance.complete')}</strong> {t('seance.completeDesc')}
-          </p>
-        )}
+      <div class="gr-frame">
+        <SiteHeader view={view} show={show} />
+        <div role="status" class="gr-status">
+          {seanceDone && view === 'graveyard' && (
+            <p>
+              <strong>{t('seance.complete')}</strong> {t('seance.completeDesc')}
+            </p>
+          )}
+        </div>
+        <main>
+          {view === 'graveyard' && <GraveyardScene />}
+          {view === 'seance' && (
+            <SeanceSession key={activeDeckId.value ?? 'all'} deckId={activeDeckId.value} onComplete={finishSeance} />
+          )}
+          {view === 'ledger' && <LedgerView />}
+          {view === 'crypts' && (inCrypt ? <CryptEditor /> : <CryptList />)}
+          {view === 'settings' && <SettingsPanel />}
+        </main>
       </div>
-      <main>
-        {view === 'graveyard' && <GraveyardScene />}
-        {view === 'seance' && (
-          <SeanceSession key={activeDeckId.value ?? 'all'} deckId={activeDeckId.value} onComplete={finishSeance} />
-        )}
-        {view === 'ledger' && <LedgerView />}
-        {view === 'crypts' && (inCrypt ? <CryptEditor /> : <CryptList />)}
-        {view === 'settings' && <SettingsPanel />}
-      </main>
       <CaptionBar />
     </div>
   );

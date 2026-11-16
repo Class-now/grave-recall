@@ -37,6 +37,14 @@ describe('Design tokens', () => {
     '--color-surface-panel',
     '--color-border',
     '--color-focus-ring',
+    '--color-sky-top',
+    '--color-sky-horizon',
+    '--color-hill-far',
+    '--color-hill-near',
+    '--color-tree',
+    '--color-iron',
+    '--color-ground-fore',
+    '--color-halo',
   ];
 
   const motionTokenNames: CssTokenName[] = [

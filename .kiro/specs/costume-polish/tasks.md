@@ -18,25 +18,25 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: none*
 *Refs: CP-04 (palette tokens), CP-05 to CP-15, CP-60, CP-62, CP-63*
 
-- [ ] Add the eight backdrop palette tokens from steering section 6.2 to `src/index.css` and as constants in `src/design/tokens.ts` and `TOKEN_MAP` (`COLOR_SKY_TOP`, `COLOR_SKY_HORIZON`, `COLOR_HILL_FAR`, `COLOR_HILL_NEAR`, `COLOR_TREE`, `COLOR_IRON`, `COLOR_GROUND_FORE`, `COLOR_HALO`). Add the names to the lists in `tokens.test.ts`. The existing "index.css mirrors the TypeScript tokens" test then covers them.
-- [ ] Add `--gr-chrome: 12.5rem` to `index.css` (used from Task 2) and a body background wash: a vertical gradient from `--color-sky-top` to `--color-void`.
-- [ ] Create `src/components/frame/TombstoneLogo.tsx`: a small inline SVG with `aria-hidden="true"` and `focusable="false"`, using the silhouette of `public/grave.svg` (arched stone, cross incision) with design-token colours.
-- [ ] Create `src/components/frame/SiteHeader.tsx`: logo, `<h1>{t('app.name')}</h1>`, and the `<nav aria-label={t('nav.main')}>` with the same five buttons, order, labels and `aria-current` as in `app.tsx`. Add a divider-rule ornament below (aria-hidden). `app.tsx` renders `SiteHeader` and passes the current view and `show`. Keep the `role="status"` region and `<main>`.
-- [ ] Create `src/components/frame/frame.css`:
+- [x] Add the eight backdrop palette tokens from steering section 6.2 to `src/index.css` and as constants in `src/design/tokens.ts` and `TOKEN_MAP` (`COLOR_SKY_TOP`, `COLOR_SKY_HORIZON`, `COLOR_HILL_FAR`, `COLOR_HILL_NEAR`, `COLOR_TREE`, `COLOR_IRON`, `COLOR_GROUND_FORE`, `COLOR_HALO`). Add the names to the lists in `tokens.test.ts`. The existing "index.css mirrors the TypeScript tokens" test then covers them.
+- [x] Add `--gr-chrome: 12.5rem` to `index.css` (used from Task 2) and a body background wash: a vertical gradient from `--color-sky-top` to `--color-void`.
+- [x] Create `src/components/frame/TombstoneLogo.tsx`: a small inline SVG with `aria-hidden="true"` and `focusable="false"`, using the silhouette of `public/grave.svg` (arched stone, cross incision) with design-token colours.
+- [x] Create `src/components/frame/SiteHeader.tsx`: logo, `<h1>{t('app.name')}</h1>`, and the `<nav aria-label={t('nav.main')}>` with the same five buttons, order, labels and `aria-current` as in `app.tsx`. Add a divider-rule ornament below (aria-hidden). `app.tsx` renders `SiteHeader` and passes the current view and `show`. Keep the `role="status"` region and `<main>`.
+- [x] Create `src/components/frame/frame.css`:
   - A centred container (`max-width: 75rem`, `margin-inline: auto`, inline padding at least `1rem`) around header, status and main.
   - `h1` in `var(--font-display)` at `var(--text-display)` (clamped down to 1.75rem on narrow screens), `letter-spacing: 0.05em`, `font-synthesis-weight: none`; a `:lang(ja)` rule that adds a Japanese serif stack.
   - Nav tabs: stone-slab look from `--color-stone-dark`, `--color-stone-mid`, `--color-border`; arched top corners; the active tab (`[aria-current="page"]`) raised, with no bottom border, and a lighter fill; hover state; at least 2.5rem tall; wrapping; a 2 px `--color-focus-ring` outline with offset so it is not clipped.
   - Remove the `#grave-recall-root nav` rules from `index.css`; keep the nav tabs independent of `.gr-btn`.
-- [ ] Make the séance-complete status line take no layout space (CP-15): reserve a fixed-height slot inside the header region or position it over the top edge of `<main>`. Keep `role="status"` and its text.
-- [ ] Steering: add `components/frame/` (`SiteHeader.tsx`, `TombstoneLogo.tsx`, `frame.css`) to the layout in `.kiro/steering/structure.md`.
-- [ ] Tests:
+- [x] Make the séance-complete status line take no layout space (CP-15): reserve a fixed-height slot inside the header region or position it over the top edge of `<main>`. Keep `role="status"` and its text.
+- [x] Steering: add `components/frame/` (`SiteHeader.tsx`, `TombstoneLogo.tsx`, `frame.css`) to the layout in `.kiro/steering/structure.md`.
+- [x] Tests:
   - `app.test.ts`: the nav still has five buttons in the same order with the same names, the active one has `aria-current="page"`, and an `<h1>` with the app name exists. Do not change existing assertions.
   - New `frame.test.ts`: the logo has `aria-hidden="true"` and no focusable descendants; `frame.css` text contains `max-width`, `font-synthesis-weight: none`, `var(--font-display)`, an `[aria-current="page"]` rule and a `:focus-visible` rule using `var(--color-focus-ring)`; the CSS does not reference `.gr-btn`.
   - `contrast.test.ts`: the stone-slab pairs (`text-primary` on `stone-dark` and `stone-mid`, `focus-ring` on both) already exist; confirm they are present and add `text-primary` and `text-secondary` on `sky-top` and `sky-horizon` (4.5:1), `focus-ring` on `sky-top` and `sky-horizon` (3:1), and `stone-crumbled` on `stone-dark` (3:1) for the tab border.
   - `bundle.test.ts` is unchanged and must pass (no new host).
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes (411 existing tests plus the new ones).
-- [ ] Gate: `npm run build` passes.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes (411 existing tests plus the new ones).
+- [x] Gate: `npm run build` passes.
 
 *Owner check: open at 1280 by 720 and at 390 wide. The title is blackletter and centred with margins, the tabs read as slabs, the active tab is obvious, Tab shows the focus ring on each tab, and Japanese mode shows no missing-glyph boxes in the title.*
 

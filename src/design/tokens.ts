@@ -33,6 +33,19 @@ export const COLOR_BORDER = '#3a342e' as const;
 export const COLOR_FOCUS_RING = '#7eb8f7' as const;
 
 // ---------------------------------------------------------------------------
+// Decorative backdrop palette (spooky-design-system section 6.2)
+// ---------------------------------------------------------------------------
+
+export const COLOR_SKY_TOP = '#05060c' as const;
+export const COLOR_SKY_HORIZON = '#1a2238' as const;
+export const COLOR_HILL_FAR = '#121826' as const;
+export const COLOR_HILL_NEAR = '#0d1019' as const;
+export const COLOR_TREE = '#07080d' as const;
+export const COLOR_IRON = '#1f2229' as const;
+export const COLOR_GROUND_FORE = '#120d0a' as const;
+export const COLOR_HALO = '#6f86b8' as const;
+
+// ---------------------------------------------------------------------------
 // Motion timing tokens (milliseconds as numbers)
 // ---------------------------------------------------------------------------
 
@@ -75,6 +88,14 @@ export const TOKEN_MAP = {
   '--color-surface-panel': COLOR_SURFACE_PANEL,
   '--color-border': COLOR_BORDER,
   '--color-focus-ring': COLOR_FOCUS_RING,
+  '--color-sky-top': COLOR_SKY_TOP,
+  '--color-sky-horizon': COLOR_SKY_HORIZON,
+  '--color-hill-far': COLOR_HILL_FAR,
+  '--color-hill-near': COLOR_HILL_NEAR,
+  '--color-tree': COLOR_TREE,
+  '--color-iron': COLOR_IRON,
+  '--color-ground-fore': COLOR_GROUND_FORE,
+  '--color-halo': COLOR_HALO,
   '--motion-instant': MOTION_INSTANT,
   '--motion-fast': MOTION_FAST,
   '--motion-normal': MOTION_NORMAL,

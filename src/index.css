@@ -34,6 +34,22 @@
   --color-border:         #3a342e;
   --color-focus-ring:     #7eb8f7;
 
+  /* Decorative backdrop palette (spooky-design-system section 6.2) */
+  --color-sky-top:        #05060c;
+  --color-sky-horizon:    #1a2238;
+  --color-hill-far:       #121826;
+  --color-hill-near:      #0d1019;
+  --color-tree:           #07080d;
+  --color-iron:           #1f2229;
+  --color-ground-fore:    #120d0a;
+  --color-halo:           #6f86b8;
+
+  /* -------------------------------------------------------------------------
+     Layout  Evertical space taken by everything above the graveyard stage
+     (header, frame padding, view heading, hint). Used from Task 2.
+     ------------------------------------------------------------------------- */
+  --gr-chrome:            12.5rem;
+
   /* -------------------------------------------------------------------------
      Typography — font stacks
      ------------------------------------------------------------------------- */
@@ -78,6 +94,10 @@ html {
 body {
   margin: 0;
   background-color: var(--color-void);
+  /* Night-sky wash: static, data-free page backdrop (steering section 6.1). */
+  background-image: linear-gradient(to bottom, var(--color-sky-top), var(--color-void));
+  background-repeat: no-repeat;
+  background-size: 100% 100vh;
   color: var(--color-text-primary);
   font-family: var(--font-ui);
   font-size: 1rem;
@@ -89,17 +109,4 @@ body {
 :focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
-}
-
-/* View switcher */
-#grave-recall-root nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  margin-block: 0.5rem;
-}
-
-#grave-recall-root nav [aria-current="page"] {
-  background: var(--color-stone-mid);
-  border-color: var(--color-focus-ring);
 }

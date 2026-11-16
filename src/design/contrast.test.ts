@@ -15,6 +15,8 @@ import {
   COLOR_STONE_CRUMBLED,
   COLOR_STONE_DARK,
   COLOR_STONE_MID,
+  COLOR_SKY_HORIZON,
+  COLOR_SKY_TOP,
   COLOR_SUCCESS,
   COLOR_SURFACE_CARD,
   COLOR_SURFACE_PANEL,
@@ -68,6 +70,17 @@ const COMPONENT_PAIRS: Pair[] = [
   { name: 'success border on surface-card', fg: COLOR_SUCCESS, bg: COLOR_SURFACE_CARD, min: 3 },
 ];
 
+/** Page frame (costume-polish CP-12, CP-63): the night-sky wash and the stone-slab tabs. */
+const FRAME_PAIRS: Pair[] = [
+  { name: 'text-primary on sky-top', fg: COLOR_TEXT_PRIMARY, bg: COLOR_SKY_TOP, min: 4.5 },
+  { name: 'text-primary on sky-horizon', fg: COLOR_TEXT_PRIMARY, bg: COLOR_SKY_HORIZON, min: 4.5 },
+  { name: 'text-secondary on sky-top', fg: COLOR_TEXT_SECONDARY, bg: COLOR_SKY_TOP, min: 4.5 },
+  { name: 'text-secondary on sky-horizon', fg: COLOR_TEXT_SECONDARY, bg: COLOR_SKY_HORIZON, min: 4.5 },
+  { name: 'focus-ring on sky-top', fg: COLOR_FOCUS_RING, bg: COLOR_SKY_TOP, min: 3 },
+  { name: 'focus-ring on sky-horizon', fg: COLOR_FOCUS_RING, bg: COLOR_SKY_HORIZON, min: 3 },
+  { name: 'tab border on stone-dark', fg: COLOR_STONE_CRUMBLED, bg: COLOR_STONE_DARK, min: 3 },
+];
+
 describe('contrastRatio', () => {
   it('is 21 for black on white and 1 for identical colours', () => {
     expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 5);
@@ -90,9 +103,23 @@ describe('contrastRatio', () => {
 describe.each([
   ['spooky-design-system §1.3', SECTION_1_3],
   ['component CSS', COMPONENT_PAIRS],
+  ['page frame', FRAME_PAIRS],
 ])('WCAG AA: %s', (_label, pairs) => {
   it.each(pairs)('$name is at least $min:1', ({ fg, bg, min }) => {
     expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(min);
+  });
+});
+
+describe('stone-slab tab pairs', () => {
+  const known = new Set([...SECTION_1_3, ...COMPONENT_PAIRS].map((p) => `${p.fg}/${p.bg}/${p.min}`));
+
+  it.each([
+    ['text-primary on stone-dark', COLOR_TEXT_PRIMARY, COLOR_STONE_DARK, 4.5],
+    ['text-primary on stone-mid', COLOR_TEXT_PRIMARY, COLOR_STONE_MID, 4.5],
+    ['focus-ring on stone-dark', COLOR_FOCUS_RING, COLOR_STONE_DARK, 3],
+    ['focus-ring on stone-mid', COLOR_FOCUS_RING, COLOR_STONE_MID, 3],
+  ])('%s is already audited', (_name, fg, bg, min) => {
+    expect(known.has(`${fg}/${bg}/${min}`)).toBe(true);
   });
 });
 

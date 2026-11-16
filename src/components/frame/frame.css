@@ -1,0 +1,158 @@
+/* Page frame: centred container, header, title and stone-slab tabs.
+   Every value comes from the design tokens in src/index.css. */
+
+.gr-frame {
+  max-width: 75rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  padding-block: 0.5rem 1rem;
+}
+
+.gr-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.gr-header__brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  max-width: 100%;
+}
+
+.gr-logo {
+  flex: none;
+  pointer-events: none;
+}
+
+h1.gr-header__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: 0.05em;
+  font-synthesis-weight: none;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+/* The display face has no CJK glyphs: fall back per glyph to a Japanese serif. */
+h1.gr-header__title:lang(ja) {
+  font-family: var(--font-display), 'Yu Mincho', 'Hiragino Mincho ProN', 'Noto Serif JP', serif;
+}
+
+@media (max-width: 40rem) {
+  h1.gr-header__title {
+    font-size: 1.75rem;
+  }
+}
+
+/* Stone-slab tabs ---------------------------------------------------------- */
+
+.gr-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0.5rem;
+  /* Room above for the raised active tab and its focus outline. */
+  padding: 0.5rem 0.25rem 0;
+  margin: 0;
+  border-bottom: 1px solid var(--color-border);
+  width: 100%;
+}
+
+.gr-tab {
+  min-height: 2.5rem;
+  padding: 0.375rem 1rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-stone-dark);
+  border: 1px solid var(--color-stone-crumbled);
+  border-radius: 1rem 1rem 0 0;
+  cursor: pointer;
+}
+
+.gr-tab:hover {
+  background: var(--color-stone-mid);
+}
+
+/* Active tab: a raised slab with no bottom border and a lighter fill. */
+.gr-tab[aria-current="page"] {
+  background: var(--color-stone-mid);
+  border-bottom: 0;
+  min-height: 2.75rem;
+  padding-bottom: 0.4375rem;
+  margin-bottom: -1px;
+  font-weight: 700;
+  font-synthesis-weight: none;
+}
+
+.gr-tab:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+/* Divider rule ornament ---------------------------------------------------- */
+
+.gr-divider {
+  position: relative;
+  width: 100%;
+  height: 0.75rem;
+  pointer-events: none;
+}
+
+.gr-divider::before {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    var(--color-stone-worn) 20%,
+    var(--color-stone-worn) 80%,
+    transparent
+  );
+}
+
+.gr-divider::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: var(--color-stone-worn);
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+/* Séance-complete status line ---------------------------------------------- */
+/* Zero height: the message floats over the top edge of <main> so showing it
+   never changes the page height (CP-15). */
+
+.gr-status {
+  position: relative;
+  height: 0;
+  z-index: 1;
+}
+
+.gr-status > p {
+  position: absolute;
+  inset-inline: 0;
+  top: 0.25rem;
+  margin: 0;
+  padding: 0.375rem 0.75rem;
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  color: var(--color-text-primary);
+  background: var(--color-surface-panel);
+  border: 1px solid var(--color-border);
+}
