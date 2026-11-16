@@ -99,6 +99,12 @@ export const ja: Record<TranslationKey, string> = {
   'stats.noData': 'データなし',
   'stats.days': '日',
   'stats.cards': '枚',
+  'stats.reviewsPerDay': '1日ごとの復習数(直近30日)',
+  'stats.barReviews': '{date}: 復習{count}回、正解{correct}回',
+  'stats.barForecast': '{date}: 期限のカード{count}枚',
+  'stats.legendCorrect': '正解(良い・簡単)',
+  'stats.legendIncorrect': '未達成(もう一度・難しい)',
+  'stats.peak': '最大: {count}',
 
   // Settings
   'settings.title': '設定',

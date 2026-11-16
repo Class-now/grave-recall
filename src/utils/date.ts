@@ -49,3 +49,13 @@ export function isSameDay(a: Date, b: Date): boolean {
 export function todayStart(): Date {
   return startOfDay(new Date());
 }
+
+/**
+ * Formats a date as a local calendar day, YYYY-MM-DD. Unlike toISOString()
+ * this does not shift the day for time zones ahead of or behind UTC.
+ */
+export function formatDay(d: Date): string {
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${d.getFullYear()}-${month}-${day}`;
+}

@@ -24,6 +24,7 @@ import {
   isSessionComplete,
   reducedMotion,
   remainingCount,
+  saveState,
   startSession,
 } from '../../store';
 import { candleSeal, ghostScream, hardThud, pageTurn, sessionEndToll } from '../../audio/sounds';
@@ -87,6 +88,8 @@ export function SeanceSession(props: SeanceSessionProps): h.JSX.Element | null {
     if (!card || !isCardFlipped.peek()) return;
     const wasWellLearned = card.srs.stability > JUMPSCARE_STABILITY_THRESHOLD;
     gradeCard(grade);
+    // The graded card and the review log must survive a reload (AC-21.1).
+    saveState();
     playGradeSound(grade);
     if (grade === 0 && wasWellLearned && !reducedMotion.peek() && !cowardMode.peek()) {
       setScare((n) => n + 1);

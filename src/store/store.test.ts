@@ -341,6 +341,35 @@ describe('Persistence: saveState and loadState', () => {
     expect(decks.value).toHaveLength(1);
     expect(decks.value[0]!.name).toBe('SavedDeck');
   });
+
+  it('saveState / loadState: round-trips the review log, dates included', () => {
+    const when = new Date(2025, 5, 1, 9, 30);
+    addReviewLog({ date: when, cardId: 'card-1' as never, grade: 2, correct: true });
+    addReviewLog({ date: when, cardId: 'card-2' as never, grade: 0, correct: false });
+    saveState();
+
+    const stored = JSON.parse(localStorage.getItem('grave-recall-data')!);
+    expect(stored.reviewLog).toHaveLength(2);
+
+    reviewLog.value = [];
+    expect(loadState()).toBe(true);
+    expect(reviewLog.value).toHaveLength(2);
+    expect(reviewLog.value[0]).toEqual({ date: when, cardId: 'card-1', grade: 2, correct: true });
+    expect(reviewLog.value[0]!.date).toBeInstanceOf(Date);
+    expect(reviewLog.value[1]!.correct).toBe(false);
+  });
+
+  it('loadState: rejects stored data whose review log has an invalid entry', () => {
+    createDeck('Kept');
+    saveState();
+    const stored = JSON.parse(localStorage.getItem('grave-recall-data')!);
+    stored.reviewLog = [{ date: 'not a date', cardId: 'c', grade: 1, correct: true }];
+    localStorage.setItem('grave-recall-data', JSON.stringify(stored));
+
+    decks.value = [];
+    expect(loadState()).toBe(false);
+    expect(reviewLog.value).toHaveLength(0);
+  });
 });
 
 // === EXPORT/IMPORT ===

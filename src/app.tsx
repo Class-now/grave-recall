@@ -10,14 +10,16 @@ import { CryptEditor } from './components/deck/CryptEditor';
 import { CryptList } from './components/deck/CryptList';
 import { GraveyardScene } from './components/graveyard/GraveyardScene';
 import { SeanceSession } from './components/review/SeanceSession';
+import { LedgerView } from './components/stats/LedgerView';
 
 import './index.css';
 
-type View = 'graveyard' | 'seance' | 'crypts';
+type View = 'graveyard' | 'seance' | 'ledger' | 'crypts';
 
 const VIEWS: ReadonlyArray<{ view: View; label: TranslationKey }> = [
   { view: 'graveyard', label: 'nav.graveyard' },
   { view: 'seance', label: 'nav.seance' },
+  { view: 'ledger', label: 'nav.stats' },
   { view: 'crypts', label: 'nav.crypts' },
 ];
 
@@ -82,6 +84,7 @@ export function App(): h.JSX.Element {
         {view === 'seance' && (
           <SeanceSession key={activeDeckId.value ?? 'all'} deckId={activeDeckId.value} onComplete={finishSeance} />
         )}
+        {view === 'ledger' && <LedgerView />}
         {view === 'crypts' && (inCrypt ? <CryptEditor /> : <CryptList />)}
       </main>
     </div>

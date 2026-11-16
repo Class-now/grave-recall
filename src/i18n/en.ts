@@ -99,6 +99,12 @@ export const en: Record<TranslationKey, string> = {
   'stats.noData': 'No data yet',
   'stats.days': 'days',
   'stats.cards': 'cards',
+  'stats.reviewsPerDay': 'Reviews per day, last 30 days',
+  'stats.barReviews': '{date}: {count} reviews, {correct} correct',
+  'stats.barForecast': '{date}: {count} cards due',
+  'stats.legendCorrect': 'Correct (Good or Easy)',
+  'stats.legendIncorrect': 'Not recalled (Again or Hard)',
+  'stats.peak': 'Peak: {count}',
 
   // Settings
   'settings.title': 'Settings',

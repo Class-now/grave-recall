@@ -168,11 +168,11 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 5*
 *Refs: US-18–20, AC-18.1–18.3, AC-19.1–19.2, AC-20.1–20.2*
 
-- [ ] Implement `<LedgerView>` as the stats page container
-- [ ] Implement `<RetentionChart>`: SVG bar chart of reviews per day for last 30 days; each bar has `aria-label` with date and count; uses `--color-success` / `--color-danger` fill; shows "No data yet" when no reviews
-- [ ] Implement `<ForecastChart>`: SVG bar chart of cards due per day for next 14 days; computed from card `dueDate` values across all crypts; each bar has `aria-label`
-- [ ] Display retention percentage: `correctReviews30d / totalReviews30d`; "No data yet" when zero reviews
-- [ ] Write stats tests: `retentionRate` signal computes correctly from review log; forecast counts match cards with matching due dates; "No data yet" rendered when review log empty
+- [x] Implement `<LedgerView>` as the stats page container
+- [x] Implement `<RetentionChart>`: SVG bar chart of reviews per day for last 30 days; each bar has `aria-label` with date and count; uses `--color-success` / `--color-danger` fill; shows "No data yet" when no reviews
+- [x] Implement `<ForecastChart>`: SVG bar chart of cards due per day for next 14 days; computed from card `dueDate` values across all crypts; each bar has `aria-label`
+- [x] Display retention percentage: `correctReviews30d / totalReviews30d`; "No data yet" when zero reviews
+- [x] Write stats tests: `retentionRate` signal computes correctly from review log; forecast counts match cards with matching due dates; "No data yet" rendered when review log empty
 
 ---
 

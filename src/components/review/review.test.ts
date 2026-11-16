@@ -14,6 +14,7 @@ import {
   createDeck,
   currentCard,
   decks,
+  loadState,
   reviewLog,
   updateCardSrs,
   type Card,
@@ -393,5 +394,27 @@ describe('jumpscare flash', () => {
     await againOn(30);
     expect(flash()).toBeNull();
     expect(lastSound()).toBe('coward-chime');
+  });
+});
+
+describe('persistence', () => {
+  afterEach(() => localStorage.clear());
+
+  it('saves the graded card and the review log, so history survives a reload', async () => {
+    localStorage.clear();
+    const card = dueCard('persisted');
+    renderSeance();
+    await flipWithSpace();
+    fireEvent.keyDown(document.body, { key: '3' });
+
+    const stored = JSON.parse(localStorage.getItem('grave-recall-data') ?? 'null');
+    expect(stored.reviewLog).toHaveLength(1);
+    expect(stored.reviewLog[0]).toMatchObject({ cardId: card.id, grade: 2, correct: true });
+
+    // Reload: clear the in-memory log and restore it from storage.
+    reviewLog.value = [];
+    expect(loadState()).toBe(true);
+    expect(reviewLog.value).toHaveLength(1);
+    expect(reviewLog.value[0]!.date).toBeInstanceOf(Date);
   });
 });

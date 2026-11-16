@@ -100,6 +100,12 @@ export type TranslationKey =
   | 'stats.noData'
   | 'stats.days'
   | 'stats.cards'
+  | 'stats.reviewsPerDay'
+  | 'stats.barReviews'
+  | 'stats.barForecast'
+  | 'stats.legendCorrect'
+  | 'stats.legendIncorrect'
+  | 'stats.peak'
 
   // Settings
   | 'settings.title'

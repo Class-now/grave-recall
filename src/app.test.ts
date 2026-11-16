@@ -68,14 +68,25 @@ describe('first user gesture', () => {
 });
 
 describe('view switcher', () => {
-  it('offers Graveyard, Séance and Crypts in a labelled navigation', () => {
+  it('offers Graveyard, Séance, Ledger and Crypts in a labelled navigation', () => {
     render(h(App, null));
     const nav = screen.getByRole('navigation', { name: 'Main navigation' });
     expect(Array.from(nav.querySelectorAll('button')).map((b) => b.textContent)).toEqual([
       'The Graveyard',
       en['nav.seance'],
+      'Ledger of the Dead',
       'Crypts',
     ]);
+  });
+
+  it('shows the Ledger of the Dead with its charts', () => {
+    render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: 'Ledger of the Dead' }));
+    expect(screen.getByRole('button', { name: 'Ledger of the Dead' }).getAttribute('aria-current')).toBe('page');
+    expect(screen.getByRole('heading', { level: 2, name: 'Ledger of the Dead' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: en['stats.retention'] })).toBeTruthy();
+    expect(screen.getByRole('region', { name: en['stats.forecast'] })).toBeTruthy();
+    expect(screen.getByText(en['stats.noData'])).toBeTruthy();
   });
 
   it('marks the current view with aria-current and shows its content', () => {

@@ -64,6 +64,7 @@ export {
   gradeCard,
   endSession,
   getReviewsToday,
+  getReviewCounts,
   getRetentionRate,
   getStreakDays,
 } from './session';
@@ -74,9 +75,15 @@ export {
   moonPhasePct,
   streakDays,
   retentionRate,
+  retentionSummary,
   fogOpacity,
   forecastData,
   reviewsPerDay,
+  FORECAST_DAYS,
+  HISTORY_DAYS,
+  type ForecastDay,
+  type ReviewDay,
+  type RetentionSummary,
 } from './stats';
 
 // Persistence

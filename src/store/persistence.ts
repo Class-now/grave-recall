@@ -59,6 +59,15 @@ export function isAppExport(value: unknown): value is AppExport {
     if (typeof card.front !== 'string' || typeof card.back !== 'string') return false;
   }
   
+  // Review log validation: a bad entry would put an invalid Date into the Ledger charts.
+  for (const entry of obj.reviewLog) {
+    if (typeof entry !== 'object' || entry === null) return false;
+    const e = entry as Record<string, unknown>;
+    if (typeof e.cardId !== 'string' || typeof e.grade !== 'number' || typeof e.correct !== 'boolean') return false;
+    if (typeof e.date !== 'string' && !(e.date instanceof Date)) return false;
+    if (Number.isNaN(new Date(e.date).getTime())) return false;
+  }
+  
   return true;
 }
 
@@ -93,7 +102,7 @@ export function saveState(): void {
       exportedAt: new Date().toISOString(),
       decks: decks.value,
       cards: cards.value,
-      reviewLog: [],
+      reviewLog: reviewLog.value,
       prefs: getPrefs(),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(data));

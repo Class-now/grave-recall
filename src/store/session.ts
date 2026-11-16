@@ -6,7 +6,7 @@ import type { DeckId, Grade } from '../scheduler/types';
 import type { Card } from './cards';
 import { schedule } from '../scheduler';
 import { addReviewLog, updateCardSrs, reviewLog, dueCards } from './cards';
-import { startOfDay, isSameDay } from '../utils/date';
+import { startOfDay, isSameDay, addDays } from '../utils/date';
 
 // Session queue (cards to review)
 const sessionQueue = signal<Card[]>([]);
@@ -114,24 +114,28 @@ export function getReviewsToday(): number {
 }
 
 /**
- * Gets the total review count for the last N days.
+ * Counts reviews over the last `days` calendar days, today included
+ * (so 30 days is today plus the 29 days before it, matching the Ledger chart).
  */
-function getReviewsInDays(days: number): { total: number; correct: number } {
-  const now = new Date();
-  const start = startOfDay(new Date(now.getTime() - days * 24 * 60 * 60 * 1000));
-  
-  const recentReviews = reviewLog.value.filter(entry => entry.date >= start);
-  const total = recentReviews.length;
-  const correct = recentReviews.filter(r => r.correct).length;
-  
+export function getReviewCounts(days: number): { total: number; correct: number } {
+  const start = startOfDay(addDays(new Date(), -(days - 1)));
+
+  let total = 0;
+  let correct = 0;
+  for (const entry of reviewLog.value) {
+    if (entry.date < start) continue;
+    total++;
+    if (entry.correct) correct++;
+  }
+
   return { total, correct };
 }
 
 /**
- * Gets retention rate for last 30 days.
+ * Gets retention rate for last 30 days: correct / total, or 0 with no reviews.
  */
 export function getRetentionRate(): number {
-  const { total, correct } = getReviewsInDays(30);
+  const { total, correct } = getReviewCounts(30);
   if (total === 0) return 0;
   return correct / total;
 }
