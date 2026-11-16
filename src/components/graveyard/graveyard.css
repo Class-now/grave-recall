@@ -42,12 +42,31 @@
   margin: 0;
 }
 
-/* Stage: a fixed 2:1 box. The height follows the viewport height minus the
-   chrome above it (--gr-chrome in src/index.css), so the whole view fits
-   without page scroll; wider viewports are limited by the available width.
-   On narrow screens the stage scrolls inside its own wrapper. */
+/* Stage: a fixed 2:1 box. Where the graveyard sits in the fit-mode frame
+   (.gr-frame--fit), the height is whatever is left under the header, heading and
+   hint, so the view always fits the viewport, including when a first-run
+   invitation line adds height. Elsewhere (and where container units are not
+   supported) the height follows the viewport height minus a fixed chrome estimate
+   (--gr-chrome in src/index.css). Wider viewports are limited by the available
+   width. On narrow screens the stage scrolls inside its own wrapper. */
 .gr-stage-scroll {
   overflow-x: auto;
+}
+
+.gr-graveyard {
+  display: flex;
+  flex-direction: column;
+}
+
+.gr-frame--fit .gr-graveyard {
+  flex: 1 1 0;
+  min-height: 0;
+}
+
+.gr-frame--fit .gr-stage-scroll {
+  flex: 1 1 0;
+  min-height: 0;
+  container-type: size;
 }
 
 .gr-stage {
@@ -59,6 +78,12 @@
   margin-inline: auto;
   border: 1px solid var(--color-border);
   background: var(--color-void);
+}
+
+@supports (width: 1cqw) {
+  .gr-frame--fit .gr-stage {
+    width: max(45rem, min(100cqw, 200cqh));
+  }
 }
 
 /* Vignette: a frame ornament over the scene, never data. */
@@ -312,15 +337,22 @@
 
 /* Moon --------------------------------------------------------------------- */
 
-/* The rim keeps the unlit disc readable against the halo. */
+/* The rim keeps the unlit disc readable against the halo. The disc is the daily-progress
+   moon (section 5), so its unlit side stays dark; a pale cast and the lit side's glow
+   make it read as a moon rather than a flat navy circle. */
 .gr-moon__disc {
   fill: var(--color-moon-new);
   stroke: var(--color-stone-crumbled);
   stroke-width: 2;
 }
 
+.gr-moon__stop {
+  stop-color: var(--color-moon-full);
+}
+
 .gr-moon__lit {
-  fill: var(--color-moon-full);
+  fill: url(#gr-moon-lit-gradient) var(--color-moon-full);
+  filter: drop-shadow(0 0 6px var(--color-moon-full));
 }
 
 /* moon-wax is 800ms: 4/3 of --motion-slow, so it stays tied to the motion tokens. */

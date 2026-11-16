@@ -396,6 +396,24 @@ describe('graveyard stage', () => {
     expect(stageCss).toMatch(/\.gr-stage\s*\{[^}]*min-width:\s*45rem/);
   });
 
+  it('derives the stage height from the viewport height minus the chrome above it', () => {
+    // Fit mode: the frame is one dynamic viewport tall, a flex column, and the stage
+    // takes its width from the space left under the header (container units).
+    expect(frameCss).toMatch(/\.gr-frame--fit\s*\{[^}]*height:\s*100dvh/);
+    expect(frameCss).toMatch(/\.gr-frame--fit\s*\{[^}]*flex-direction:\s*column/);
+    expect(frameCss).toMatch(/\.gr-frame--fit\s*>\s*main\s*\{[^}]*flex:\s*1 1 0[^}]*min-height:\s*0/);
+    expect(stageCss).toMatch(/\.gr-frame--fit \.gr-stage-scroll\s*\{[^}]*container-type:\s*size/);
+    expect(stageCss).toMatch(/\.gr-frame--fit \.gr-stage\s*\{[^}]*width:\s*max\(45rem,\s*min\(100cqw,\s*200cqh\)\)/);
+    // Fallback where container units are missing: viewport height minus --gr-chrome, 2:1.
+    expect(stageCss).toMatch(/\.gr-stage\s*\{[^}]*calc\(\(100dvh - var\(--gr-chrome\)\) \* 2\)/);
+  });
+
+  it('budgets enough chrome for the header, heading and hint at 1280x720 (no page scroll)', () => {
+    // Measured at 1280x720: everything above the stage plus the bottom padding is 212px.
+    const chrome = /--gr-chrome:\s*([\d.]+)rem/.exec(indexCss);
+    expect(Number(chrome?.[1]) * 16).toBeGreaterThanOrEqual(212);
+  });
+
   it('sets no min-height above 100vh on the root, the frame or the graveyard', () => {
     const selectors: ReadonlyArray<readonly [string, string]> = [
       ['#grave-recall-root', indexCss + frameCss + stageCss],
@@ -836,6 +854,20 @@ describe('backdrop (spooky-design-system section 6)', () => {
         Number(disc?.getAttribute('r')),
       ),
     );
+  });
+
+  it('shades the moon with a pale cast and a lit-side gradient, using only the moon-full colour', () => {
+    makeCard('seed');
+    dailyGoal.value = 10;
+    logReviewsOnDaysAgo([0, 0, 0, 0, 0]);
+    const { container } = render(h(GraveyardScene, null));
+    const moon = container.querySelector('.gr-moon') as Element;
+    expect(moon.querySelector('.gr-moon__shine')?.getAttribute('fill')).toBe('url(#gr-moon-shine-gradient)');
+    expect(moon.querySelector('.gr-moon__lit')?.getAttribute('fill')).toBe('url(#gr-moon-lit-gradient)');
+    expect(stageCss).toMatch(/\.gr-moon__stop\s*\{[^}]*stop-color:\s*var\(--color-moon-full\)/);
+    expect(stageCss).toMatch(/\.gr-moon__lit\s*\{[^}]*fill:\s*url\(#gr-moon-lit-gradient\)/);
+    // The data mapping is untouched: the wedge still comes from the progress.
+    expect(moon.getAttribute('data-progress')).toBe('50');
   });
 
   it('centres the halo on the moon with a constant opacity of at most 0.35', () => {

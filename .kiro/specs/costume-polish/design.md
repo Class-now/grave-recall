@@ -37,6 +37,8 @@ An SVG with `height: auto; max-height: X` and `preserveAspectRatio="meet"` lette
 
 `--gr-chrome` is the sum of everything above the stage: header, frame padding, view heading and hint. Initial value `12.5rem` (200 px). At 720p the stage is 520 px tall and 1040 px wide, which fits the 1152 px content column. Taller viewports are limited by width instead. A `vh` fallback line precedes the `dvh` line.
 
+Task 9 refinement: --gr-chrome is now 13.5rem (the measured chrome at 1280 by 720 is 212 px). In the Graveyard view the frame gets gr-frame--fit (one 100dvh flex column), and the stage width becomes max(45rem, min(100cqw, 200cqh)) over the leftover space, so extra lines such as the first-run invitation never push the page past the viewport. The calc() rule stays as the fallback.
+
 Below 720 px the stage sits in a wrapper with `overflow-x: auto` and has `min-width: 45rem`. The wrapper is the only scroller.
 
 ### D3. Fixed `viewBox`, variable density
@@ -178,9 +180,9 @@ Static, no animation: the backdrop, fresh plots, hatch patterns, ledger ruling a
 ```
 section.gr-seance
   header (title, remaining)
-  div.gr-table                       ← table surface (CSS gradient)
+  div.gr-table                       ↁEtable surface (CSS gradient)
     Candle (left)  aria-hidden, data-lit
-    FlipCard                          ← perspective container
+    FlipCard                          ↁEperspective container
       div.gr-flipcard__inner
         div.gr-flipcard__front  (button while face-down)
         div.gr-flipcard__back   (mounted after the flip, pre-rotated 180deg)

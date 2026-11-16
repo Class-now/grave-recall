@@ -1,11 +1,11 @@
-/* Grave Recall — Global Design Tokens
+/* Grave Recall  EGlobal Design Tokens
    All CSS custom properties are defined here and mirror src/design/tokens.ts.
    Components reference these tokens; no hard-coded values in component CSS.
 */
 
 :root {
   /* -------------------------------------------------------------------------
-     Color tokens — base palette
+     Color tokens  Ebase palette
      ------------------------------------------------------------------------- */
   --color-void:           #0a0a0f;
   --color-grave-soil:     #1a1410;
@@ -53,10 +53,10 @@
      Layout  Evertical space taken by everything above the graveyard stage
      (header, frame padding, view heading, hint). Used from Task 2.
      ------------------------------------------------------------------------- */
-  --gr-chrome:            12.5rem;
+  --gr-chrome:            13.5rem;
 
   /* -------------------------------------------------------------------------
-     Typography — font stacks
+     Typography  Efont stacks
      ------------------------------------------------------------------------- */
   --font-display: 'UnifrakturMaguntia', 'MedievalSharp', serif;
   --font-body:    'IM Fell English', 'Palatino Linotype', Georgia, serif;
@@ -64,7 +64,7 @@
   --font-ui:      system-ui, -apple-system, sans-serif;
 
   /* -------------------------------------------------------------------------
-     Typography — type scale
+     Typography  Etype scale
      ------------------------------------------------------------------------- */
   --text-display:       2.5rem;
   --text-crypt-name:    1.75rem;
@@ -94,6 +94,9 @@
 
 html {
   font-size: 16px;
+  /* Native controls (checkboxes, radios, sliders, file pickers, scrollbars) draw
+     in their dark variants so none of them shows as a white browser default. */
+  color-scheme: dark;
 }
 
 body {
@@ -110,7 +113,7 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
-/* Focus ring — all interactive elements */
+/* Focus ring  Eall interactive elements */
 :focus-visible {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;

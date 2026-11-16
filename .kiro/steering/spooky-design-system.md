@@ -2,7 +2,7 @@
 inclusion: always
 ---
 
-# Grave Recall — Spooky Design System
+# Grave Recall  ESpooky Design System
 
 Every token, motion rule, and sound rule in this file exists to serve a functional purpose. Decoration for its own sake is rejected. If a new visual or audio effect is added, its data mapping must be documented here before it is implemented. The only exception is the closed list of static, data-free elements in section 6 (Decorative backdrop).
 
@@ -54,14 +54,14 @@ These tokens are set at runtime via inline CSS custom properties on the relevant
 
 | Semantic Token | Resolved From | Data Source |
 |---|---|---|
-| `--tombstone-fill` | interpolated between `--color-stone-dark` and `--color-stone-crumbled` | `card.stability` (0–100 scale) |
-| `--tombstone-crack-opacity` | `0` → `1` | inverse of `card.stability` |
-| `--tombstone-moss-opacity` | `0` → `0.6` | `card.stability` (high stability = more moss, old but memorised) |
-| `--ghost-opacity` | `0.15` → `0.95` | `1 - card.retrievability` (0 = perfectly recalled, 1 = completely forgotten) |
-| `--ghost-drift-speed` | `12s` → `3s` animation-duration | how overdue the card is (days past due) |
-| `--fog-opacity` | `0.05` → `0.60` | `overdueCount / totalCards` ratio |
-| `--moon-phase-pct` | `0%` → `100%` | `reviewsDoneToday / dailyGoal` |
-| `--candle-flicker-rate` | `2Hz` → `8Hz` | constant during active session (ornamental within session) |
+| `--tombstone-fill` | interpolated between `--color-stone-dark` and `--color-stone-crumbled` | `card.stability` (0 E00 scale) |
+| `--tombstone-crack-opacity` | `0` ↁE`1` | inverse of `card.stability` |
+| `--tombstone-moss-opacity` | `0` ↁE`0.6` | `card.stability` (high stability = more moss, old but memorised) |
+| `--ghost-opacity` | `0.15` ↁE`0.95` | `1 - card.retrievability` (0 = perfectly recalled, 1 = completely forgotten) |
+| `--ghost-drift-speed` | `12s` ↁE`3s` animation-duration | how overdue the card is (days past due) |
+| `--fog-opacity` | `0.05` ↁE`0.60` | `overdueCount / totalCards` ratio |
+| `--moon-phase-pct` | `0%` ↁE`100%` | `reviewsDoneToday / dailyGoal` |
+| `--candle-flicker-rate` | `2Hz` ↁE`8Hz` | constant during active session (ornamental within session) |
 
 ### 1.3 Contrast Guarantees
 
@@ -129,10 +129,10 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 
 | Animation | Element | Duration | Easing | Data meaning | Reduced-motion substitute |
 |---|---|---|---|---|---|
-| `ghost-drift` | `<Ghost>` | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness | Hidden entirely (ghost still shown as static icon) |
+| `ghost-drift` | `<Ghost>` | `--ghost-drift-speed` (3 E2s) | `ease-in-out`, infinite | Card overdue-ness | Hidden entirely (ghost still shown as static icon) |
 | `fog-pulse` | `<FogLayer>` | `8s` | `ease-in-out`, infinite | Ambient overdue load | Static fog at computed opacity |
 | `fog-drift-a`, `fog-drift-b`, `fog-drift-c` | Fog banks inside `<FogLayer>` | 6, 8 and 7 times `--motion-ambient`, `alternate`, infinite | `ease-in-out` | Ambient overdue load (banks A and C drift left, B drifts right; the wrapper opacity is still `fogOpacity`, so drift carries no extra data) | Not applied; banks stay at rest at the computed opacity |
-| `ghost-sway` | `<Ghost>` (a `rotate` of 3 degrees either way about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
+| `ghost-sway` | `<Ghost>` (a `rotate` of 3 degrees either way about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3 E2s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
 | `candle-flicker` | Candle SVG | `0.3s` | `steps(3)` | While the flames are lit | Solid glow, no flicker |
 | `candle-flare` | Candle flame in `<Candle>` | `--motion-slow` | `ease-out` | Good or Easy grade | Solid glow, no flare |
 | `tombstone-crack-appear` | Crack SVG paths | `600ms` | `ease-out` | Stability decrease after failed review | Instant opacity change |
@@ -150,7 +150,7 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 --motion-fast:    150ms;
 --motion-normal:  350ms;
 --motion-slow:    600ms;
---motion-ambient: 8000ms;  /* fog, moon — background ambience */
+--motion-ambient: 8000ms;  /* fog, moon  Ebackground ambience */
 ```
 
 ### 3.4 Rules
@@ -169,7 +169,7 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 
 1. **Synthesis only.** Every sound is built from `OscillatorNode`, `GainNode`, `BiquadFilterNode`, `WaveShaperNode`, and `ConvolverNode`. No audio files, no samples, no external libraries.
 2. **Every sound has a caption.** The caption string is defined in `src/audio/captions.ts` and referenced in both i18n locale files. Captions display in a visually hidden live region (`aria-live="polite"`) and in an optional on-screen caption bar.
-3. **Master gain.** All sound output routes through a single master `GainNode` whose gain value mirrors the user's volume preference (0–1, stored in `store/prefs.ts`). Muting sets gain to 0; it never suspends the AudioContext.
+3. **Master gain.** All sound output routes through a single master `GainNode` whose gain value mirrors the user's volume preference (0 E, stored in `store/prefs.ts`). Muting sets gain to 0; it never suspends the AudioContext.
 4. **Coward mode.** A boolean signal in `store/prefs.ts`. When true, any sound classified as `SoundClass.SCARE` is replaced by the `softChime()` synthesis instead. No other sounds are affected.
 5. **Lazy context.** `AudioContext` is created on the first user gesture (click, keydown, or touchstart) and reused thereafter. Pre-gesture calls to any `sounds.ts` function are no-ops (silently dropped, not errors).
 
@@ -177,12 +177,12 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 
 | Sound ID | Function | Classification | Data trigger | Synthesis sketch | Caption key |
 |---|---|---|---|---|---|
-| `ghost-scream` | `ghostScream()` | `SCARE` | Again grade (failure) | Sawtooth osc, 80–400Hz glide up over 0.6s, band-pass Q=8, decay 0.8s | `caption.ghostScream` |
+| `ghost-scream` | `ghostScream()` | `SCARE` | Again grade (failure) | Sawtooth osc, 80 E00Hz glide up over 0.6s, band-pass Q=8, decay 0.8s | `caption.ghostScream` |
 | `coward-chime` | `softChime()` | `AMBIENT` | Replaces `ghost-scream` in Coward mode | Two sine oscs (C5+E5), triangle envelope 0.4s | `caption.softChime` |
-| `candle-seal` | `candleSeal()` | `REWARD` | Successful review (Good or Easy) | Sine osc 440→880Hz over 0.2s, then harmonics fade, 0.5s total | `caption.candleSeal` |
+| `candle-seal` | `candleSeal()` | `REWARD` | Successful review (Good or Easy) | Sine osc 440ↁE80Hz over 0.2s, then harmonics fade, 0.5s total | `caption.candleSeal` |
 | `hard-thud` | `hardThud()` | `NEUTRAL` | Hard grade | Low sine pulse 60Hz, 0.15s, felt more than heard | `caption.hardThud` |
 | `page-turn` | `pageTurn()` | `AMBIENT` | Card flip | White noise burst filtered at 2kHz, 0.1s | `caption.pageTurn` |
-| `crow-caw` | `crowCaw()` | `AMBIENT` | Streak extended | Three sawtooth chirps: 600→900Hz, 50ms each, 80ms apart | `caption.crowCaw` |
+| `crow-caw` | `crowCaw()` | `AMBIENT` | Streak extended | Three sawtooth chirps: 600ↁE00Hz, 50ms each, 80ms apart | `caption.crowCaw` |
 | `session-end-toll` | `sessionEndToll()` | `AMBIENT` | Review session completed | Sine osc 220Hz, slow attack 0.3s, 1.5s decay, slight reverb via ConvolverNode | `caption.sessionEndToll` |
 | `import-success` | `importSuccess()` | `AMBIENT` | JSON import succeeds | Ascending pentatonic arpeggio, 5 sine pulses, 60ms each | `caption.importSuccess` |
 
@@ -222,12 +222,12 @@ This table is the single source of truth for every effect that reads, or can be 
 | Effect | Type | Data source | Formula / mapping |
 |---|---|---|---|
 | Fog density | Visual | `overdueCount`, `totalCards` | `opacity = clamp(overdueCount / totalCards, 0.05, 0.60)` |
-| Ghost opacity | Visual | `card.retrievability` (0–1) | `opacity = clamp(1 - retrievability, 0.15, 0.95)` |
+| Ghost opacity | Visual | `card.retrievability` (0 E) | `opacity = clamp(1 - retrievability, 0.15, 0.95)` |
 | Ghost drift speed | Motion | `card.daysPastDue` | `duration = max(3, 12 - daysPastDue * 1.5)` seconds |
 | Tombstone fill | Visual | `card.stability` (days) | Linear interpolation from `--color-stone-crumbled` (stability=0) to `--color-stone-dark` (stability≥60) |
 | Tombstone crack opacity | Visual | `card.stability` | `opacity = clamp(1 - stability/60, 0, 1)` |
 | Tombstone moss opacity | Visual | `card.stability` | `opacity = clamp(stability/60, 0, 0.6)` |
-| Moon phase arc | Visual | `reviewsDoneToday / dailyGoal` | SVG arc from 0° to `360° * progress`; full circle = full moon |
+| Moon phase arc | Visual | `reviewsDoneToday / dailyGoal` | SVG arc from 0° to `360° * progress`; full circle = full moon. Constant surface shading only (no data): a radial gradient on the lit wedge, a pale `--color-moon-full` cast at 0.22 opacity or less on the unlit side, and a soft glow on the wedge |
 | Crow eye glow | Visual | `streakDays` | Glow active when `streakDays >= 3` |
 | Crow wing-flap | Motion | `streakDays` just extended | One-shot `crow-hop` animation on streak increment |
 | Ghost scream audio | Audio | Incorrect recall event | `ghostScream()` called; replaced by `softChime()` in Coward mode |

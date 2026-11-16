@@ -116,6 +116,21 @@ describe('view switcher', () => {
     expect(screen.getByText('No cards to review')).toBeTruthy();
   });
 
+  it('fits the Graveyard to the viewport: only that view uses the fit-mode frame', () => {
+    const { container } = render(h(App, null));
+    const frame = container.querySelector('.gr-frame');
+    expect(frame?.classList.contains('gr-frame--fit')).toBe(false);
+
+    fireEvent.click(screen.getByRole('button', { name: 'The Graveyard' }));
+    expect(container.querySelector('.gr-frame')?.classList.contains('gr-frame--fit')).toBe(true);
+    expect(container.querySelector('.gr-frame--fit > main .gr-stage')).not.toBeNull();
+
+    for (const name of [en['nav.seance'], en['nav.stats'], 'Crypts', en['nav.settings']]) {
+      fireEvent.click(screen.getByRole('button', { name }));
+      expect(container.querySelector('.gr-frame')?.classList.contains('gr-frame--fit')).toBe(false);
+    }
+  });
+
   it('is operable from the keyboard (buttons are natively focusable)', () => {
     render(h(App, null));
     const seance = screen.getByRole('button', { name: en['nav.seance'] });

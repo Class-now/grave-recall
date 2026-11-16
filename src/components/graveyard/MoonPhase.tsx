@@ -13,6 +13,9 @@ import { moonArcPath } from './visuals';
 
 import './graveyard.css';
 
+export const MOON_LIT_GRADIENT_ID = 'gr-moon-lit-gradient';
+export const MOON_SHINE_GRADIENT_ID = 'gr-moon-shine-gradient';
+
 export interface MoonPhaseProps {
   cx?: number;
   cy?: number;
@@ -47,11 +50,38 @@ export function MoonPhase(props: MoonPhaseProps): h.JSX.Element {
       })}
       data-progress={percent}
     >
+      <defs>
+        {/* Surface shading only: constants of the disc geometry, never read from data. */}
+        <radialGradient
+          id={MOON_LIT_GRADIENT_ID}
+          gradientUnits="userSpaceOnUse"
+          cx={cx - r * 0.25}
+          cy={cy - r * 0.25}
+          r={r * 1.3}
+        >
+          <stop class="gr-moon__stop" offset="0" stop-opacity="1" />
+          <stop class="gr-moon__stop" offset="0.7" stop-opacity="0.95" />
+          <stop class="gr-moon__stop" offset="1" stop-opacity="0.8" />
+        </radialGradient>
+        <radialGradient
+          id={MOON_SHINE_GRADIENT_ID}
+          gradientUnits="userSpaceOnUse"
+          cx={cx - r * 0.25}
+          cy={cy - r * 0.25}
+          r={r * 1.3}
+        >
+          <stop class="gr-moon__stop" offset="0" stop-opacity="0.22" />
+          <stop class="gr-moon__stop" offset="1" stop-opacity="0.06" />
+        </radialGradient>
+      </defs>
       <circle class="gr-moon__disc" cx={cx} cy={cy} r={r} />
+      {/* Pale cast on the unlit side, so the disc reads as a moon at any progress. */}
+      <circle class="gr-moon__shine" cx={cx} cy={cy} r={r} fill={`url(#${MOON_SHINE_GRADIENT_ID})`} />
       {path !== '' && (
         <path
           key={percent}
           class={animate ? 'gr-moon__lit gr-moon__lit--wax' : 'gr-moon__lit'}
+          fill={`url(#${MOON_LIT_GRADIENT_ID})`}
           d={path}
           onAnimationEnd={() => setWaxing(false)}
         />

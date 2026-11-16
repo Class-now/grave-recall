@@ -59,7 +59,7 @@ export function App(): h.JSX.Element {
   const inCrypt = activeDeckId.value !== null;
   return (
     <div id="grave-recall-root">
-      <div class="gr-frame">
+      <div class={view === 'graveyard' ? 'gr-frame gr-frame--fit' : 'gr-frame'}>
         <SiteHeader view={view} show={show} />
         <div role="status" class="gr-status">
           {seanceDone && view === 'graveyard' && (

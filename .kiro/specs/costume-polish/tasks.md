@@ -227,3 +227,16 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Notes (Task 8): build output is 31.96 KB gzipped JavaScript (budget 150 KB) and 5.28 KB gzipped CSS. 633 tests pass (411 baseline). Fixes found by the sweep: the ghost-drift fallback duration in graveyard.css was a literal 12s and is now calc(var(--motion-ambient) * 3 / 2); the crow outline was stone-worn (2.96:1 on the sky) and is now stone-crumbled. Steering: ghost-sway row now says 3 degrees, structure.md lists the two new cross-cutting tests.*
 
 *Owner check: the full walk-through at 1280 by 720 in English and Japanese: first run with starter crypts, a séance of five cards, the Graveyard with fog and ghosts after back-dating some cards, the Ledger, Settings with Reduced Motion on, Coward mode on.*
+
+---
+
+## Task 9  Screenshot review fixes
+*Prerequisites: Task 8*
+
+- [x] Moon: the disc is the daily-progress moon (steering section 5), so it cannot be a permanently full pale disc without erasing the data. It now reads as a moon at every progress: a radial gradient on the lit wedge, a faint pale cast on the unlit side, and a soft glow on the wedge, all from `--color-moon-full`. The wedge path, the `moon-new` unlit colour and the halo are unchanged. The master-table row notes the constant shading.
+- [x] Graveyard fit: at 1280 by 720 the page scrolled 12 px (scrollHeight 732, bottom border cut). `--gr-chrome` was too small (now `13.5rem`). The Graveyard view also uses a `gr-frame--fit` frame (`100dvh` flex column) with a container-unit stage, so the scene takes exactly the space under the header, heading and hint. Measured in a real browser: scrollHeight 720 at 1280 by 720 and 1080 at 1920 by 1080 (stage 1752 px wide). The Ledger first chart ends at about y=526 at 1280 by 720, above the fold.
+- [x] Default controls: `color-scheme: dark` on `html` (checkboxes, radios, slider, scrollbars), a tokenised `::file-selector-button` for the import picker, and spacing between the crypt editor's back button and the crypt name.
+- [x] Tests: `graveyard.test.ts` (fit-mode CSS, chrome budget, moon shading), `app.test.ts` (`gr-frame--fit` only in the Graveyard view).
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npx vitest run` passes.
+- [x] Gate: `npm run build` passes.
