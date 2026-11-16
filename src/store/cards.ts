@@ -79,7 +79,7 @@ export function addCard(
     deckId,
     front: front.trim(),
     back: back.trim(),
-    example: example?.trim() ?? null,
+    example: example?.trim() || null,
     createdAt: new Date(),
     srs: {
       id: generateId() as CardId,
@@ -110,7 +110,7 @@ export function editCard(
           ...c,
           front: updates.front?.trim() ?? c.front,
           back: updates.back?.trim() ?? c.back,
-          example: updates.example?.trim() ?? c.example,
+          example: updates.example === undefined ? c.example : (updates.example?.trim() || null),
         }
       : c
   );

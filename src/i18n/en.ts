@@ -26,6 +26,15 @@ export const en: Record<TranslationKey, string> = {
   'crypt.deleteConfirm': 'Are you sure you want to delete this crypt? All cards will be lost.',
   'crypt.empty': 'No crypts yet. Create one to get started.',
   'crypt.cardsCount': '{count} cards',
+  'crypt.nameLabel': 'Crypt name',
+  'crypt.nameRequired': 'Crypt name is required',
+  'crypt.nameTooLong': 'Crypt name must be 80 characters or fewer',
+  'crypt.create': 'Create Crypt',
+  'crypt.open': 'Open crypt {name}',
+  'crypt.renameAria': 'Rename crypt {name}',
+  'crypt.deleteAria': 'Delete crypt {name}',
+  'crypt.deleteTitle': 'Delete crypt "{name}"?',
+  'crypt.back': 'Back to crypts',
 
   // Card editor
   'card.front': 'Front',
@@ -39,6 +48,14 @@ export const en: Record<TranslationKey, string> = {
   'card.editCard': 'Edit Card',
   'card.deleteCard': 'Delete Card',
   'card.exampleOptional': 'Example sentence',
+  'card.frontTooLong': 'Front must be 200 characters or fewer',
+  'card.backTooLong': 'Back must be 500 characters or fewer',
+  'card.exampleTooLong': 'Example must be 500 characters or fewer',
+  'card.listTitle': 'Cards',
+  'card.listEmpty': 'No cards in this crypt yet.',
+  'card.deleteConfirm': 'Delete this card? This cannot be undone.',
+  'card.editAria': 'Edit card {front}',
+  'card.deleteAria': 'Delete card {front}',
 
   // Bulk import
   'import.title': 'Bulk Import',
@@ -47,7 +64,9 @@ export const en: Record<TranslationKey, string> = {
   'import.success': 'Imported {count} cards',
   'import.skipped': 'Skipped {count} malformed rows',
   'import.error': 'Import failed: {error}',
-  'import.tooMany': 'Maximum 500 cards per import',
+  'import.tooMany': 'Maximum 500 cards per import. {count} valid rows were not imported.',
+  'import.nothing': 'Paste at least one row to import',
+  'import.hint': 'One card per line: front, back, optional example (tab or comma separated)',
 
   // Séance (review session)
   'seance.title': 'Séance',
@@ -127,5 +146,6 @@ export const en: Record<TranslationKey, string> = {
   'common.no': 'No',
   'common.cancel': 'Cancel',
   'common.confirm': 'Confirm',
+  'common.save': 'Save',
   'common.loading': 'Loading...',
 };

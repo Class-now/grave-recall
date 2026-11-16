@@ -1,0 +1,198 @@
+/* Deck and card management UI. Every value comes from the design tokens in src/index.css. */
+
+.gr-section {
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+  background: var(--color-surface-panel);
+  border: 1px solid var(--color-border);
+  padding: 1rem;
+  margin-block: 1rem;
+}
+
+.gr-heading {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-crypt-name);
+  line-height: 1.2;
+  margin: 0 0 0.75rem;
+}
+
+.gr-subheading {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  margin: 0 0 0.5rem;
+}
+
+.gr-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gr-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.gr-list__main {
+  flex: 1 1 12rem;
+  min-width: 0;
+}
+
+.gr-card-front {
+  font-family: var(--font-body);
+  font-size: var(--text-card-back);
+}
+
+.gr-card-back {
+  font-family: var(--font-body);
+  font-size: var(--text-card-example);
+}
+
+.gr-card-example {
+  font-family: var(--font-body);
+  font-size: var(--text-card-example);
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.gr-meta {
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+}
+
+.gr-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.gr-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gr-label {
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+
+.gr-input {
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem;
+}
+
+.gr-input[aria-invalid="true"] {
+  border-color: var(--color-danger);
+}
+
+.gr-error {
+  font-size: var(--text-label);
+  color: var(--color-text-primary);
+  border-left: 3px solid var(--color-danger);
+  padding-left: 0.5rem;
+  margin: 0;
+}
+
+.gr-status {
+  font-size: var(--text-label);
+  margin: 0.5rem 0 0;
+}
+
+.gr-btn {
+  font-family: var(--font-ui);
+  font-size: var(--text-label);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border);
+  padding: 0.5rem 0.75rem;
+  min-height: 2.5rem;
+  cursor: pointer;
+  transition: background-color var(--motion-fast) ease-out;
+}
+
+.gr-btn:hover {
+  background: var(--color-stone-dark);
+}
+
+.gr-btn:focus-visible,
+.gr-input:focus-visible,
+.gr-link:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.gr-btn--primary {
+  background: var(--color-stone-mid);
+}
+
+.gr-btn--danger {
+  background: var(--color-danger);
+  color: var(--color-text-primary);
+  border-color: var(--color-danger);
+}
+
+.gr-link {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-crypt-name);
+  color: var(--color-text-primary);
+  background: none;
+  border: none;
+  padding: 0.25rem;
+  cursor: pointer;
+  text-align: left;
+}
+
+.gr-link:hover {
+  text-decoration: underline;
+}
+
+.gr-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-void);
+  background: color-mix(in srgb, var(--color-void) 80%, transparent);
+  z-index: 100;
+}
+
+.gr-modal {
+  max-width: 28rem;
+  width: calc(100% - 2rem);
+  background: var(--color-surface-panel);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+  padding: 1.5rem;
+}
+
+.gr-modal__title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-crypt-name);
+  margin: 0 0 0.75rem;
+}
+
+.gr-modal__desc {
+  font-family: var(--font-body);
+  margin: 0 0 1rem;
+}
+
+.gr-modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}

@@ -128,11 +128,11 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 5, 7*
 *Refs: US-01–08, AC-01–08*
 
-- [ ] Implement `<CryptList>`: list of decks with keyboard navigation; "New Crypt" button; delete with confirmation dialog (focus-trapped); rename inline
-- [ ] Implement `<CryptEditor>` / `<CardEditor>`: form with front, back, example fields; field-level validation errors via `t()` keys; submit creates/edits card; validation error on empty front or back
-- [ ] Implement `<BulkImport>`: textarea for TSV/CSV paste; calls `parseTsvCsv`; shows summary of imported/skipped counts; imports up to 500 cards per operation
-- [ ] All interactive elements: `role`, `aria-label`, keyboard handlers, visible focus ring using `--color-focus-ring`
-- [ ] Write component tests: create crypt happy path; empty-name validation shows error; bulk import with mixed valid/skipped rows shows correct summary; delete confirmation dialog traps focus
+- [x] Implement `<CryptList>`: list of decks with keyboard navigation; "New Crypt" button; delete with confirmation dialog (focus-trapped); rename inline
+- [x] Implement `<CryptEditor>` / `<CardEditor>`: form with front, back, example fields; field-level validation errors via `t()` keys; submit creates/edits card; validation error on empty front or back
+- [x] Implement `<BulkImport>`: textarea for TSV/CSV paste; calls `parseTsvCsv`; shows summary of imported/skipped counts; imports up to 500 cards per operation
+- [x] All interactive elements: `role`, `aria-label`, keyboard handlers, visible focus ring using `--color-focus-ring`
+- [x] Write component tests: create crypt happy path; empty-name validation shows error; bulk import with mixed valid/skipped rows shows correct summary; delete confirmation dialog traps focus
 
 ---
 

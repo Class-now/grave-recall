@@ -27,6 +27,15 @@ export type TranslationKey =
   | 'crypt.deleteConfirm'
   | 'crypt.empty'
   | 'crypt.cardsCount'
+  | 'crypt.nameLabel'
+  | 'crypt.nameRequired'
+  | 'crypt.nameTooLong'
+  | 'crypt.create'
+  | 'crypt.open'
+  | 'crypt.renameAria'
+  | 'crypt.deleteAria'
+  | 'crypt.deleteTitle'
+  | 'crypt.back'
 
   // Card editor
   | 'card.front'
@@ -40,6 +49,14 @@ export type TranslationKey =
   | 'card.editCard'
   | 'card.deleteCard'
   | 'card.exampleOptional'
+  | 'card.frontTooLong'
+  | 'card.backTooLong'
+  | 'card.exampleTooLong'
+  | 'card.listTitle'
+  | 'card.listEmpty'
+  | 'card.deleteConfirm'
+  | 'card.editAria'
+  | 'card.deleteAria'
 
   // Bulk import
   | 'import.title'
@@ -49,6 +66,8 @@ export type TranslationKey =
   | 'import.skipped'
   | 'import.error'
   | 'import.tooMany'
+  | 'import.nothing'
+  | 'import.hint'
 
   // Séance (review session)
   | 'seance.title'
@@ -128,4 +147,5 @@ export type TranslationKey =
   | 'common.no'
   | 'common.cancel'
   | 'common.confirm'
+  | 'common.save'
   | 'common.loading';

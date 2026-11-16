@@ -4,6 +4,7 @@
 import { signal, computed } from '@preact/signals';
 import type { DeckId } from '../scheduler/types';
 import { generateId } from '../utils/id';
+import { cards } from './cards';
 
 export interface Deck {
   readonly id: DeckId;
@@ -47,10 +48,11 @@ export function renameDeck(id: DeckId, newName: string): void {
 }
 
 /**
- * Deletes a deck.
+ * Deletes a deck and all of its cards.
  */
 export function deleteDeck(id: DeckId): void {
   decks.value = decks.value.filter(d => d.id !== id);
+  cards.value = cards.value.filter(c => c.deckId !== id);
   // Clear active deck if it was deleted
   if (activeDeckId.value === id) {
     activeDeckId.value = null;

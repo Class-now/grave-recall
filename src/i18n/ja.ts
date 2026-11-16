@@ -26,6 +26,15 @@ export const ja: Record<TranslationKey, string> = {
   'crypt.deleteConfirm': 'この墓所を削除しますか？すべてのカードが失われます。',
   'crypt.empty': 'まだ墓所がありません。作成してください。',
   'crypt.cardsCount': '{count}枚のカード',
+  'crypt.nameLabel': '墓所の名前',
+  'crypt.nameRequired': '墓所の名前を入力してください',
+  'crypt.nameTooLong': '墓所の名前は80文字以内で入力してください',
+  'crypt.create': '墓所を作成',
+  'crypt.open': '墓所「{name}」を開く',
+  'crypt.renameAria': '墓所「{name}」の名前を変更',
+  'crypt.deleteAria': '墓所「{name}」を削除',
+  'crypt.deleteTitle': '墓所「{name}」を削除しますか？',
+  'crypt.back': '墓所一覧に戻る',
 
   // Card editor
   'card.front': '表面',
@@ -39,6 +48,14 @@ export const ja: Record<TranslationKey, string> = {
   'card.editCard': 'カードを編集',
   'card.deleteCard': 'カードを削除',
   'card.exampleOptional': '例文',
+  'card.frontTooLong': '表面は200文字以内で入力してください',
+  'card.backTooLong': '裏面は500文字以内で入力してください',
+  'card.exampleTooLong': '例文は500文字以内で入力してください',
+  'card.listTitle': 'カード',
+  'card.listEmpty': 'この墓所にはまだカードがありません。',
+  'card.deleteConfirm': 'このカードを削除しますか？元に戻せません。',
+  'card.editAria': 'カード「{front}」を編集',
+  'card.deleteAria': 'カード「{front}」を削除',
 
   // Bulk import
   'import.title': '一括インポート',
@@ -47,7 +64,9 @@ export const ja: Record<TranslationKey, string> = {
   'import.success': '{count}枚のカードをインポートしました',
   'import.skipped': '{count}行をスキップしました',
   'import.error': 'インポート失敗: {error}',
-  'import.tooMany': '1回のインポートは最大500枚まで',
+  'import.tooMany': '1回のインポートは最大500枚までです。有効な{count}行はインポートされませんでした。',
+  'import.nothing': 'インポートする行を1行以上貼り付けてください',
+  'import.hint': '1行に1枚: 表面、裏面、任意の例文（タブまたはカンマ区切り）',
 
   // Séance (review session)
   'seance.title': '降霊会',
@@ -127,5 +146,6 @@ export const ja: Record<TranslationKey, string> = {
   'common.no': 'いいえ',
   'common.cancel': 'キャンセル',
   'common.confirm': '確認',
+  'common.save': '保存',
   'common.loading': '読み込み中...',
 };
