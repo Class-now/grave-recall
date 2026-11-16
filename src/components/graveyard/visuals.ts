@@ -160,9 +160,22 @@ export function layoutGraves(count: number): GraveLayout {
 
 /** Locale-aware short date used in labels and the detail panel. */
 export function formatDate(date: Date, locale: 'en' | 'ja'): string {
-  return new Intl.DateTimeFormat(locale === 'ja' ? 'ja-JP' : 'en-GB', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  }).format(date);
+  return dateFormatter(locale).format(date);
+}
+
+// Building an Intl.DateTimeFormat is far slower than using one, and every grave
+// formats a date on each render, so one formatter per locale is kept.
+const dateFormatters = new Map<'en' | 'ja', Intl.DateTimeFormat>();
+
+function dateFormatter(locale: 'en' | 'ja'): Intl.DateTimeFormat {
+  let formatter = dateFormatters.get(locale);
+  if (formatter === undefined) {
+    formatter = new Intl.DateTimeFormat(locale === 'ja' ? 'ja-JP' : 'en-GB', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+    dateFormatters.set(locale, formatter);
+  }
+  return formatter;
 }

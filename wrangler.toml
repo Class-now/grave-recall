@@ -1,0 +1,5 @@
+# Cloudflare Pages configuration. The site is a static build: no Functions, no bindings.
+# `npm run build` writes the site to dist/, which Pages serves as-is.
+name = "grave-recall"
+pages_build_output_dir = "dist"
+compatibility_date = "2025-01-01"

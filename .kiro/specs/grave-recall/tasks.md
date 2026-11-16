@@ -210,11 +210,11 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 1–13*
 *Refs: NFR-01 (performance), NFR-03 (privacy), product success criteria*
 
-- [ ] Profile graveyard scene with 200 cards; assert render time ≤ 16ms per frame; optimise SVG reuse with `<use>` elements if needed
-- [ ] Measure and verify initial gzipped JS bundle ≤ 150 KB; tree-shake any unused Preact features
-- [ ] Verify `schedule()` call executes in ≤ 0.1ms using `performance.now()` benchmark in a test
-- [ ] Confirm no outbound network requests beyond page assets and Google Fonts (AC-NFR-03.1); audit network tab
-- [ ] Add `cloudflare pages` deploy configuration (`wrangler.toml` or Pages project settings); static output from `dist/`
-- [ ] Write `README.md`: project overview, local setup, build, test, deploy instructions, license
-- [ ] Final CI check: `typecheck` + `test --run` (all property tests included) + `build` all pass
-- [ ] Verify JSON round-trip end-to-end: export from app → clear localStorage → import → assert identical graveyard state (manual smoke test documented in README)
+- [x] Profile graveyard scene with 200 cards; assert render time ≤ 16ms per frame; optimise SVG reuse with `<use>` elements if needed
+- [x] Measure and verify initial gzipped JS bundle ≤ 150 KB; tree-shake any unused Preact features
+- [x] Verify `schedule()` call executes in ≤ 0.1ms using `performance.now()` benchmark in a test
+- [x] Confirm no outbound network requests beyond page assets and Google Fonts (AC-NFR-03.1); audit network tab
+- [x] Add `cloudflare pages` deploy configuration (`wrangler.toml` or Pages project settings); static output from `dist/`
+- [x] Write `README.md`: project overview, local setup, build, test, deploy instructions, license
+- [x] Final CI check: `typecheck` + `test --run` (all property tests included) + `build` all pass
+- [x] Verify JSON round-trip end-to-end: export from app → clear localStorage → import → assert identical graveyard state (manual smoke test documented in README)
