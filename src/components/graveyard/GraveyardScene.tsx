@@ -5,11 +5,15 @@
  *
  * Scope: shows the cards of `deckId` when given, otherwise the active crypt,
  * otherwise every card.
+ *
+ * First-run states: with no cards in scope the yard is empty and a button opens
+ * the Crypts view; with cards but an empty review log an invitation line and a
+ * button open the Seance. Each button renders only when its callback is given.
  */
 import { h } from 'preact';
 import { useRef, useState } from 'preact/hooks';
 
-import { activeDeckId, cards, overdueCards, type Card } from '../../store';
+import { activeDeckId, cards, overdueCards, reviewLog, type Card } from '../../store';
 import type { DeckId } from '../../scheduler/types';
 import { t } from '../../i18n';
 
@@ -37,6 +41,10 @@ import './graveyard.css';
 export interface GraveyardSceneProps {
   /** Crypt to show. Omit to follow the active crypt (all cards when none is active). */
   deckId?: DeckId | null;
+  /** Opens the Seance. Offers the invitation button while nothing has been reviewed. */
+  onBeginSeance?: () => void;
+  /** Opens the Crypts view. Offers the button shown when the scope has no cards. */
+  onOpenCrypts?: () => void;
 }
 
 export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
@@ -44,6 +52,9 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
   const visible: Card[] =
     scopeId === null ? cards.value : cards.value.filter((c) => c.deckId === scopeId);
   const overdueIds = new Set(overdueCards.value.map((c) => c.id));
+
+  // Cards exist but nothing has been reviewed yet (any crypt): invite the first séance.
+  const untouched = visible.length > 0 && reviewLog.value.length === 0;
 
   const layout = layoutYard(visible.length);
   const now = new Date();
@@ -131,7 +142,27 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
   return (
     <section class="gr-graveyard">
       <h2 class="gr-graveyard__title">{t('graveyard.title')}</h2>
-      {visible.length === 0 && <p class="gr-graveyard__empty">{t('graveyard.noCards')}</p>}
+      {visible.length === 0 && (
+        <div class="gr-graveyard__invite">
+          <p class="gr-graveyard__empty">{t('graveyard.noCards')}</p>
+          <p class="gr-graveyard__empty">{t('graveyard.inviteEmpty')}</p>
+          {props.onOpenCrypts !== undefined && (
+            <button type="button" class="gr-btn gr-btn--primary" onClick={props.onOpenCrypts}>
+              {t('graveyard.openCrypts')}
+            </button>
+          )}
+        </div>
+      )}
+      {untouched && (
+        <div class="gr-graveyard__invite">
+          <p class="gr-graveyard__empty">{t('graveyard.inviteNew')}</p>
+          {props.onBeginSeance !== undefined && (
+            <button type="button" class="gr-btn gr-btn--primary" onClick={props.onBeginSeance}>
+              {t('graveyard.beginSeance')}
+            </button>
+          )}
+        </div>
+      )}
       {visible.length > 0 && (
         <p id="gr-graveyard-hint" class="gr-graveyard__hint">
           {t('graveyard.keyboardHint')}

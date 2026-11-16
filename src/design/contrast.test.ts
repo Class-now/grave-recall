@@ -28,6 +28,7 @@ import {
   COLOR_STONE_CRUMBLED,
   COLOR_STONE_DARK,
   COLOR_STONE_MID,
+  COLOR_STONE_WORN,
   COLOR_SKY_HORIZON,
   COLOR_SKY_TOP,
   COLOR_SUCCESS,
@@ -121,6 +122,23 @@ const LEDGER_PAIRS: Pair[] = [
   { name: 'ledger frame border on surface-panel', fg: COLOR_STONE_CRUMBLED, bg: COLOR_SURFACE_PANEL, min: 3 },
 ];
 
+/**
+ * Empty and first-run states (costume-polish CP-63). The fresh plot is outlined in
+ * stone-worn against the backdrop ground; its focus stroke is the focus ring.
+ * Text on the blank seance card and the blank ledger page reuses the parchment and
+ * ledger pairs above; the invitation lines sit on the page wash (frame pairs).
+ */
+const EMPTY_STATE_PAIRS: Pair[] = [
+  { name: 'fresh plot outline on hill-far', fg: COLOR_STONE_WORN, bg: COLOR_HILL_FAR, min: 3 },
+  { name: 'fresh plot outline on hill-near', fg: COLOR_STONE_WORN, bg: COLOR_HILL_NEAR, min: 3 },
+  { name: 'fresh plot outline on ground-fore', fg: COLOR_STONE_WORN, bg: COLOR_GROUND_FORE, min: 3 },
+  { name: 'fresh plot outline on void (depth shade)', fg: COLOR_STONE_WORN, bg: COLOR_VOID, min: 3 },
+  { name: 'focus-ring on hill-near', fg: COLOR_FOCUS_RING, bg: COLOR_HILL_NEAR, min: 3 },
+  { name: 'focus-ring on ground-fore', fg: COLOR_FOCUS_RING, bg: COLOR_GROUND_FORE, min: 3 },
+  { name: 'text-primary on blank ledger page', fg: COLOR_TEXT_PRIMARY, bg: COLOR_SURFACE_PANEL, min: 4.5 },
+  { name: 'text-inverse on blank seance card', fg: COLOR_TEXT_INVERSE, bg: COLOR_PARCHMENT, min: 4.5 },
+  { name: 'ink-secondary on blank seance card', fg: COLOR_INK_SECONDARY, bg: COLOR_PARCHMENT, min: 4.5 },
+];
 describe('contrastRatio', () => {
   it('is 21 for black on white and 1 for identical colours', () => {
     expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 5);
@@ -146,6 +164,7 @@ describe.each([
   ['page frame', FRAME_PAIRS],
   ['seance table and parchment card', SEANCE_PAIRS],
   ['ledger page and charts', LEDGER_PAIRS],
+  ['empty and first-run states', EMPTY_STATE_PAIRS],
 ])('WCAG AA: %s', (_label, pairs) => {
   it.each(pairs)('$name is at least $min:1', ({ fg, bg, min }) => {
     expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(min);

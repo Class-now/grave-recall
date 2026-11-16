@@ -69,7 +69,9 @@ export function App(): h.JSX.Element {
           )}
         </div>
         <main>
-          {view === 'graveyard' && <GraveyardScene />}
+          {view === 'graveyard' && (
+            <GraveyardScene onBeginSeance={() => show('seance')} onOpenCrypts={() => show('crypts')} />
+          )}
           {view === 'seance' && (
             <SeanceSession key={activeDeckId.value ?? 'all'} deckId={activeDeckId.value} onComplete={finishSeance} />
           )}

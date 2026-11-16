@@ -234,6 +234,7 @@ This table is the single source of truth for every effect that reads, or can be 
 | Candle seal audio | Audio | Correct recall event (Good/Easy) | `candleSeal()` called |
 | Seance candle flames | Visual | Most recent grade in the session is Good or Easy | Lit when true, unlit otherwise; flare once on each Good or Easy |
 | Jumpscare flash | Visual | Again grade on card with `stability > 20` | `jumpscare-flash` animation; suppressed by reduced-motion or Coward mode |
+| Fresh plot | Visual | `card.srs.srsState === 'new'` | Soil mound and blank wooden marker instead of a stone; no cracks, no moss |
 
 ---
 

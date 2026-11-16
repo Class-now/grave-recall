@@ -640,3 +640,53 @@ describe('3D flip and parchment card', () => {
     expect(container.querySelector('#back')?.getAttribute('data-front')).toBe('unique');
   });
 });
+
+describe('empty seance table (costume-polish CP-56)', () => {
+  it('shows the table, two unlit candles and a blank parchment card with the existing messages', () => {
+    const { container } = render(h(SeanceSession, { deckId: null }));
+    expect(container.querySelector('.gr-table')).not.toBeNull();
+    const candles = Array.from(container.querySelectorAll('.gr-candle'));
+    expect(candles).toHaveLength(2);
+    expect(candles.every((c) => c.getAttribute('data-lit') === 'false')).toBe(true);
+    const card = container.querySelector('.gr-flipcard--blank') as HTMLElement;
+    expect(card).not.toBeNull();
+    expect(card.textContent).toContain(en['seance.noCards']);
+    expect(card.textContent).toContain(en['seance.noCardsDesc']);
+    expect(screen.getAllByText(en['seance.noCards'])).toHaveLength(1);
+    expect(screen.getByText(en['seance.tableEmpty'])).toBeTruthy();
+  });
+
+  it('has no flip control, no grade buttons and no button at all', () => {
+    const { container } = render(h(SeanceSession, { deckId: null }));
+    expect(screen.queryByRole('button')).toBeNull();
+    expect(container.querySelector('.gr-flipcard__flip')).toBeNull();
+    expect(container.querySelector('.gr-grades')).toBeNull();
+    expect(container.querySelector('[data-flipped]')).toBeNull();
+  });
+
+  it('shows the same table when cards exist but none is due', () => {
+    const deck = createDeck('Later');
+    const card = addCard(deck.id, 'later', 'b', null);
+    updateCardSrs(card.id, { ...card.srs, dueDate: addDays(new Date(), 3) });
+    const { container } = render(h(SeanceSession, { deckId: null }));
+    expect(container.querySelectorAll('.gr-candle[data-lit="false"]')).toHaveLength(2);
+    expect(container.querySelector('.gr-flipcard--blank')).not.toBeNull();
+  });
+
+  it('keeps the candles hidden from assistive technology and unlit under reduced motion', () => {
+    reducedMotion.value = true;
+    const { container } = render(h(SeanceSession, { deckId: null }));
+    for (const candle of Array.from(container.querySelectorAll('.gr-candle'))) {
+      expect(candle.getAttribute('aria-hidden')).toBe('true');
+      expect(candle.getAttribute('data-lit')).toBe('false');
+    }
+    expect(container.querySelector('.gr-candle__flame--flare, .gr-candle__flame--flicker')).toBeNull();
+  });
+
+  it('renders in Japanese', () => {
+    locale.value = 'ja';
+    render(h(SeanceSession, { deckId: null }));
+    expect(screen.getByText(ja['seance.noCards'])).toBeTruthy();
+    expect(screen.getByText(ja['seance.tableEmpty'])).toBeTruthy();
+  });
+});

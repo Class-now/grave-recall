@@ -25,6 +25,10 @@ export type TranslationKey =
   | 'graveyard.dueDate'
   | 'graveyard.close'
   | 'graveyard.keyboardHint'
+  | 'graveyard.inviteEmpty'
+  | 'graveyard.inviteNew'
+  | 'graveyard.openCrypts'
+  | 'graveyard.beginSeance'
 
   // Crypt list (deck management)
   | 'crypt.listTitle'
@@ -90,6 +94,7 @@ export type TranslationKey =
   | 'seance.completeDesc'
   | 'seance.pressSpace'
   | 'seance.reviewed'
+  | 'seance.tableEmpty'
 
   // Stats (Ledger of the Dead)
   | 'stats.title'
@@ -107,6 +112,8 @@ export type TranslationKey =
   | 'stats.legendCorrect'
   | 'stats.legendIncorrect'
   | 'stats.peak'
+  | 'stats.ledgerEmpty'
+  | 'stats.ledgerEmptyHint'
 
   // Settings
   | 'settings.title'

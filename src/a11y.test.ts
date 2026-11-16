@@ -22,6 +22,7 @@ import { cowardMode, locale, reducedMotion, reducedMotionUser, showCaptions } fr
 import { resetCaptions } from './audio/captions';
 import { resetAudioContext } from './audio/context';
 import { en } from './i18n/en';
+import { ja } from './i18n/ja';
 import { addDays } from './utils/date';
 
 import { expectNoAxeViolations, PAGE_LEVEL_RULES } from './__fixtures__/axe';
@@ -463,5 +464,90 @@ describe.each([
     await waitFor(() => expect(screen.queryByRole('alertdialog')).toBeNull());
     expect(trigger.isConnected).toBe(false);
     expect(document.activeElement).not.toBe(document.body);
+  });
+});
+
+describe('first-run and empty states (costume-polish CP-59, CP-64)', () => {
+  const LANGS = [
+    ['en', en],
+    ['ja', ja],
+  ] as const;
+
+  it.each(LANGS)('<App> shows no axe violations in all five views, empty, in %s', async (lang, strings) => {
+    locale.value = lang;
+    const { container } = render(h(App, null));
+    for (const view of [
+      strings['nav.crypts'],
+      strings['nav.graveyard'],
+      strings['nav.seance'],
+      strings['nav.stats'],
+      strings['nav.settings'],
+    ]) {
+      fireEvent.click(screen.getByRole('button', { name: view }));
+      await expectNoAxeViolations(container);
+    }
+  });
+
+  it.each(LANGS)('<App> shows no axe violations with untouched cards, in %s', async (lang, strings) => {
+    locale.value = lang;
+    const deck = createDeck('Crypt');
+    for (let i = 0; i < 20; i++) addCard(deck.id, `word${i}`, `meaning ${i}`, null);
+    const { container } = render(h(App, null));
+    for (const view of [strings['nav.graveyard'], strings['nav.seance'], strings['nav.stats']]) {
+      fireEvent.click(screen.getByRole('button', { name: view }));
+      await expectNoAxeViolations(container);
+    }
+  });
+
+  it('<GraveyardScene> with fresh plots and the invitation has no axe violations', async () => {
+    const deck = createDeck('Crypt');
+    for (let i = 0; i < 30; i++) addCard(deck.id, `word${i}`, `meaning ${i}`, null);
+    const { container } = render(h(GraveyardScene, { onBeginSeance: () => undefined, onOpenCrypts: () => undefined }));
+    expect(container.querySelectorAll('.gr-tombstone--plot')).toHaveLength(30);
+    await expectNoAxeViolations(container, COMPONENT_RULES);
+
+    fireEvent.click(container.querySelector('[data-card-id]') as Element);
+    await screen.findByRole('dialog');
+    await expectNoAxeViolations(container, COMPONENT_RULES);
+  });
+
+  it('the empty Graveyard buttons are ordinary Tab stops with names, in reading order', async () => {
+    const user = userEvent.setup();
+    const { container } = render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: en['nav.graveyard'] }));
+
+    const stops = tabStops(container);
+    const names = stops.map((el) => el.textContent);
+    expect(names).toEqual([
+      en['nav.graveyard'],
+      en['nav.seance'],
+      en['nav.stats'],
+      en['nav.crypts'],
+      en['nav.settings'],
+      en['graveyard.openCrypts'],
+    ]);
+    // The scene and its ornaments add no Tab stop.
+    expect(container.querySelector('.gr-stage [tabindex]')).toBeNull();
+
+    (document.activeElement as HTMLElement | null)?.blur();
+    const visited: Element[] = [];
+    for (let i = 0; i < stops.length; i++) {
+      await user.tab();
+      visited.push(document.activeElement as Element);
+    }
+    expect(visited).toEqual(stops);
+  });
+
+  it('the untouched Graveyard has one extra Tab stop (the button) plus the single grave stop', () => {
+    const deck = createDeck('Crypt');
+    for (let i = 0; i < 40; i++) addCard(deck.id, `word${i}`, 'x', null);
+    const { container } = render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: en['nav.graveyard'] }));
+    const stops = tabStops(container);
+    expect(stops.map((el) => el.textContent)).toContain(en['graveyard.beginSeance']);
+    // Five nav buttons, the invitation button and one grave.
+    expect(stops).toHaveLength(7);
+    const button = screen.getByRole('button', { name: en['graveyard.beginSeance'] });
+    expect(stops.indexOf(button)).toBe(5);
   });
 });

@@ -24,6 +24,10 @@ export const en: Record<TranslationKey, string> = {
   'graveyard.dueDate': 'Due date',
   'graveyard.close': 'Close',
   'graveyard.keyboardHint': 'Arrow keys move between graves. Enter opens the selected grave.',
+  'graveyard.inviteEmpty': 'Create a crypt and add a few words. Each one will rise here as a grave.',
+  'graveyard.inviteNew': 'Every plot is a word you have not met yet. Hold a seance to wake the first one.',
+  'graveyard.openCrypts': 'Open the Crypts',
+  'graveyard.beginSeance': 'Begin a seance',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'Your Crypts',
@@ -89,6 +93,7 @@ export const en: Record<TranslationKey, string> = {
   'seance.complete': 'Séance Complete',
   'seance.completeDesc': 'The spirits have been appeased. Well done.',
   'seance.pressSpace': 'Press Space to begin',
+  'seance.tableEmpty': 'The candles are unlit. Add cards to a crypt, or return when some are due.',
 
   // Stats (Ledger of the Dead)
   'stats.title': 'Ledger of the Dead',
@@ -106,6 +111,8 @@ export const en: Record<TranslationKey, string> = {
   'stats.legendCorrect': 'Correct (Good or Easy)',
   'stats.legendIncorrect': 'Not recalled (Again or Hard)',
   'stats.peak': 'Peak: {count}',
+  'stats.ledgerEmpty': 'Hold a seance and the ledger will start to fill.',
+  'stats.ledgerEmptyHint': 'Reviews from the last 30 days are counted here.',
 
   // Settings
   'settings.title': 'Settings',

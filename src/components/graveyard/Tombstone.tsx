@@ -1,6 +1,8 @@
 /**
- * One grave per card. Visual state comes from `card.srs.stability`:
+ * One grave per card. Visual state comes from card.srs.stability:
  * fill (stone-crumbled to stone-dark), crack opacity (inverse), moss opacity.
+ * A card that has never been reviewed (srsState === 'new') is a fresh plot
+ * instead: a soil mound and a blank wooden marker, with no cracks and no moss.
  *
  * Perspective (`scale`, `tilt`, `shade`) comes from the grave's row in the yard
  * and never from card fields (steering section 6.4). The shade is a separate
@@ -49,10 +51,16 @@ export interface TombstoneProps {
 const STONE_PATH = 'M-20 0 V-32 A20 20 0 0 1 20 -32 V0 Z';
 const MOSS_PATH = 'M-20 0 V-12 Q-11 -17 -6 -10 Q2 -19 10 -10 Q16 -14 20 -12 V0 Z';
 const CRACK_PATH = 'M0 -48 L-3 -38 L2 -30 L-4 -20 L1 -10';
+/** Fresh plot: a low mound, 40 wide, and a blank marker (plaque on a post) behind it. */
+const MOUND_PATH = 'M-20 0 Q-17 -13 0 -14 Q17 -13 20 0 Z';
+const MARKER_PATH = 'M-8 -38 H8 V-20 H2 V-8 H-2 V-20 H-8 Z';
+/** One shade path covering the whole plot. */
+const PLOT_SHADE_PATH = MOUND_PATH + ' ' + MARKER_PATH;
 
 export function Tombstone(props: TombstoneProps): h.JSX.Element {
   const { card, x, y, scale, tilt, shade, onOpen, tabStop = true, onFocus } = props;
   const stability = card.srs.stability;
+  const isPlot = card.srs.srsState === 'new';
 
   const label = ti('a11y.tombstoneDue', {
     front: card.front,
@@ -69,7 +77,7 @@ export function Tombstone(props: TombstoneProps): h.JSX.Element {
   return (
     <g transform={`translate(${x} ${y}) rotate(${tilt}) scale(${scale})`}>
       <g
-        class="gr-tombstone"
+        class={isPlot ? 'gr-tombstone gr-tombstone--plot' : 'gr-tombstone'}
         role="button"
         tabindex={tabStop ? 0 : -1}
         aria-label={label}
@@ -84,10 +92,20 @@ export function Tombstone(props: TombstoneProps): h.JSX.Element {
         onKeyDown={onKeyDown}
         onFocus={() => onFocus?.(card)}
       >
-        <path class="gr-tombstone__stone" d={STONE_PATH} />
-        <path class="gr-tombstone__moss" d={MOSS_PATH} />
-        <path class="gr-tombstone__crack" d={CRACK_PATH} />
-        <path class="gr-tombstone__shade" d={STONE_PATH} />
+        {isPlot ? (
+          <>
+            <path class="gr-tombstone__marker" d={MARKER_PATH} />
+            <path class="gr-tombstone__mound" d={MOUND_PATH} />
+            <path class="gr-tombstone__shade" d={PLOT_SHADE_PATH} />
+          </>
+        ) : (
+          <>
+            <path class="gr-tombstone__stone" d={STONE_PATH} />
+            <path class="gr-tombstone__moss" d={MOSS_PATH} />
+            <path class="gr-tombstone__crack" d={CRACK_PATH} />
+            <path class="gr-tombstone__shade" d={STONE_PATH} />
+          </>
+        )}
       </g>
     </g>
   );

@@ -104,6 +104,24 @@
   margin: 0;
 }
 
+/* The blank ledger page: a fixed-height block of the same ruled paper, so the
+   empty Ledger looks like an unwritten page and not a missing chart. */
+.gr-stats__blank {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 8rem;
+  padding: 0.5rem 0;
+}
+
+.gr-stats__invite {
+  font-family: var(--font-body);
+  font-size: var(--text-card-back);
+  line-height: 1.6;
+  margin: 0;
+}
+
 /* Charts -------------------------------------------------------------------- */
 
 .gr-chart {

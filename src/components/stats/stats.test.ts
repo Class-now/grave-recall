@@ -391,3 +391,46 @@ describe('ledger palette and hatch (costume-polish CP-49, CP-50, CP-51)', () => 
     expect(screen.getByRole('heading', { level: 2, name: en['stats.title'] }).id).toBe('gr-ledger-title');
   });
 });
+
+describe('empty Ledger page (costume-polish CP-57)', () => {
+  it('shows the blank page with "No data yet" once, the invitation and the hint', () => {
+    const { container } = render(h(LedgerView, null));
+    expect(screen.getAllByText(en['stats.noData'])).toHaveLength(1);
+    expect(screen.getByText(en['stats.ledgerEmpty'])).toBeTruthy();
+    expect(screen.getByText(en['stats.ledgerEmptyHint'])).toBeTruthy();
+    const blank = container.querySelector('.gr-stats__blank') as HTMLElement;
+    expect(blank).not.toBeNull();
+    expect(blank.textContent).toContain(en['stats.noData']);
+    expect(container.querySelector('.gr-chart--retention')).toBeNull();
+  });
+
+  it('still renders the forecast chart', () => {
+    const deck = createDeck('A');
+    addCardDue(deck.id, 2);
+    const { container } = render(h(LedgerView, null));
+    expect(container.querySelector('.gr-chart--forecast')).not.toBeNull();
+    expect(screen.getByRole('region', { name: en['stats.forecast'] })).toBeTruthy();
+  });
+
+  it('is also shown when every review is older than 30 days', () => {
+    logReview(45, true);
+    const { container } = render(h(LedgerView, null));
+    expect(container.querySelector('.gr-stats__blank')).not.toBeNull();
+    expect(screen.getByText(en['stats.ledgerEmpty'])).toBeTruthy();
+  });
+
+  it('gives way to the charts once a review is logged', () => {
+    logReview(0, true);
+    const { container } = render(h(LedgerView, null));
+    expect(container.querySelector('.gr-stats__blank')).toBeNull();
+    expect(screen.queryByText(en['stats.ledgerEmpty'])).toBeNull();
+    expect(container.querySelector('.gr-chart--retention')).not.toBeNull();
+  });
+
+  it('renders in Japanese', () => {
+    locale.value = 'ja';
+    render(h(LedgerView, null));
+    expect(screen.getByText(ja['stats.noData'])).toBeTruthy();
+    expect(screen.getByText(ja['stats.ledgerEmpty'])).toBeTruthy();
+  });
+});

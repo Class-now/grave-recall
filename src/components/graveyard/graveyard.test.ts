@@ -29,6 +29,8 @@ import {
   COLOR_STONE_CRUMBLED,
   COLOR_STONE_DARK,
 } from '../../design/tokens';
+import { en } from '../../i18n/en';
+import { ja } from '../../i18n/ja';
 import { addDays } from '../../utils/date';
 
 import { CrowKeeper, resetCrowKeeperMemory } from './CrowKeeper';
@@ -1209,6 +1211,195 @@ describe('soft layered fog and larger ghosts (costume-polish Task 4)', () => {
       const [tx, ty] = /translate\(([-\d.]+) ([-\d.]+)\)/.exec(outer?.getAttribute('transform') ?? '')?.slice(1).map(Number) ?? [];
       expect(tx).toBe(pos?.x);
       expect(ty).toBeLessThan((pos?.y ?? 0) - TOMBSTONE_HEIGHT * (pos?.scale ?? 1));
+    });
+  });
+});
+
+describe('empty and first-run states (costume-polish Task 7)', () => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const css = readFileSync(resolve(here, 'graveyard.css'), 'utf8');
+
+  /** Adds `count` untouched cards (srsState 'new') to one crypt. */
+  function addNewCards(count: number): Card[] {
+    const deck = createDeck('Crypt');
+    for (let i = 0; i < count; i++) addCard(deck.id, `new${i}`, 'x', null);
+    return cards.value.slice();
+  }
+
+  describe('fresh plots', () => {
+    it('draw every new card as a plot with no stone, moss or crack', () => {
+      addNewCards(12);
+      const { container } = render(h(GraveyardScene, null));
+      const all = graves(container);
+      expect(all).toHaveLength(12);
+      for (const grave of all) {
+        expect(grave.classList.contains('gr-tombstone--plot')).toBe(true);
+        expect(grave.querySelector('.gr-tombstone__mound')).not.toBeNull();
+        expect(grave.querySelector('.gr-tombstone__marker')).not.toBeNull();
+        expect(grave.querySelector('.gr-tombstone__stone')).toBeNull();
+      }
+      expect(container.querySelectorAll('.gr-tombstone__crack')).toHaveLength(0);
+      expect(container.querySelectorAll('.gr-tombstone__moss')).toHaveLength(0);
+    });
+
+    it('keep the role, label, tab stop, card id and the three custom properties', () => {
+      const [card] = addNewCards(3);
+      const { container } = render(h(GraveyardScene, null));
+      const grave = container.querySelector<HTMLElement>(`[data-card-id="${card?.id}"]`) as HTMLElement;
+      expect(grave.getAttribute('role')).toBe('button');
+      expect(grave.getAttribute('aria-label')).toMatch(/^Grave for new0, due /);
+      expect(grave.getAttribute('tabindex')).toBe('0');
+      for (const name of ['--tombstone-fill', '--tombstone-crack-opacity', '--tombstone-moss-opacity']) {
+        expect(grave.style.getPropertyValue(name)).not.toBe('');
+      }
+      expect(grave.style.getPropertyValue('--tombstone-fill')).toBe(tombstoneFill(card?.srs.stability ?? 0));
+    });
+
+    it('still apply the depth shade and the row tilt', () => {
+      addNewCards(60);
+      const { container } = render(h(GraveyardScene, null));
+      const all = graves(container);
+      expect(all.every((g) => g.querySelector('.gr-tombstone__shade') !== null)).toBe(true);
+      const shades = all.map((g) => Number(g.style.getPropertyValue('--depth-shade')));
+      expect(Math.max(...shades)).toBeGreaterThan(0);
+      expect(Math.max(...shades)).toBeLessThanOrEqual(MAX_DEPTH_SHADE);
+      const tilts = all.map((g) => /rotate\(([-\d.]+)\)/.exec(g.parentElement?.getAttribute('transform') ?? '')?.[1]);
+      expect(tilts.every((tilt) => tilt !== undefined)).toBe(true);
+      expect(new Set(tilts).size).toBeGreaterThan(1);
+    });
+
+    it('still draw a stone for a card that is not new', () => {
+      makeCard('learned', { stability: 30 });
+      const card = cards.value[0] as Card;
+      updateCardSrs(card.id, { ...card.srs, srsState: 'review' });
+      const { container } = render(h(GraveyardScene, null));
+      const grave = graves(container)[0] as HTMLElement;
+      expect(grave.classList.contains('gr-tombstone--plot')).toBe(false);
+      expect(grave.querySelector('.gr-tombstone__stone')).not.toBeNull();
+      expect(grave.querySelector('.gr-tombstone__crack')).not.toBeNull();
+      expect(grave.querySelector('.gr-tombstone__moss')).not.toBeNull();
+      expect(grave.querySelector('.gr-tombstone__mound')).toBeNull();
+    });
+
+    it('turn into a stone once the card has been reviewed', () => {
+      const [card] = addNewCards(1);
+      const { container } = render(h(GraveyardScene, null));
+      expect(graves(container)[0]?.classList.contains('gr-tombstone--plot')).toBe(true);
+      act(() => {
+        updateCardSrs((card as Card).id, { ...(card as Card).srs, srsState: 'learning' });
+      });
+      expect(graves(container)[0]?.classList.contains('gr-tombstone--plot')).toBe(false);
+      expect(container.querySelectorAll('.gr-tombstone__stone')).toHaveLength(1);
+    });
+
+    it('are static: the plot CSS has no animation, transition or hard-coded colour', () => {
+      const rules = css.match(/^\.gr-tombstone__(?:mound|marker)\s*\{[^}]*\}/gm) ?? [];
+      expect(rules).toHaveLength(2);
+      for (const rule of rules) {
+        expect(rule).not.toMatch(/animation|transition/);
+        expect(rule).not.toMatch(/#[0-9a-f]{3,8}\b/i);
+      }
+    });
+
+    it('show the same focus ring as a stone', () => {
+      expect(css).toMatch(/\.gr-tombstone:focus-visible \.gr-tombstone__mound/);
+      expect(css).toMatch(/\.gr-tombstone:focus-visible \.gr-tombstone__marker/);
+    });
+
+    it('open the detail panel like any other grave', () => {
+      addNewCards(2);
+      const { container } = render(h(GraveyardScene, null));
+      fireEvent.click(graves(container)[0] as HTMLElement);
+      expect(screen.getByRole('dialog')).toBeTruthy();
+    });
+  });
+
+  describe('empty crypt', () => {
+    it('draws the full backdrop, moon and gate with no graves, and offers the Crypts button', () => {
+      const onOpenCrypts = vi.fn();
+      const { container } = render(h(GraveyardScene, { onOpenCrypts }));
+      expect(graves(container)).toHaveLength(0);
+      expect(screen.getByText(en['graveyard.noCards'])).toBeTruthy();
+      expect(container.querySelectorAll('.gr-backdrop').length).toBeGreaterThan(0);
+      expect(container.querySelector('.gr-moon, [data-progress]')).not.toBeNull();
+      expect(container.querySelector('.gr-gate')).not.toBeNull();
+
+      fireEvent.click(screen.getByRole('button', { name: en['graveyard.openCrypts'] }));
+      expect(onOpenCrypts).toHaveBeenCalledTimes(1);
+    });
+
+    it('renders no buttons when no callbacks are given', () => {
+      render(h(GraveyardScene, null));
+      expect(screen.queryByRole('button')).toBeNull();
+      expect(screen.getByText(en['graveyard.noCards'])).toBeTruthy();
+    });
+
+    it('does not offer the Seance button when there are no cards', () => {
+      render(h(GraveyardScene, { onBeginSeance: vi.fn(), onOpenCrypts: vi.fn() }));
+      expect(screen.queryByRole('button', { name: en['graveyard.beginSeance'] })).toBeNull();
+    });
+
+    it('draws the same viewBox and backdrop as a populated yard', () => {
+      const empty = render(h(GraveyardScene, null));
+      const emptyBox = empty.container.querySelector('svg.gr-scene')?.getAttribute('viewBox');
+      const emptyBack = empty.container.querySelector('.gr-backdrop')?.outerHTML;
+      empty.unmount();
+      addNewCards(20);
+      const full = render(h(GraveyardScene, null));
+      expect(full.container.querySelector('svg.gr-scene')?.getAttribute('viewBox')).toBe(emptyBox);
+      expect(full.container.querySelector('.gr-backdrop')?.outerHTML).toBe(emptyBack);
+    });
+
+    it('shows the invitation in Japanese too', () => {
+      locale.value = 'ja';
+      render(h(GraveyardScene, { onOpenCrypts: vi.fn() }));
+      expect(screen.getByText(ja['graveyard.inviteEmpty'])).toBeTruthy();
+      expect(screen.getByRole('button', { name: ja['graveyard.openCrypts'] })).toBeTruthy();
+    });
+  });
+
+  describe('cards but no reviews', () => {
+    it('shows the invitation and the Seance button while the review log is empty', () => {
+      addNewCards(5);
+      const onBeginSeance = vi.fn();
+      render(h(GraveyardScene, { onBeginSeance, onOpenCrypts: vi.fn() }));
+      expect(screen.getByText(en['graveyard.inviteNew'])).toBeTruthy();
+      fireEvent.click(screen.getByRole('button', { name: en['graveyard.beginSeance'] }));
+      expect(onBeginSeance).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole('button', { name: en['graveyard.openCrypts'] })).toBeNull();
+    });
+
+    it('puts the button before the stage in reading order', () => {
+      addNewCards(5);
+      const { container } = render(h(GraveyardScene, { onBeginSeance: vi.fn() }));
+      const button = screen.getByRole('button', { name: en['graveyard.beginSeance'] });
+      const stage = container.querySelector('.gr-stage') as Element;
+      expect(button.compareDocumentPosition(stage) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    });
+
+    it('omits the button but keeps the line when no callback is given', () => {
+      addNewCards(5);
+      render(h(GraveyardScene, null));
+      expect(screen.getByText(en['graveyard.inviteNew'])).toBeTruthy();
+      expect(screen.queryByRole('button', { name: en['graveyard.beginSeance'] })).toBeNull();
+    });
+
+    it('disappears once the review log has an entry', () => {
+      const [card] = addNewCards(5);
+      render(h(GraveyardScene, { onBeginSeance: vi.fn() }));
+      expect(screen.getByText(en['graveyard.inviteNew'])).toBeTruthy();
+      act(() => {
+        addReviewLog({ date: new Date(), cardId: (card as Card).id, grade: 2, correct: true });
+      });
+      expect(screen.queryByText(en['graveyard.inviteNew'])).toBeNull();
+      expect(screen.queryByRole('button', { name: en['graveyard.beginSeance'] })).toBeNull();
+    });
+
+    it('is not shown when the review log already has entries', () => {
+      const [card] = addNewCards(3);
+      addReviewLog({ date: new Date(), cardId: (card as Card).id, grade: 2, correct: true });
+      render(h(GraveyardScene, { onBeginSeance: vi.fn() }));
+      expect(screen.queryByText(en['graveyard.inviteNew'])).toBeNull();
     });
   });
 });

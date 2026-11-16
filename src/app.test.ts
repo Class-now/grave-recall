@@ -146,3 +146,35 @@ describe('view switcher', () => {
     expect(screen.getByRole('status').textContent).toBe('');
   });
 });
+
+describe('empty Graveyard buttons (costume-polish CP-53, CP-55)', () => {
+  it('"Open the Crypts" in the empty Graveyard switches to the Crypts view', () => {
+    render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: en['nav.graveyard'] }));
+    expect(screen.getByText(en['graveyard.noCards'])).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: en['graveyard.openCrypts'] }));
+    expect(screen.getByRole('button', { name: en['nav.crypts'] }).getAttribute('aria-current')).toBe('page');
+    expect(screen.getByRole('button', { name: 'New Crypt' })).toBeTruthy();
+  });
+
+  it('"Begin a seance" in the untouched Graveyard switches to the Seance view', () => {
+    const deck = createDeck('Crypt');
+    addCard(deck.id, 'only', 'the answer', null);
+    render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: en['nav.graveyard'] }));
+    expect(screen.getByText(en['graveyard.inviteNew'])).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: en['graveyard.beginSeance'] }));
+    expect(screen.getByRole('button', { name: en['nav.seance'] }).getAttribute('aria-current')).toBe('page');
+    expect(screen.getByRole('heading', { level: 2, name: en['seance.title'] })).toBeTruthy();
+    expect(screen.queryByText(en['graveyard.inviteNew'])).toBeNull();
+  });
+
+  it('is gone from the Graveyard once a review has been logged', () => {
+    const deck = createDeck('Crypt');
+    const card = addCard(deck.id, 'only', 'the answer', null);
+    reviewLog.value = [{ date: new Date(), cardId: card.id, grade: 2, correct: true }];
+    render(h(App, null));
+    fireEvent.click(screen.getByRole('button', { name: en['nav.graveyard'] }));
+    expect(screen.queryByRole('button', { name: en['graveyard.beginSeance'] })).toBeNull();
+  });
+});

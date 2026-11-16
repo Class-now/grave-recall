@@ -29,6 +29,19 @@
   font-size: var(--text-label);
 }
 
+/* First-run invitation: the line (or lines) and its button, above the stage. */
+.gr-graveyard__invite {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem 1rem;
+  margin: 0 0 0.5rem;
+}
+
+.gr-graveyard__invite > p {
+  margin: 0;
+}
+
 /* Stage: a fixed 2:1 box. The height follows the viewport height minus the
    chrome above it (--gr-chrome in src/index.css), so the whole view fits
    without page scroll; wider viewports are limited by the available width.
@@ -159,6 +172,24 @@
   pointer-events: none;
 }
 
+/* Fresh plot (card never reviewed): a soil mound and a blank wooden marker.
+   Static, no cracks and no moss. The outlines use stone-worn so the plot reads
+   against the dark ground (3:1, see contrast.test.ts). */
+.gr-tombstone__mound {
+  fill: var(--color-grave-soil);
+  stroke: var(--color-stone-worn);
+  stroke-width: 1px;
+  vector-effect: non-scaling-stroke;
+}
+
+.gr-tombstone__marker {
+  fill: var(--color-ink-secondary);
+  stroke: var(--color-stone-worn);
+  stroke-width: 1px;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
 .gr-tombstone:focus {
   outline: none;
 }
@@ -169,7 +200,9 @@
 }
 
 /* Outlines on SVG elements are not drawn everywhere, so the stone is stroked too. */
-.gr-tombstone:focus-visible .gr-tombstone__stone {
+.gr-tombstone:focus-visible .gr-tombstone__stone,
+.gr-tombstone:focus-visible .gr-tombstone__mound,
+.gr-tombstone:focus-visible .gr-tombstone__marker {
   stroke: var(--color-focus-ring);
   stroke-width: 3px;
 }

@@ -184,22 +184,22 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Tasks 2, 3, 5, 6*
 *Refs: CP-53 to CP-59, CP-60, CP-63, CP-64*
 
-- [ ] Steering first: add the master-table row "Fresh plot | Visual | `card.srs.srsState === 'new'` | Soil mound and blank wooden marker instead of a stone; no cracks, no moss" to section 5 of `spooky-design-system.md`.
-- [ ] Add the new strings to `src/i18n/types.ts`, `en.ts` and `ja.ts` (proposed keys in design section 9): graveyard invitation for an empty crypt, graveyard invitation for untouched cards, the two button labels, the séance empty-table line, and the Ledger empty line and hint. Write natural Japanese. The existing i18n completeness test must pass.
-- [ ] `Tombstone.tsx`: when `card.srs.srsState === 'new'`, draw a fresh plot (mound path, blank marker) instead of the stone, moss and crack paths. Keep the `.gr-tombstone` group, role, label, tab stop, `data-card-id`, handlers, focus ring and the three inline custom properties. Add `gr-tombstone--plot`. The depth shade and tilt still apply.
-- [ ] `GraveyardScene.tsx`: add optional props `onBeginSeance` and `onOpenCrypts`. With no cards in scope, render the full backdrop, the moon and gate, the existing `graveyard.noCards` message and an "open crypts" button (when `onOpenCrypts` is given). With cards and an empty `reviewLog`, render the invitation line and a "begin séance" button (when `onBeginSeance` is given); these disappear once the review log has an entry. `app.tsx` passes `show('seance')` and `show('crypts')`. Buttons use the frame's button style and sit in reading order before the stage.
-- [ ] `SeanceSession.tsx`: when `total === 0`, render the table, two unlit candles and a blank parchment card with the existing `seance.noCards` and `seance.noCardsDesc` texts, plus the new table line if it adds anything. No flip control, no grade buttons.
-- [ ] `RetentionChart.tsx` and `LedgerView.tsx`: when there are no reviews in the window, render the blank ruled ledger page with the existing `stats.noData` text and an invitation line. The forecast chart still renders.
-- [ ] Tests:
+- [x] Steering first: add the master-table row "Fresh plot | Visual | `card.srs.srsState === 'new'` | Soil mound and blank wooden marker instead of a stone; no cracks, no moss" to section 5 of `spooky-design-system.md`.
+- [x] Add the new strings to `src/i18n/types.ts`, `en.ts` and `ja.ts` (proposed keys in design section 9): graveyard invitation for an empty crypt, graveyard invitation for untouched cards, the two button labels, the séance empty-table line, and the Ledger empty line and hint. Write natural Japanese. The existing i18n completeness test must pass.
+- [x] `Tombstone.tsx`: when `card.srs.srsState === 'new'`, draw a fresh plot (mound path, blank marker) instead of the stone, moss and crack paths. Keep the `.gr-tombstone` group, role, label, tab stop, `data-card-id`, handlers, focus ring and the three inline custom properties. Add `gr-tombstone--plot`. The depth shade and tilt still apply.
+- [x] `GraveyardScene.tsx`: add optional props `onBeginSeance` and `onOpenCrypts`. With no cards in scope, render the full backdrop, the moon and gate, the existing `graveyard.noCards` message and an "open crypts" button (when `onOpenCrypts` is given). With cards and an empty `reviewLog`, render the invitation line and a "begin séance" button (when `onBeginSeance` is given); these disappear once the review log has an entry. `app.tsx` passes `show('seance')` and `show('crypts')`. Buttons use the frame's button style and sit in reading order before the stage.
+- [x] `SeanceSession.tsx`: when `total === 0`, render the table, two unlit candles and a blank parchment card with the existing `seance.noCards` and `seance.noCardsDesc` texts, plus the new table line if it adds anything. No flip control, no grade buttons.
+- [x] `RetentionChart.tsx` and `LedgerView.tsx`: when there are no reviews in the window, render the blank ruled ledger page with the existing `stats.noData` text and an invitation line. The forecast chart still renders.
+- [x] Tests:
   - `graveyard.test.ts`: with only `new` cards each grave has `gr-tombstone--plot`, still has the three custom properties, the same `role`, `aria-label` and `data-card-id`, and no `.gr-tombstone__crack` or `.gr-tombstone__moss`; a `review`-state card still draws the stone; with no cards the message and the crypts button render and zero graves exist; the invitation and its button render while `reviewLog` is empty and vanish after one entry is added.
   - `review.test.ts`: with no due cards the table, two candles (`data-lit="false"`), the existing messages and no `button` for flip or grade render.
   - `stats.test.ts`: the empty Ledger shows `stats.noData` once and the invitation; the forecast chart is present.
   - `app.test.ts`: the buttons in the empty Graveyard switch to the Séance and Crypts views; existing assertions pass unchanged.
   - `a11y.test.ts`: add axe runs for each of the five views in the empty state, in `en` and `ja`; and axe on a populated Graveyard with `new` cards. Verify the existing tab-order tests still pass (the new buttons are ordinary tab stops; ornaments add none).
   - `contrast.test.ts`: any new text/background pair introduced here.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes.
-- [ ] Gate: `npm run build` passes.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes.
+- [x] Gate: `npm run build` passes.
 
 *Owner check: clear localStorage and reload. The first screens (Graveyard with 150 fresh plots, an invitation line, an empty Séance table, an empty Ledger page) look intentional, with no blank boxes.*
 

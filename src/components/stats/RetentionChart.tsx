@@ -2,7 +2,8 @@
  * Retention over the last 30 days: the retention percentage
  * (correct / total reviews) and a bar chart of reviews per day. Each bar
  * stacks correct reviews (success colour) under the rest (danger colour).
- * With no reviews in the window, both are replaced by "No data yet".
+ * With no reviews in the window, both are replaced by a blank ledger page:
+ * "No data yet", an invitation line and a hint.
  */
 import { h } from 'preact';
 
@@ -28,7 +29,11 @@ export function RetentionChart(): h.JSX.Element {
     return (
       <section class="gr-stats__section" aria-labelledby="gr-retention-title">
         {heading}
-        <p class="gr-stats__empty">{t('stats.noData')}</p>
+        <div class="gr-stats__blank">
+          <p class="gr-stats__empty">{t('stats.noData')}</p>
+          <p class="gr-stats__invite">{t('stats.ledgerEmpty')}</p>
+          <p class="gr-stats__empty">{t('stats.ledgerEmptyHint')}</p>
+        </div>
       </section>
     );
   }

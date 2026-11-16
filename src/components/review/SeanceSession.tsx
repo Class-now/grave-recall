@@ -2,7 +2,8 @@
  * The séance: a review session over the due cards.
  *
  * - Mount starts a session (optionally limited to one crypt); unmount ends it.
- * - No due cards: a message is shown and nothing else happens.
+ * - No due cards: the table, two unlit candles and a blank parchment card carry
+ *   the messages; there is nothing to flip or grade.
  * - Each card is shown face-down; flipping reveals the back and the grade buttons.
  * - Grading calls the store's `gradeCard()`, plays the grade's sound (which
  *   publishes the caption) and moves on. A jumpscare flash covers an "Again" on
@@ -120,8 +121,23 @@ export function SeanceSession(props: SeanceSessionProps): h.JSX.Element | null {
         <h2 id="gr-seance-title" class="gr-seance__title">
           {t('seance.title')}
         </h2>
-        <p class="gr-seance__message">{t('seance.noCards')}</p>
-        <p class="gr-seance__hint">{t('seance.noCardsDesc')}</p>
+        <div class="gr-table">
+          <div class="gr-table__candle gr-table__candle--left">
+            <Candle lit={false} flare={0} paused={hidden} motion={!reducedMotion.value} />
+          </div>
+          <div class="gr-flipcard gr-flipcard--blank">
+            <div class="gr-flipcard__inner">
+              <div class="gr-flipcard__front">
+                <p class="gr-seance__message">{t('seance.noCards')}</p>
+                <p class="gr-seance__hint">{t('seance.noCardsDesc')}</p>
+              </div>
+            </div>
+          </div>
+          <div class="gr-table__candle gr-table__candle--right">
+            <Candle lit={false} flare={0} paused={hidden} motion={!reducedMotion.value} />
+          </div>
+        </div>
+        <p class="gr-seance__hint">{t('seance.tableEmpty')}</p>
       </section>
     );
   }

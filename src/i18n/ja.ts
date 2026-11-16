@@ -24,6 +24,10 @@ export const ja: Record<TranslationKey, string> = {
   'graveyard.dueDate': '復習期限',
   'graveyard.close': '閉じる',
   'graveyard.keyboardHint': '矢印キーで墓の間を移動し、Enter キーで選んだ墓を開きます。',
+  'graveyard.inviteEmpty': '墓所を作って単語を追加すると、ひとつずつ墓として現れます。',
+  'graveyard.inviteNew': 'どの区画も、まだ出会っていない単語です。降霊会を開いて、最初の一つを呼び覚ましましょう。',
+  'graveyard.openCrypts': '墓所を開く',
+  'graveyard.beginSeance': '降霊会を始める',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'あなたの墓所',
@@ -89,6 +93,7 @@ export const ja: Record<TranslationKey, string> = {
   'seance.complete': '降霊会完了',
   'seance.completeDesc': '霊たちは鎮まりました。よくできました。',
   'seance.pressSpace': 'スペースキーを押して開始',
+  'seance.tableEmpty': 'ろうそくは消えています。墓所にカードを追加するか、復習の時期が来たらまた来てください。',
 
   // Stats (Ledger of the Dead)
   'stats.title': '死者之名簿',
@@ -106,6 +111,8 @@ export const ja: Record<TranslationKey, string> = {
   'stats.legendCorrect': '正解(良い・簡単)',
   'stats.legendIncorrect': '未達成(もう一度・難しい)',
   'stats.peak': '最大: {count}',
+  'stats.ledgerEmpty': '降霊会を開くと、名簿が埋まり始めます。',
+  'stats.ledgerEmptyHint': '直近30日の復習がここに記録されます。',
 
   // Settings
   'settings.title': '設定',

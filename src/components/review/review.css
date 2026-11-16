@@ -93,6 +93,22 @@
   }
 }
 
+/* The empty table: a blank parchment card, nothing to flip. The text is dark ink
+   on parchment (text-inverse and ink-secondary, see contrast.test.ts). */
+.gr-flipcard--blank .gr-flipcard__front {
+  padding: 1.5rem;
+}
+
+.gr-flipcard--blank .gr-seance__message {
+  font-family: var(--font-body);
+  margin: 0 0 0.5rem;
+}
+
+.gr-flipcard--blank .gr-seance__hint {
+  font-family: var(--font-body);
+  color: var(--color-ink-secondary);
+}
+
 /* Candle -------------------------------------------------------------------- */
 
 .gr-candle {
