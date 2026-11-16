@@ -16,9 +16,11 @@ import {
   COLOR_GROUND_FORE,
   COLOR_HILL_FAR,
   COLOR_HILL_NEAR,
+  COLOR_INK_SECONDARY,
   COLOR_IRON,
   COLOR_MOON_FULL,
   COLOR_MOON_NEW,
+  COLOR_PARCHMENT,
   COLOR_TREE,
   COLOR_STONE_CRUMBLED,
   COLOR_STONE_DARK,
@@ -29,6 +31,7 @@ import {
   COLOR_SURFACE_CARD,
   COLOR_SURFACE_PANEL,
   COLOR_TEXT_PRIMARY,
+  COLOR_TEXT_INVERSE,
   COLOR_TEXT_SECONDARY,
   COLOR_VOID,
   COLOR_WARNING,
@@ -89,6 +92,17 @@ const FRAME_PAIRS: Pair[] = [
   { name: 'tab border on stone-dark', fg: COLOR_STONE_CRUMBLED, bg: COLOR_STONE_DARK, min: 3 },
 ];
 
+/** Seance parchment card and table (costume-polish CP-45 to CP-48). */
+const SEANCE_PAIRS: Pair[] = [
+  { name: 'text-inverse on parchment', fg: COLOR_TEXT_INVERSE, bg: COLOR_PARCHMENT, min: 4.5 },
+  { name: 'ink-secondary on parchment', fg: COLOR_INK_SECONDARY, bg: COLOR_PARCHMENT, min: 4.5 },
+  // The inner ring of the two-tone focus ring sits on the parchment.
+  { name: 'void (inner focus ring) on parchment', fg: COLOR_VOID, bg: COLOR_PARCHMENT, min: 3 },
+  // The outer ring sits on the table, which is a gradient from stone-dark to grave-soil.
+  { name: 'focus-ring on grave-soil (table edge)', fg: COLOR_FOCUS_RING, bg: COLOR_GRAVE_SOIL, min: 3 },
+  { name: 'focus-ring on stone-dark (table centre)', fg: COLOR_FOCUS_RING, bg: COLOR_STONE_DARK, min: 3 },
+];
+
 describe('contrastRatio', () => {
   it('is 21 for black on white and 1 for identical colours', () => {
     expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 5);
@@ -112,6 +126,7 @@ describe.each([
   ['spooky-design-system §1.3', SECTION_1_3],
   ['component CSS', COMPONENT_PAIRS],
   ['page frame', FRAME_PAIRS],
+  ['seance table and parchment card', SEANCE_PAIRS],
 ])('WCAG AA: %s', (_label, pairs) => {
   it.each(pairs)('$name is at least $min:1', ({ fg, bg, min }) => {
     expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(min);

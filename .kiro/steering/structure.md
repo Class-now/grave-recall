@@ -65,6 +65,7 @@ grave-recall/
 │   │   ├── review/              # Séance review session
 │   │   │   ├── SeanceSession.tsx
 │   │   │   ├── FlipCard.tsx
+│   │   │   ├── Candle.tsx       # Seance candle; flame lit by the latest grade (Good or Easy)
 │   │   │   ├── GradeButtons.tsx
 │   │   │   └── review.test.ts
 │   │   │

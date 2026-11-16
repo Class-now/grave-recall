@@ -37,6 +37,8 @@ describe('Design tokens', () => {
     '--color-surface-panel',
     '--color-border',
     '--color-focus-ring',
+    '--color-parchment',
+    '--color-ink-secondary',
     '--color-sky-top',
     '--color-sky-horizon',
     '--color-hill-far',

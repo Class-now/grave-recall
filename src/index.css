@@ -33,6 +33,8 @@
   --color-surface-panel:  #151210;
   --color-border:         #3a342e;
   --color-focus-ring:     #7eb8f7;
+  --color-parchment:      #e9dcc0;
+  --color-ink-secondary:  #5a4a36;
 
   /* Decorative backdrop palette (spooky-design-system section 6.2) */
   --color-sky-top:        #05060c;

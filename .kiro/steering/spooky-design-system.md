@@ -39,6 +39,8 @@ All tokens are CSS custom properties declared on `:root`. TypeScript constants i
 | `--color-text-secondary` | `#9e9488` | Labels, hints (≥ 3:1 on `--color-void`) |
 | `--color-text-inverse` | `#0a0a0f` | Text on light surfaces |
 | `--color-surface-card` | `#1e1a16` | Card face background |
+| `--color-parchment` | `#e9dcc0` | Seance card face (`--color-text-inverse` on it is at least 4.5:1) |
+| `--color-ink-secondary` | `#5a4a36` | Secondary text on the parchment card (at least 4.5:1 on `--color-parchment`) |
 | `--color-surface-panel` | `#151210` | Side panel / settings background |
 | `--color-border` | `#3a342e` | Subtle borders |
 | `--color-focus-ring` | `#7eb8f7` | Keyboard focus outline (≥ 3:1 on all backgrounds) |
@@ -128,7 +130,8 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 | `fog-pulse` | `<FogLayer>` | `8s` | `ease-in-out`, infinite | Ambient overdue load | Static fog at computed opacity |
 | `fog-drift-a`, `fog-drift-b`, `fog-drift-c` | Fog banks inside `<FogLayer>` | 6, 8 and 7 times `--motion-ambient`, `alternate`, infinite | `ease-in-out` | Ambient overdue load (banks A and C drift left, B drifts right; the wrapper opacity is still `fogOpacity`, so drift carries no extra data) | Not applied; banks stay at rest at the computed opacity |
 | `ghost-sway` | `<Ghost>` (a `rotate` of about 2 degrees about the bottom centre, part of the `ghost-drift` keyframes) | `--ghost-drift-speed` (3–12s) | `ease-in-out`, infinite | Card overdue-ness (the same duration as `ghost-drift`) | Not applied; ghost shown as a static icon |
-| `candle-flicker` | Candle SVG | `0.3s` | `steps(3)` | Active review session | Solid glow, no flicker |
+| `candle-flicker` | Candle SVG | `0.3s` | `steps(3)` | While the flames are lit | Solid glow, no flicker |
+| `candle-flare` | Candle flame in `<Candle>` | `--motion-slow` | `ease-out` | Good or Easy grade | Solid glow, no flare |
 | `tombstone-crack-appear` | Crack SVG paths | `600ms` | `ease-out` | Stability decrease after failed review | Instant opacity change |
 | `ghost-materialize` | `<Ghost>` | `400ms` | `ease-in` | Card becomes overdue | Instant opacity change |
 | `ghost-dissolve` | `<Ghost>` | `500ms` | `ease-out` | Card reviewed successfully | Instant fade-out |
@@ -226,6 +229,7 @@ This table is the single source of truth for every effect that reads, or can be 
 | Crow wing-flap | Motion | `streakDays` just extended | One-shot `crow-hop` animation on streak increment |
 | Ghost scream audio | Audio | Incorrect recall event | `ghostScream()` called; replaced by `softChime()` in Coward mode |
 | Candle seal audio | Audio | Correct recall event (Good/Easy) | `candleSeal()` called |
+| Seance candle flames | Visual | Most recent grade in the session is Good or Easy | Lit when true, unlit otherwise; flare once on each Good or Easy |
 | Jumpscare flash | Visual | Again grade on card with `stability > 20` | `jumpscare-flash` animation; suppressed by reduced-motion or Coward mode |
 
 ---

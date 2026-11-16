@@ -48,28 +48,35 @@ export function FlipCard(props: FlipCardProps): h.JSX.Element {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, [flipped]);
 
-  const backClass = reducedMotion.value ? 'gr-flipcard__back' : 'gr-flipcard__back gr-flipcard__back--flip';
+  const motion = !reducedMotion.value;
+  // Under reduced motion neither flip class is present, so the static
+  // `[data-flipped="true"]` rule shows the back at once.
+  const innerClass = motion && flipped ? 'gr-flipcard__inner gr-flipcard__inner--flip' : 'gr-flipcard__inner';
+  const backClass = motion ? 'gr-flipcard__back gr-flipcard__back--flip' : 'gr-flipcard__back';
 
   return (
     <div class="gr-flipcard" data-flipped={flipped ? 'true' : 'false'}>
-      <div class="gr-flipcard__front" role="group" aria-label={t('a11y.flipCard')}>
-        {flipped ? (
-          <p class="gr-flipcard__word">{card.front}</p>
-        ) : (
-          <button ref={flipRef} type="button" class="gr-flipcard__flip" onClick={onFlip}>
-            <span class="gr-flipcard__word">{card.front}</span>
-            <span class="gr-flipcard__hint">{t('seance.flip')}</span>
-          </button>
-        )}
-      </div>
-      {flipped && (
-        <div id={backId} class={backClass}>
-          <p class="gr-flipcard__answer">{card.back}</p>
-          {card.example !== null && card.example !== '' && (
-            <p class="gr-flipcard__example">{card.example}</p>
+      <div class={innerClass}>
+        <div class="gr-flipcard__front" role="group" aria-label={t('a11y.flipCard')}>
+          {flipped ? (
+            <p class="gr-flipcard__word">{card.front}</p>
+          ) : (
+            <button ref={flipRef} type="button" class="gr-flipcard__flip" onClick={onFlip}>
+              <span class="gr-flipcard__word">{card.front}</span>
+              <span class="gr-flipcard__hint">{t('seance.flip')}</span>
+            </button>
           )}
         </div>
-      )}
+        {flipped && (
+          // data-front feeds a CSS-only recap of the word, so it is not a second text node.
+          <div id={backId} class={backClass} data-front={card.front}>
+            <p class="gr-flipcard__answer">{card.back}</p>
+            {card.example !== null && card.example !== '' && (
+              <p class="gr-flipcard__example">{card.example}</p>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

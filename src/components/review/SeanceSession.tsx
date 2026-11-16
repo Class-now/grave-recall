@@ -30,6 +30,9 @@ import {
 import { candleSeal, ghostScream, hardThud, pageTurn, sessionEndToll } from '../../audio/sounds';
 import { t, ti } from '../../i18n';
 
+import { useDocumentHidden } from '../graveyard/useDocumentHidden';
+
+import { Candle } from './Candle';
 import { FlipCard } from './FlipCard';
 import { GradeButtons } from './GradeButtons';
 import { SEANCE_ROOT_CLASS } from './keys';
@@ -60,6 +63,11 @@ export function SeanceSession(props: SeanceSessionProps): h.JSX.Element | null {
   const [total, setTotal] = useState<number | null>(null);
   /** Non-zero while the jumpscare overlay is on screen; changes to restart it. */
   const [scare, setScare] = useState(0);
+  /** Whether the candle flames are lit: true while the latest grade is Good or Easy. */
+  const [lit, setLit] = useState(false);
+  /** Counts Good and Easy grades; each change restarts the flame flare. */
+  const [flare, setFlare] = useState(0);
+  const hidden = useDocumentHidden();
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
 
@@ -94,6 +102,8 @@ export function SeanceSession(props: SeanceSessionProps): h.JSX.Element | null {
     if (grade === 0 && wasWellLearned && !reducedMotion.peek() && !cowardMode.peek()) {
       setScare((n) => n + 1);
     }
+    setLit(grade >= 2);
+    if (grade >= 2) setFlare((n) => n + 1);
   }
 
   if (total === null) return null;
@@ -139,7 +149,15 @@ export function SeanceSession(props: SeanceSessionProps): h.JSX.Element | null {
         </h2>
         <p class="gr-seance__remaining">{ti('seance.remaining', { count: remainingCount.value })}</p>
       </header>
-      <FlipCard key={card.id} card={card} flipped={flipped} onFlip={handleFlip} backId={BACK_ID} />
+      <div class="gr-table">
+        <div class="gr-table__candle gr-table__candle--left">
+          <Candle lit={lit} flare={flare} paused={hidden} motion={!reducedMotion.value} />
+        </div>
+        <FlipCard key={card.id} card={card} flipped={flipped} onFlip={handleFlip} backId={BACK_ID} />
+        <div class="gr-table__candle gr-table__candle--right">
+          <Candle lit={lit} flare={flare} paused={hidden} motion={!reducedMotion.value} />
+        </div>
+      </div>
       <div class="gr-seance__actions">
         {flipped && <GradeButtons key={card.id} onGrade={handleGrade} describedBy={BACK_ID} />}
       </div>

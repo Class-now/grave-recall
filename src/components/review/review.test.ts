@@ -3,6 +3,10 @@
  * Sounds are not mocked: a fake AudioContext lets the real sound functions run, and
  * the published caption identifies which sound played.
  */
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { h } from 'preact';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/preact';
@@ -28,6 +32,7 @@ import { addDays } from '../../utils/date';
 
 import { FakeAudioContext } from '../../__fixtures__/fake-audio';
 
+import { Candle } from './Candle';
 import { FlipCard } from './FlipCard';
 import { GradeButtons } from './GradeButtons';
 import { SeanceSession } from './SeanceSession';
@@ -416,5 +421,222 @@ describe('persistence', () => {
     expect(loadState()).toBe(true);
     expect(reviewLog.value).toHaveLength(1);
     expect(reviewLog.value[0]!.date).toBeInstanceOf(Date);
+  });
+});
+
+// ---- Candles, table and 3D flip (costume-polish Task 5) ----------------------
+
+describe('seance candles', () => {
+  const candles = (): Element[] => Array.from(document.querySelectorAll('.gr-candle'));
+  const lit = (): (string | null)[] => candles().map((c) => c.getAttribute('data-lit'));
+
+  /** Starts a session of `count` due cards and grades the current card with `key`. */
+  async function gradeWith(key: string): Promise<void> {
+    fireEvent.keyDown(document.body, { key: ' ' });
+    await screen.findByRole('button', { name: 'Grade Again' });
+    fireEvent.keyDown(document.body, { key });
+  }
+
+  function startSession(count: number, srs: { stability?: number } = {}): void {
+    const deckId = createDeck('Crypt').id;
+    for (let i = 0; i < count; i += 1) dueCard(`card ${i}`, srs, deckId);
+    renderSeance();
+  }
+
+  it('shows one candle on each side of the card, unlit at session start', () => {
+    startSession(2);
+    expect(candles()).toHaveLength(2);
+    expect(lit()).toEqual(['false', 'false']);
+    const table = document.querySelector('.gr-table');
+    expect(table?.children[0]?.querySelector('.gr-candle')).not.toBeNull();
+    expect(table?.children[1]?.classList.contains('gr-flipcard')).toBe(true);
+    expect(table?.children[2]?.querySelector('.gr-candle')).not.toBeNull();
+    expect(document.querySelectorAll('.gr-candle__ember')).toHaveLength(2);
+    expect(document.querySelector('.gr-candle__fire')).toBeNull();
+  });
+
+  it.each(['3', '4'])('key %s (Good or Easy) lights both candles', async (key) => {
+    startSession(2);
+    await gradeWith(key);
+    expect(lit()).toEqual(['true', 'true']);
+    expect(document.querySelectorAll('.gr-candle__fire')).toHaveLength(2);
+    expect(document.querySelector('.gr-candle__ember')).toBeNull();
+  });
+
+  it.each(['1', '2'])('key %s (Again or Hard) leaves both candles unlit', async (key) => {
+    startSession(2);
+    await gradeWith(key);
+    expect(lit()).toEqual(['false', 'false']);
+  });
+
+  it('Good then Again puts the flames out again', async () => {
+    startSession(3);
+    await gradeWith('3');
+    expect(lit()).toEqual(['true', 'true']);
+    await gradeWith('1');
+    expect(lit()).toEqual(['false', 'false']);
+  });
+
+  it('Good then Hard puts the flames out too', async () => {
+    startSession(3);
+    await gradeWith('4');
+    await gradeWith('2');
+    expect(lit()).toEqual(['false', 'false']);
+  });
+
+  it('renders the flare and flicker classes under full motion', async () => {
+    startSession(2);
+    expect(document.querySelector('.gr-candle__flame--flare')).toBeNull();
+    await gradeWith('3');
+    expect(document.querySelectorAll('.gr-candle__flame--flare')).toHaveLength(2);
+    expect(document.querySelectorAll('.gr-candle__flame--flicker')).toHaveLength(2);
+  });
+
+  it('restarts the flare on every Good or Easy by remounting the flame', async () => {
+    startSession(3);
+    await gradeWith('3');
+    const first = document.querySelector('.gr-candle__flame--flare');
+    await gradeWith('4');
+    const second = document.querySelector('.gr-candle__flame--flare');
+    expect(second).not.toBeNull();
+    expect(second).not.toBe(first);
+  });
+
+  it('adds neither flare nor flicker under reduced motion, while data-lit still updates', async () => {
+    reducedMotionUser.value = true;
+    startSession(3);
+    await gradeWith('3');
+    expect(lit()).toEqual(['true', 'true']);
+    expect(document.querySelector('.gr-candle__flame--flare')).toBeNull();
+    expect(document.querySelector('.gr-candle__flame--flicker')).toBeNull();
+    expect(document.querySelectorAll('.gr-candle__fire')).toHaveLength(2);
+    await gradeWith('1');
+    expect(lit()).toEqual(['false', 'false']);
+  });
+
+  it('Coward mode: Again leaves the candles unlit with no jumpscare, and Good still lights them', async () => {
+    cowardMode.value = true;
+    startSession(3, { stability: 30 });
+    await gradeWith('1');
+    expect(lit()).toEqual(['false', 'false']);
+    expect(document.querySelector('.gr-jumpscare')).toBeNull();
+    await gradeWith('3');
+    expect(lit()).toEqual(['true', 'true']);
+    expect(document.querySelector('.gr-jumpscare')).toBeNull();
+  });
+
+  it('the candles are hidden from assistive technology and have no focusable descendants', async () => {
+    startSession(2);
+    await gradeWith('3');
+    for (const candle of candles()) {
+      expect(candle.getAttribute('aria-hidden')).toBe('true');
+      expect(candle.getAttribute('focusable')).toBe('false');
+      expect(candle.querySelectorAll('a, button, input, select, textarea, [tabindex], [role]')).toHaveLength(0);
+      expect(candle.textContent).toBe('');
+    }
+  });
+
+  it('Candle pauses its animations while the tab is hidden and gives each instance its own gradient id', () => {
+    const { container } = render(
+      h('div', null, [
+        h(Candle, { lit: true, flare: 1, paused: true, motion: true }),
+        h(Candle, { lit: true, flare: 1, paused: false, motion: true }),
+      ]),
+    );
+    const [a, b] = Array.from(container.querySelectorAll('.gr-candle'));
+    expect(a?.classList.contains('gr-candle--paused')).toBe(true);
+    expect(b?.classList.contains('gr-candle--paused')).toBe(false);
+    const ids = Array.from(container.querySelectorAll('radialGradient')).map((g) => g.id);
+    expect(new Set(ids).size).toBe(2);
+  });
+});
+
+describe('3D flip and parchment card', () => {
+  const css = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'review.css'), 'utf8');
+
+  /** The body of `@keyframes name { ... }`, found by matching braces. */
+  function keyframes(name: string): string {
+    const start = css.indexOf(`@keyframes ${name}`);
+    expect(start, `@keyframes ${name} exists`).toBeGreaterThanOrEqual(0);
+    const open = css.indexOf('{', start);
+    let depth = 0;
+    for (let i = open; i < css.length; i += 1) {
+      if (css[i] === '{') depth += 1;
+      else if (css[i] === '}' && (depth -= 1) === 0) return css.slice(open + 1, i);
+    }
+    throw new Error(`unterminated @keyframes ${name}`);
+  }
+
+  function animatedProperties(body: string): string[] {
+    const props = new Set<string>();
+    for (const block of body.matchAll(/\{([^}]*)\}/g)) {
+      for (const decl of (block[1] ?? '').split(';')) {
+        const prop = decl.split(':')[0]?.trim();
+        if (prop) props.add(prop);
+      }
+    }
+    return [...props].sort();
+  }
+
+  it('review.css sets up a perspective container with hidden back faces', () => {
+    expect(css).toContain('perspective');
+    expect(css).toContain('transform-style: preserve-3d');
+    expect(css).toContain('backface-visibility: hidden');
+    expect(css).toContain('rotateY(180deg)');
+    expect(css).toMatch(/\.gr-flipcard\[data-flipped='true'\] \.gr-flipcard__inner\s*\{[^}]*rotateY\(180deg\)/);
+  });
+
+  it.each(['card-flip', 'candle-flare', 'candle-flicker'])('the %s keyframes animate only transform and opacity', (name) => {
+    for (const prop of animatedProperties(keyframes(name))) {
+      expect(['opacity', 'transform']).toContain(prop);
+    }
+  });
+
+  it('uses motion tokens for the flip and candle durations', () => {
+    expect(css).toMatch(/\.gr-flipcard__inner--flip\s*\{\s*animation: card-flip var\(--motion-normal\) cubic-bezier\(0\.4, 0, 0\.2, 1\)/);
+    expect(css).toMatch(/animation: candle-flare var\(--motion-slow\)/);
+    expect(css).toMatch(/animation: candle-flicker calc\(var\(--motion-fast\) \* 2\) steps\(3\)/);
+    expect(css).toMatch(/\.gr-candle--paused[^{]*\{[^}]*animation-play-state: paused/);
+  });
+
+  it('puts the parchment card on the table and keeps text inside the token palette', () => {
+    expect(css).toMatch(/background: var\(--color-parchment\)/);
+    expect(css).toContain('var(--color-text-inverse)');
+    expect(css).toContain('var(--color-ink-secondary)');
+    expect(css).toContain('var(--color-grave-soil)');
+    expect(css).toContain('var(--color-stone-dark)');
+    expect(css).toMatch(/\.gr-flipcard__flip:focus-visible\s*\{[^}]*var\(--color-focus-ring\)[^}]*var\(--color-void\)/);
+    expect(css).toMatch(/@media \(max-width: 40rem\)/);
+  });
+
+  it('full motion: the inner box and the back carry the flip classes once flipped', () => {
+    const card = dueCard('one');
+    const props = { card, flipped: true, onFlip: () => undefined, backId: 'back' };
+    const { container } = render(h(FlipCard, props));
+    expect(container.querySelector('.gr-flipcard__inner--flip')).not.toBeNull();
+    expect(container.querySelector('.gr-flipcard__back--flip')).not.toBeNull();
+  });
+
+  it('full motion: the inner box does not animate while the card is face-down', () => {
+    const card = dueCard('one');
+    const { container } = render(h(FlipCard, { card, flipped: false, onFlip: () => undefined, backId: 'back' }));
+    expect(container.querySelector('.gr-flipcard__inner--flip')).toBeNull();
+    expect(container.querySelector('.gr-flipcard__back')).toBeNull();
+  });
+
+  it('reduced motion: neither flip class is present and the back is still rendered', () => {
+    reducedMotionUser.value = true;
+    const card = dueCard('one');
+    const { container } = render(h(FlipCard, { card, flipped: true, onFlip: () => undefined, backId: 'back' }));
+    expect(container.querySelector('.gr-flipcard__inner--flip')).toBeNull();
+    expect(container.querySelector('.gr-flipcard__back--flip')).toBeNull();
+    expect(container.querySelector('.gr-flipcard[data-flipped="true"] .gr-flipcard__back')).not.toBeNull();
+  });
+
+  it('shows the front word once, never repeated as a text node on the back', () => {
+    const card = dueCard('unique');
+    const { container } = render(h(FlipCard, { card, flipped: true, onFlip: () => undefined, backId: 'back' }));
+    expect(screen.getAllByText('unique')).toHaveLength(1);
+    expect(container.querySelector('#back')?.getAttribute('data-front')).toBe('unique');
   });
 });

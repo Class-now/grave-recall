@@ -4,7 +4,7 @@
 .gr-seance {
   font-family: var(--font-ui);
   color: var(--color-text-primary);
-  max-width: 40rem;
+  max-width: 48rem;
   margin-inline: auto;
 }
 
@@ -42,30 +42,218 @@
   margin: 0;
 }
 
+/* Table --------------------------------------------------------------------- */
+
+/* Table props (steering 6.1): a surface lit by a soft lamp, a candle on each side.
+   Below 40rem the candles sit above the card, side by side. */
+.gr-table {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'left card right';
+  align-items: center;
+  gap: 1rem;
+  margin-block: 0.75rem;
+  padding: 1.25rem 1rem;
+  background: radial-gradient(ellipse at 50% 45%, var(--color-stone-dark) 0%, var(--color-grave-soil) 75%);
+  border: 1px solid var(--color-border);
+}
+
+.gr-table__candle {
+  display: flex;
+  align-items: flex-end;
+}
+
+.gr-table__candle--left {
+  grid-area: left;
+}
+
+.gr-table__candle--right {
+  grid-area: right;
+}
+
+.gr-table > .gr-flipcard {
+  grid-area: card;
+}
+
+@media (max-width: 40rem) {
+  .gr-table {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      'left right'
+      'card card';
+    gap: 0.5rem 1rem;
+  }
+
+  .gr-table__candle--left {
+    justify-content: flex-end;
+  }
+
+  .gr-table__candle--right {
+    justify-content: flex-start;
+  }
+}
+
+/* Candle -------------------------------------------------------------------- */
+
+.gr-candle {
+  display: block;
+  width: 3.5rem;
+  height: auto;
+  overflow: visible;
+}
+
+.gr-candle__holder {
+  fill: var(--color-iron);
+  stroke: var(--color-stone-mid);
+  stroke-width: 1;
+}
+
+.gr-candle__wax {
+  fill: var(--color-candle-wax);
+}
+
+.gr-candle__wick {
+  fill: none;
+  stroke: var(--color-stone-mid);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.gr-candle__fire {
+  fill: var(--color-candle-flame);
+}
+
+.gr-candle__glow-stop {
+  stop-color: var(--color-candle-flame);
+}
+
+.gr-candle__ember {
+  fill: var(--color-stone-worn);
+}
+
+/* Flame animations pivot about the base of the flame and use transform and opacity only.
+   Neither class is rendered under reduced motion, so the flame shows solid. */
+.gr-candle__flame--flare,
+.gr-candle__flame--flicker {
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+.gr-candle__flame--flare {
+  animation: candle-flare var(--motion-slow) ease-out;
+}
+
+.gr-candle__flame--flicker {
+  animation: candle-flicker calc(var(--motion-fast) * 2) steps(3) infinite alternate;
+}
+
+@keyframes candle-flare {
+  from {
+    transform: scale(1.7);
+    opacity: 0.4;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+@keyframes candle-flicker {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  to {
+    transform: scale(0.94, 1.06);
+    opacity: 0.85;
+  }
+}
+
+/* The infinite flicker stops while the tab is hidden. */
+.gr-candle--paused .gr-candle__flame--flare,
+.gr-candle--paused .gr-candle__flame--flicker {
+  animation-play-state: paused;
+}
+
 /* Card ---------------------------------------------------------------------- */
 
+/* A parchment card in a perspective container. Both faces share one grid cell
+   and hide their backs, so the card is as tall as the taller face. */
 .gr-flipcard {
-  background: var(--color-surface-card);
-  border: 1px solid var(--color-border);
-  padding: 1.5rem;
-  margin-block: 1rem;
+  perspective: 75rem;
+  min-height: 12rem;
   text-align: center;
+  color: var(--color-text-inverse);
+}
+
+.gr-flipcard__inner {
+  display: grid;
+  min-height: 12rem;
+  transform-style: preserve-3d;
+}
+
+/* Reduced motion: no flip class, so the card turns at once. */
+.gr-flipcard[data-flipped='true'] .gr-flipcard__inner {
+  transform: rotateY(180deg);
+}
+
+.gr-flipcard__front,
+.gr-flipcard__back {
+  grid-area: 1 / 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: var(--color-parchment);
+  border: 2px solid var(--color-ink-secondary);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.gr-flipcard__front > .gr-flipcard__word {
+  padding: 1.5rem;
+}
+
+/* The back keeps `gr-flipcard__back--flip` as its full-motion marker. It is
+   pre-rotated, so the inner box turns it face-up. */
+.gr-flipcard__back {
+  transform: rotateY(180deg);
+  padding: 1.5rem;
+}
+
+/* A CSS-only recap of the word (not a text node, and silent for screen readers
+   where the alternative-text form is supported). */
+.gr-flipcard__back::before {
+  content: attr(data-front);
+  content: attr(data-front) / '';
+  display: block;
+  font-family: var(--font-body);
+  font-size: var(--text-label);
+  color: var(--color-ink-secondary);
+  margin-bottom: 0.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--color-ink-secondary);
 }
 
 .gr-flipcard__flip {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
+  height: 100%;
   background: transparent;
   color: inherit;
   border: 0;
-  padding: 1rem 0;
+  padding: 1.5rem;
   font: inherit;
   cursor: pointer;
 }
 
+/* Two-tone ring: the inner void ring contrasts with the parchment, the outer
+   focus ring with the table. */
 .gr-flipcard__flip:focus-visible {
   outline: 2px solid var(--color-focus-ring);
-  outline-offset: 4px;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--color-void);
 }
 
 .gr-flipcard__word {
@@ -81,13 +269,7 @@
   display: block;
   margin-top: 0.75rem;
   font-size: var(--text-label);
-  color: var(--color-text-secondary);
-}
-
-.gr-flipcard__back {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid var(--color-border);
+  color: var(--color-ink-secondary);
 }
 
 .gr-flipcard__answer {
@@ -102,27 +284,24 @@
   font-size: var(--text-card-example);
   font-style: italic;
   line-height: 1.6;
-  color: var(--color-text-secondary);
+  color: var(--color-ink-secondary);
   margin: 0.5rem 0 0;
 }
 
 /* Full motion only: under reduced motion the class is absent and the back face
    appears at once. */
-.gr-flipcard__back--flip {
+.gr-flipcard__inner--flip {
   animation: card-flip var(--motion-normal) cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes card-flip {
   from {
-    transform: rotateX(90deg);
-    opacity: 0;
+    transform: rotateY(0deg);
   }
   to {
-    transform: none;
-    opacity: 1;
+    transform: rotateY(180deg);
   }
 }
-
 /* Grade buttons ------------------------------------------------------------- */
 
 /* Reserves the row so the layout does not jump when the buttons appear. */

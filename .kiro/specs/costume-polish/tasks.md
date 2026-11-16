@@ -132,17 +132,17 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Task 1*
 *Refs: CP-39 to CP-48, CP-60 to CP-63*
 
-- [ ] Steering first, in `spooky-design-system.md`:
+- [x] Steering first, in `spooky-design-system.md`:
   - Master table (section 5): add the row "Séance candle flames | Visual | Most recent grade in the session is Good or Easy | Lit when true, unlit otherwise; flare once on each Good or Easy".
   - Animation catalogue (section 3.2): add `candle-flare` (`--motion-slow`, `ease-out`, Good or Easy grade, reduced-motion substitute: solid glow). Narrow the `candle-flicker` row to "while the flames are lit".
   - Colour table (section 1.1): add `--color-parchment` and `--color-ink-secondary` with the hex values in design section 6.
-- [ ] Add `--color-parchment` and `--color-ink-secondary` to `index.css`, `tokens.ts` and `TOKEN_MAP`; add both names to `tokens.test.ts`.
-- [ ] Create `src/components/review/Candle.tsx`: SVG candle with a wax body (`--color-candle-wax`), iron holder (`--color-iron`), wick and a flame (`--color-candle-flame`) with a radial glow inside the same group. Props `lit: boolean`, `flare: number`, `paused: boolean`, `motion: boolean`. Root is `aria-hidden="true"` with `data-lit`. When lit and motion allowed: class `gr-candle__flame--flicker`; when `flare` changes and motion allowed: `gr-candle__flame--flare`, keyed on `flare` so it restarts. When unlit: no flame, only a wick ember dot.
-- [ ] Update `SeanceSession.tsx`: state `lit` (false at start) and `flare` (0). In `handleGrade`, after the existing logic, set `lit` to `grade >= 2` and increment `flare` when `grade >= 2`. Wrap the card in `.gr-table` with a `Candle` on each side. Use `useDocumentHidden` (from `../graveyard/useDocumentHidden`) for the paused state. Do not change the sounds, jumpscare, Coward-mode logic or `onComplete`.
-- [ ] Rework `FlipCard.tsx` and `review.css` for a parchment card in a perspective container (design sections 6 and 8): `.gr-flipcard` has `perspective`; `.gr-flipcard__inner` has `transform-style: preserve-3d` and a static `rotateY(180deg)` when `data-flipped="true"`; both faces use `backface-visibility: hidden`; the back is pre-rotated 180 degrees; faces share one grid cell; the card has a `min-height`. Under full motion add `gr-flipcard__inner--flip` and keep `gr-flipcard__back--flip` on the back (keyframe from `rotateY(0)` to `rotateY(180deg)`, `--motion-normal`, `cubic-bezier(0.4, 0, 0.2, 1)`). Under reduced motion add neither class. Keep the front `<button>`, focus on mount, Space handling, `backId`, and the back mounted only after the flip. Do not repeat the front word as a second text node.
-- [ ] Table styling: a table surface from `--color-grave-soil` and `--color-stone-dark` with a soft lamplight radial gradient; text on the card uses `--color-text-inverse` and `--color-ink-secondary`; two-tone focus ring on controls over the parchment (inner `--color-void`, outer `--color-focus-ring`). Below 40rem the candles sit above the card side by side. The séance (header, table, card, grade buttons) fits 720p for ordinary card text.
-- [ ] Add the flame animations to `review.css`: `candle-flare` (`transform` and `opacity`, `var(--motion-slow)`) and `candle-flicker` (`calc(var(--motion-fast) * 2)`, `steps(3)`); a paused rule for hidden.
-- [ ] Tests in `review.test.ts`:
+- [x] Add `--color-parchment` and `--color-ink-secondary` to `index.css`, `tokens.ts` and `TOKEN_MAP`; add both names to `tokens.test.ts`.
+- [x] Create `src/components/review/Candle.tsx`: SVG candle with a wax body (`--color-candle-wax`), iron holder (`--color-iron`), wick and a flame (`--color-candle-flame`) with a radial glow inside the same group. Props `lit: boolean`, `flare: number`, `paused: boolean`, `motion: boolean`. Root is `aria-hidden="true"` with `data-lit`. When lit and motion allowed: class `gr-candle__flame--flicker`; when `flare` changes and motion allowed: `gr-candle__flame--flare`, keyed on `flare` so it restarts. When unlit: no flame, only a wick ember dot.
+- [x] Update `SeanceSession.tsx`: state `lit` (false at start) and `flare` (0). In `handleGrade`, after the existing logic, set `lit` to `grade >= 2` and increment `flare` when `grade >= 2`. Wrap the card in `.gr-table` with a `Candle` on each side. Use `useDocumentHidden` (from `../graveyard/useDocumentHidden`) for the paused state. Do not change the sounds, jumpscare, Coward-mode logic or `onComplete`.
+- [x] Rework `FlipCard.tsx` and `review.css` for a parchment card in a perspective container (design sections 6 and 8): `.gr-flipcard` has `perspective`; `.gr-flipcard__inner` has `transform-style: preserve-3d` and a static `rotateY(180deg)` when `data-flipped="true"`; both faces use `backface-visibility: hidden`; the back is pre-rotated 180 degrees; faces share one grid cell; the card has a `min-height`. Under full motion add `gr-flipcard__inner--flip` and keep `gr-flipcard__back--flip` on the back (keyframe from `rotateY(0)` to `rotateY(180deg)`, `--motion-normal`, `cubic-bezier(0.4, 0, 0.2, 1)`). Under reduced motion add neither class. Keep the front `<button>`, focus on mount, Space handling, `backId`, and the back mounted only after the flip. Do not repeat the front word as a second text node.
+- [x] Table styling: a table surface from `--color-grave-soil` and `--color-stone-dark` with a soft lamplight radial gradient; text on the card uses `--color-text-inverse` and `--color-ink-secondary`; two-tone focus ring on controls over the parchment (inner `--color-void`, outer `--color-focus-ring`). Below 40rem the candles sit above the card side by side. The séance (header, table, card, grade buttons) fits 720p for ordinary card text.
+- [x] Add the flame animations to `review.css`: `candle-flare` (`transform` and `opacity`, `var(--motion-slow)`) and `candle-flicker` (`calc(var(--motion-fast) * 2)`, `steps(3)`); a paused rule for hidden.
+- [x] Tests in `review.test.ts`:
   - Candles are unlit at session start; after grading Good or Easy `data-lit="true"` on both; after Again or Hard `data-lit="false"`; Good then Again returns to unlit.
   - A Good or Easy grade renders the flare class under full motion; under reduced motion neither flare nor flicker class is present, while `data-lit` still updates.
   - Coward mode: grading Again in Coward mode leaves both candles unlit and the jumpscare absent, and Good still lights them.
@@ -150,10 +150,10 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
   - CSS text: `review.css` contains `perspective`, `backface-visibility: hidden`, `rotateY(180deg)`; the flip and candle keyframes contain only `transform` and `opacity`.
   - Full motion: the back has `gr-flipcard__back--flip` and the inner box has `gr-flipcard__inner--flip`. Reduced: neither. The existing flip, grading, keyboard and jumpscare tests pass unchanged.
   - `contrast.test.ts`: `text-inverse` on `parchment` at least 4.5; `ink-secondary` on `parchment` at least 4.5; `void` on `parchment` at least 3; `focus-ring` on `grave-soil` and on `stone-dark` (the table) at least 3.
-- [ ] Steering: add `Candle.tsx` to the review folder in `structure.md`.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes.
-- [ ] Gate: `npm run build` passes.
+- [x] Steering: add `Candle.tsx` to the review folder in `structure.md`.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes.
+- [x] Gate: `npm run build` passes.
 
 *Owner check: the séance shows a table with a parchment card and a candle on each side. Space turns the card in 3D. Pressing 3 or 4 lights both flames with a flare; 1 or 2 puts them out. With reduced motion the card swaps instantly and the flames change without animation.*
 
