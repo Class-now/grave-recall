@@ -10,6 +10,7 @@ export const en: Record<TranslationKey, string> = {
   'nav.stats': 'Ledger of the Dead',
   'nav.settings': 'Settings',
   'nav.crypts': 'Crypts',
+  'nav.main': 'Main navigation',
 
   // Graveyard view
   'graveyard.title': 'The Graveyard',
@@ -75,6 +76,7 @@ export const en: Record<TranslationKey, string> = {
 
   // Séance (review session)
   'seance.title': 'Séance',
+  'seance.reviewed': '{count} reviewed',
   'seance.noCards': 'No cards to review',
   'seance.noCardsDesc': 'All souls are at rest. Return later.',
   'seance.flip': 'Press Space or tap to reveal',

@@ -155,12 +155,12 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 5, 7, 9*
 *Refs: US-12–15, AC-12.1–12.3, AC-13.1–13.4, AC-14.1–14.7, AC-15.1–15.4*
 
-- [ ] Implement `<SeanceSession>`: loads due cards into queue; shows "no cards due" message if queue is empty; displays remaining count
-- [ ] Implement `<FlipCard>`: front face shown initially; grade buttons hidden; Space or tap reveals back; focus moves to "Again" button on flip; `card-flip` animation (instant cross-fade when `reducedMotion = true`); plays `pageTurn()` on flip
-- [ ] Implement `<GradeButtons>`: Again / Hard / Good / Easy buttons; keys 1–4; each grade: calls `gradeCard()` action, plays appropriate sound, displays caption; advances queue; plays `sessionEndToll()` and navigates to graveyard when queue empty
-- [ ] Implement jumpscare flash overlay: `jumpscare-flash` animation on Again for card with `stability > 20`; suppressed by `reducedMotion` OR `cowardMode`
-- [ ] Focus management: auto-focus flip button on new card; auto-focus Again button after flip; visible focus ring
-- [ ] Write review session tests: Space flips card; key `1` calls Again grade and plays ghost scream (or soft chime in coward mode); empty queue shows completion screen; full keyboard flow (Space → `2`) advances to next card
+- [x] Implement `<SeanceSession>`: loads due cards into queue; shows "no cards due" message if queue is empty; displays remaining count
+- [x] Implement `<FlipCard>`: front face shown initially; grade buttons hidden; Space or tap reveals back; focus moves to "Again" button on flip; `card-flip` animation (instant cross-fade when `reducedMotion = true`); plays `pageTurn()` on flip
+- [x] Implement `<GradeButtons>`: Again / Hard / Good / Easy buttons; keys 1–4; each grade: calls `gradeCard()` action, plays appropriate sound, displays caption; advances queue; plays `sessionEndToll()` and navigates to graveyard when queue empty
+- [x] Implement jumpscare flash overlay: `jumpscare-flash` animation on Again for card with `stability > 20`; suppressed by `reducedMotion` OR `cowardMode`
+- [x] Focus management: auto-focus flip button on new card; auto-focus Again button after flip; visible focus ring
+- [x] Write review session tests: Space flips card; key `1` calls Again grade and plays ghost scream (or soft chime in coward mode); empty queue shows completion screen; full keyboard flow (Space → `2`) advances to next card
 
 ---
 

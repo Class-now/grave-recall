@@ -2,7 +2,7 @@
  * Active review session state.
  */
 import { signal, computed } from '@preact/signals';
-import type { Grade } from '../scheduler/types';
+import type { DeckId, Grade } from '../scheduler/types';
 import type { Card } from './cards';
 import { schedule } from '../scheduler';
 import { addReviewLog, updateCardSrs, reviewLog, dueCards } from './cards';
@@ -46,10 +46,11 @@ export const isSessionComplete = computed(() => {
 export const isCardFlipped = computed(() => isFlipped.value);
 
 /**
- * Starts a new review session with due cards.
+ * Starts a new review session with due cards, in random order.
+ * When `deckId` is given only that crypt's due cards are queued (AC-12.1).
  */
-export function startSession(): void {
-  const due = dueCards.value;
+export function startSession(deckId: DeckId | null = null): void {
+  const due = deckId === null ? dueCards.value : dueCards.value.filter((c) => c.deckId === deckId);
   // Shuffle the cards for variety
   const shuffled = [...due].sort(() => Math.random() - 0.5);
   sessionQueue.value = shuffled;

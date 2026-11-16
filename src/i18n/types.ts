@@ -11,6 +11,7 @@ export type TranslationKey =
   | 'nav.stats'
   | 'nav.settings'
   | 'nav.crypts'
+  | 'nav.main'
 
   // Graveyard view
   | 'graveyard.title'
@@ -87,6 +88,7 @@ export type TranslationKey =
   | 'seance.complete'
   | 'seance.completeDesc'
   | 'seance.pressSpace'
+  | 'seance.reviewed'
 
   // Stats (Ledger of the Dead)
   | 'stats.title'

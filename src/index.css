@@ -90,3 +90,16 @@ body {
   outline: 2px solid var(--color-focus-ring);
   outline-offset: 2px;
 }
+
+/* View switcher */
+#grave-recall-root nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-block: 0.5rem;
+}
+
+#grave-recall-root nav [aria-current="page"] {
+  background: var(--color-stone-mid);
+  border-color: var(--color-focus-ring);
+}

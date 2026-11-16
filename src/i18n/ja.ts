@@ -10,6 +10,7 @@ export const ja: Record<TranslationKey, string> = {
   'nav.stats': '死者之名簿',
   'nav.settings': '設定',
   'nav.crypts': '墓所',
+  'nav.main': 'メインナビゲーション',
 
   // Graveyard view
   'graveyard.title': '墓地',
@@ -75,6 +76,7 @@ export const ja: Record<TranslationKey, string> = {
 
   // Séance (review session)
   'seance.title': '降霊会',
+  'seance.reviewed': '{count}枚を復習しました',
   'seance.noCards': '復習するカードがありません',
   'seance.noCardsDesc': 'すべての魂は安らいでいます。また来てみましょう。',
   'seance.flip': 'スペースキーを押して確認',
