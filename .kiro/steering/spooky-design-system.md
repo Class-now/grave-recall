@@ -4,7 +4,7 @@ inclusion: always
 
 # Grave Recall — Spooky Design System
 
-Every token, motion rule, and sound rule in this file exists to serve a functional purpose. Decoration for its own sake is rejected. If a new visual or audio effect is added, its data mapping must be documented here before it is implemented.
+Every token, motion rule, and sound rule in this file exists to serve a functional purpose. Decoration for its own sake is rejected. If a new visual or audio effect is added, its data mapping must be documented here before it is implemented. The only exception is the closed list of static, data-free elements in section 6 (Decorative backdrop).
 
 ---
 
@@ -209,7 +209,7 @@ The reduced-motion signal is stored as a Preact signal in `store/prefs.ts`. Comp
 
 ## 5. Effect-to-Data Master Table
 
-This table is the single source of truth. Any new effect must be added here before implementation.
+This table is the single source of truth for every effect that reads, or can be mistaken for, application data. Any new such effect must be added here before implementation. Static backdrop elements that carry no data are governed by section 6 instead.
 
 | Effect | Type | Data source | Formula / mapping |
 |---|---|---|---|
@@ -225,3 +225,65 @@ This table is the single source of truth. Any new effect must be added here befo
 | Ghost scream audio | Audio | Incorrect recall event | `ghostScream()` called; replaced by `softChime()` in Coward mode |
 | Candle seal audio | Audio | Correct recall event (Good/Easy) | `candleSeal()` called |
 | Jumpscare flash | Visual | Again grade on card with `stability > 20` | `jumpscare-flash` animation; suppressed by reduced-motion or Coward mode |
+
+---
+
+## 6. Decorative backdrop
+
+The rule "every effect has a data source" (sections 1 to 5) stays in force for anything that moves, glows, changes colour or changes shape in response to state. This section makes one narrow exception: a closed list of **static, data-free** elements that give the app a setting. They exist so the data-mapped effects have something to stand in front of. They must never carry, encode or imitate data.
+
+### 6.1 Allowed elements (closed list)
+
+| Element | Where | Constraints |
+|---|---|---|
+| Night-sky gradient | Graveyard sky, page background wash | Vertical gradient between `--color-sky-top` and `--color-sky-horizon`. No stars, clouds or other scattered items. |
+| Far hills | Graveyard horizon | Two hand-authored silhouette paths (`--color-hill-far`, `--color-hill-near`). |
+| Bare-tree silhouettes | Graveyard horizon and edges | A fixed set of hand-authored paths in `--color-tree`. The number and positions are constants. |
+| Foreground ground | Graveyard bottom edge | A fixed silhouette strip in `--color-ground-fore`, drawn in front of the last row of graves. |
+| Iron fence | Graveyard mid-ground | A fixed run of pickets in `--color-iron`. Picket count is a constant. |
+| Gate | Graveyard, behind the crow | The gate structure only (posts, arch, bars). The crow perched on it stays data-mapped (streak) under section 5. |
+| Moon halo | Around the moon disc | One soft radial glow in `--color-halo` at a constant opacity. It never varies with progress and never draws a second disc or wedge. The lit wedge inside it stays data-mapped (daily progress). |
+| Page frame ornaments | App header, view headings, Ledger page ruling | Tombstone logo, divider rules, corner flourishes, ruled lines. Text content is never part of an ornament. |
+| Séance table props | Séance view | Table surface, candle bodies (`--color-candle-wax`) and holders (`--color-iron`). The flames are not props. Flame behaviour is data-mapped and is documented in section 5. |
+
+Anything not in this table is not decorative backdrop. Adding an element means editing this table first.
+
+### 6.2 Backdrop palette
+
+All values are CSS custom properties on `:root`, mirrored as constants in `src/design/tokens.ts`, and covered by the token mirror test.
+
+| Token | Hex | Usage |
+|---|---|---|
+| `--color-sky-top` | `#05060c` | Top of the night-sky gradient |
+| `--color-sky-horizon` | `#1a2238` | Bottom of the night-sky gradient |
+| `--color-hill-far` | `#121826` | Farthest hill silhouette |
+| `--color-hill-near` | `#0d1019` | Nearer hill silhouette |
+| `--color-tree` | `#07080d` | Bare-tree silhouettes |
+| `--color-iron` | `#1f2229` | Fence, gate, candle holders |
+| `--color-ground-fore` | `#120d0a` | Foreground ground strip |
+| `--color-halo` | `#6f86b8` | Moon halo (used at a constant opacity of 0.35 or less) |
+
+Backdrop colours other than `--color-halo` must be darker (lower relative luminance) than `--color-stone-dark`, so that tombstones, ghosts and fog always read as the foreground. Backdrop elements must not use the data-reserved colours `--color-ghost-body`, `--color-ghost-glow`, `--color-fog-base`, `--color-crow-eye`, `--color-candle-flame`, `--color-moon-full`, `--color-danger`, `--color-warning` and `--color-success`.
+
+### 6.3 Rules that keep the backdrop from becoming data
+
+1. **No randomness.** Backdrop geometry is hand-authored constants. No `Math.random`, no time-based or card-derived seeds, no procedural scattering.
+2. **No counts.** The number of trees, pickets, hills and candles is fixed. It is never derived from cards, crypts, reviews, streak or any other store value.
+3. **No lookalikes.** The backdrop must not contain ghost-like figures, mist or fog-like shapes, cracks or moss on backdrop stone, bird shapes, or any second moon disc or phase. It must not use colour or opacity changes that could be read as a state.
+4. **Identical for every user.** The rendered backdrop subtree is identical for every store state and every locale. A test must render the scene with different store contents and assert the backdrop markup is equal.
+5. **Static.** Backdrop elements have no animation. Any motion near them belongs in the Animation Catalogue (section 3.2) with a data source.
+6. **Inert for assistive technology and input.** Backdrop elements carry `aria-hidden="true"`, are not focusable, have no `role`, contain no text, and use `pointer-events: none`.
+7. **Reduced motion and Coward mode.** Neither setting changes the backdrop, because it is already static and unscary.
+
+### 6.4 Perspective cues on data elements
+
+The graveyard scene may give tombstones depth so the scene reads as a place. These cues are layout, not data, and are therefore allowed on the data-mapped tombstone, provided they obey the limits below.
+
+| Cue | Source | Limit |
+|---|---|---|
+| Scale by row (back rows smaller) | Row index and total row count only | Between 0.7 and 1.0 of full size |
+| Depth shade (back rows darker) | Row index only | An overlay of `--color-void` at 0.30 opacity or less. It must not replace or alter `--tombstone-fill`. |
+| Row offset (alternate rows shifted) | Row parity | At most half a column pitch |
+| Tilt | A fixed function of row and column | At most 3 degrees, never read from card fields |
+
+A cue must never use a card field (stability, retrievability, due date, state, text) as input. Depth shade must stay small enough that the stability gradient from `--color-stone-crumbled` to `--color-stone-dark` remains readable within a row.
