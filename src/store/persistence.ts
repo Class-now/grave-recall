@@ -1,6 +1,8 @@
 /**
  * localStorage read/write, JSON export/import.
  */
+import { effect } from '@preact/signals';
+
 import type { UserPrefs } from './prefs';
 import type { Deck } from './decks';
 import type { Card, ReviewLogEntry } from './cards';
@@ -111,6 +113,59 @@ export function saveState(): void {
   }
 }
 
+/** Quiet period after the last store change before the state is written. */
+const AUTOSAVE_DELAY_MS = 250;
+
+/**
+ * Persists decks, cards and the review log whenever any of them change.
+ *
+ * Writes are debounced so a bulk import or a burst of grades causes one write.
+ * A pending write is flushed when the page is hidden or closed, so the last
+ * change is not lost. The current state is not written on start-up: call
+ * `saveState()` once yourself if it should be (e.g. after loading starter crypts).
+ *
+ * Returns a function that stops autosaving and flushes any pending write.
+ */
+export function startAutoSave(delayMs: number = AUTOSAVE_DELAY_MS): () => void {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let initialRun = true;
+
+  function flush(): void {
+    if (timer === undefined) return;
+    clearTimeout(timer);
+    timer = undefined;
+    saveState();
+  }
+
+  const disposeEffect = effect(() => {
+    // Reading .value subscribes this effect to each signal.
+    void decks.value;
+    void cards.value;
+    void reviewLog.value;
+    if (initialRun) {
+      initialRun = false;
+      return;
+    }
+    if (timer !== undefined) clearTimeout(timer);
+    timer = setTimeout(() => {
+      timer = undefined;
+      saveState();
+    }, delayMs);
+  });
+
+  function onVisibilityChange(): void {
+    if (document.visibilityState === 'hidden') flush();
+  }
+  window.addEventListener('pagehide', flush);
+  document.addEventListener('visibilitychange', onVisibilityChange);
+
+  return () => {
+    disposeEffect();
+    window.removeEventListener('pagehide', flush);
+    document.removeEventListener('visibilitychange', onVisibilityChange);
+    flush();
+  };
+}
 /**
  * Loads the app state from localStorage.
  * Returns true if state was loaded, false if starting fresh.

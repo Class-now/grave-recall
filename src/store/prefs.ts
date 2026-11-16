@@ -20,7 +20,9 @@ const defaultPrefs: UserPrefs = {
   volume: 0.7,
   dailyGoal: 20,
   reducedMotion: false,
-  showCaptions: true,
+  // Off by default: captions appear while a sound plays, then hide (AC-25.3).
+  // The Settings toggle keeps the bar visible permanently (AC-25.4).
+  showCaptions: false,
 };
 
 // Load initial reducedMotion from OS preference

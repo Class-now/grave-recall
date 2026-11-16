@@ -23,6 +23,7 @@ export const ja: Record<TranslationKey, string> = {
   'graveyard.retrievability': '想起確率',
   'graveyard.dueDate': '復習期限',
   'graveyard.close': '閉じる',
+  'graveyard.keyboardHint': '矢印キーで墓の間を移動し、Enter キーで選んだ墓を開きます。',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'あなたの墓所',

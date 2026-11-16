@@ -9,18 +9,23 @@ import frenchJson from '../../public/starter-crypts/french-50.json';
 interface Fixture {
   file: string;
   data: unknown;
+  name: string;
   language: string;
   cardCount: number;
 }
 
 const fixtures: Fixture[] = [
-  { file: 'english-100.json', data: englishJson, language: 'en', cardCount: 100 },
-  { file: 'french-50.json', data: frenchJson, language: 'fr', cardCount: 50 },
+  { file: 'english-100.json', data: englishJson, name: 'English Essentials', language: 'en', cardCount: 100 },
+  { file: 'french-50.json', data: frenchJson, name: 'Français Débutant', language: 'fr', cardCount: 50 },
 ];
 
-describe.each(fixtures)('starter crypt $file', ({ data, language, cardCount }) => {
+describe.each(fixtures)('starter crypt $file', ({ data, name, language, cardCount }) => {
   it('passes the isDeckExport type guard', () => {
     expect(isDeckExport(data)).toBe(true);
+  });
+
+  it('is named as AC-04.1 requires', () => {
+    expect((data as DeckExport).name).toBe(name);
   });
 
   it('has version 1, a non-empty name and the expected language', () => {

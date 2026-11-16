@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "name": "50 Common French Words",
+  "name": "Français Débutant",
   "language": "fr",
   "cards": [
     { "front": "bonjour", "back": "hello; good day", "example": "Bonjour, comment allez-vous?" },

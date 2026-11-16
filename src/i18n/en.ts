@@ -23,6 +23,7 @@ export const en: Record<TranslationKey, string> = {
   'graveyard.retrievability': 'Retrievability',
   'graveyard.dueDate': 'Due date',
   'graveyard.close': 'Close',
+  'graveyard.keyboardHint': 'Arrow keys move between graves. Enter opens the selected grave.',
 
   // Crypt list (deck management)
   'crypt.listTitle': 'Your Crypts',

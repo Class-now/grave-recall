@@ -1,6 +1,6 @@
 import { render, h } from 'preact';
 import { App } from './app.js';
-import { loadPrefs, loadState, loadStarterCrypts } from './store/index.js';
+import { loadPrefs, loadState, loadStarterCrypts, saveState, startAutoSave } from './store/index.js';
 
 // Initialize app state
 async function initApp(): Promise<void> {
@@ -13,7 +13,12 @@ async function initApp(): Promise<void> {
   // If no saved state, load starter crypts on first launch
   if (!loaded) {
     await loadStarterCrypts();
+    // Persist the starter crypts so a reload restores them instead of re-seeding.
+    saveState();
   }
+
+  // From here on, every change to decks, cards or the review log is saved.
+  startAutoSave();
 }
 
 // Start the app

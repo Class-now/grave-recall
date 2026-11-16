@@ -18,9 +18,14 @@
   margin: 0 0 0.5rem;
 }
 
-.gr-graveyard__empty {
+.gr-graveyard__empty,
+.gr-graveyard__hint {
   color: var(--color-text-secondary);
   margin: 0 0 0.5rem;
+}
+
+.gr-graveyard__hint {
+  font-size: var(--text-label);
 }
 
 .gr-scene {

@@ -41,28 +41,76 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
 
   const svgRef = useRef<SVGSVGElement>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  // Roving tabindex: one grave is the Tab stop, arrow keys move between graves.
+  const [stopId, setStopId] = useState<string | null>(null);
+  const stopIndex = Math.max(0, visible.findIndex((c) => c.id === stopId));
   const selected = selectedId === null ? null : (cards.value.find((c) => c.id === selectedId) ?? null);
 
   function closePanel(): void {
     const id = selectedId;
     setSelectedId(null);
-    if (id === null) return;
+    if (id !== null) focusGrave(id);
+  }
+
+  function focusGrave(id: string): void {
     const graves = svgRef.current?.querySelectorAll<SVGGElement>('[data-card-id]');
     graves?.forEach((g) => {
       if (g.getAttribute('data-card-id') === id) g.focus();
     });
   }
 
+  function onSceneKeyDown(e: KeyboardEvent): void {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const id = e.target instanceof Element ? e.target.getAttribute('data-card-id') : null;
+    if (id === null) return;
+    const index = visible.findIndex((c) => c.id === id);
+    if (index < 0) return;
+    const last = visible.length - 1;
+    let next: number;
+    switch (e.key) {
+      case 'ArrowRight':
+        next = index + 1;
+        break;
+      case 'ArrowLeft':
+        next = index - 1;
+        break;
+      case 'ArrowDown':
+        next = index + layout.columns;
+        break;
+      case 'ArrowUp':
+        next = index - layout.columns;
+        break;
+      case 'Home':
+        next = 0;
+        break;
+      case 'End':
+        next = last;
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+    const target = visible[Math.min(last, Math.max(0, next))];
+    if (target !== undefined) focusGrave(target.id);
+  }
+
   return (
     <section class="gr-graveyard">
       <h2 class="gr-graveyard__title">{t('graveyard.title')}</h2>
       {visible.length === 0 && <p class="gr-graveyard__empty">{t('graveyard.noCards')}</p>}
+      {visible.length > 0 && (
+        <p id="gr-graveyard-hint" class="gr-graveyard__hint">
+          {t('graveyard.keyboardHint')}
+        </p>
+      )}
       <svg
         ref={svgRef}
         class={hidden ? 'gr-scene gr-scene--hidden' : 'gr-scene'}
         viewBox={`0 0 ${layout.width} ${layout.height}`}
         role="group"
         aria-label={t('graveyard.title')}
+        aria-describedby={visible.length > 0 ? 'gr-graveyard-hint' : undefined}
+        onKeyDown={onSceneKeyDown}
       >
         <rect class="gr-scene__sky" x="0" y="0" width={layout.width} height={layout.height} />
         <rect
@@ -77,7 +125,15 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
         {visible.map((card, i) => {
           const pos = layout.positions[i];
           return pos === undefined ? null : (
-            <Tombstone key={card.id} card={card} x={pos.x} y={pos.y} onOpen={(c) => setSelectedId(c.id)} />
+            <Tombstone
+              key={card.id}
+              card={card}
+              x={pos.x}
+              y={pos.y}
+              tabStop={i === stopIndex}
+              onFocus={(c) => setStopId(c.id)}
+              onOpen={(c) => setSelectedId(c.id)}
+            />
           );
         })}
         {visible.map((card, i) => {

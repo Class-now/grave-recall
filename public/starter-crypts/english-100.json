@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "name": "100 Common English Words",
+  "name": "English Essentials",
   "language": "en",
   "cards": [
     { "front": "abandon", "back": "to leave someone or something, usually permanently", "example": "They abandoned their car on the highway." },

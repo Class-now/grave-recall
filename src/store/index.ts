@@ -89,6 +89,7 @@ export {
 // Persistence
 export {
   saveState,
+  startAutoSave,
   loadState,
   exportJson,
   importJson,

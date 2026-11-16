@@ -2,14 +2,22 @@
  * Date arithmetic helpers.
  */
 
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
 /**
- * Returns the number of whole days between two dates.
+ * Returns the number of calendar days between two dates (local time).
  * The result is positive if b > a, negative if b < a.
+ *
+ * Each date is reduced to its local calendar day and that day is expressed as
+ * a UTC timestamp, so a 23- or 25-hour day at a DST change still counts as
+ * exactly one day.
  */
 export function daysBetween(a: Date, b: Date): number {
-  const aMs = startOfDay(a).getTime();
-  const bMs = startOfDay(b).getTime();
-  return Math.floor((bMs - aMs) / (1000 * 60 * 60 * 24));
+  const aDay = startOfDay(a);
+  const bDay = startOfDay(b);
+  const aUtc = Date.UTC(aDay.getFullYear(), aDay.getMonth(), aDay.getDate());
+  const bUtc = Date.UTC(bDay.getFullYear(), bDay.getMonth(), bDay.getDate());
+  return Math.round((bUtc - aUtc) / MS_PER_DAY);
 }
 
 /**

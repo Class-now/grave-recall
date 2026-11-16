@@ -24,6 +24,7 @@ export type TranslationKey =
   | 'graveyard.retrievability'
   | 'graveyard.dueDate'
   | 'graveyard.close'
+  | 'graveyard.keyboardHint'
 
   // Crypt list (deck management)
   | 'crypt.listTitle'

@@ -26,10 +26,17 @@ export interface TombstoneProps {
   y: number;
   /** Called on click, Enter or Space. */
   onOpen: (card: Card) => void;
+  /**
+   * Whether this grave is the scene's single Tab stop (roving tabindex).
+   * Defaults to true so a lone tombstone is always reachable.
+   */
+  tabStop?: boolean;
+  /** Called when the grave receives focus, so the scene can move the Tab stop to it. */
+  onFocus?: (card: Card) => void;
 }
 
 export function Tombstone(props: TombstoneProps): h.JSX.Element {
-  const { card, x, y, onOpen } = props;
+  const { card, x, y, onOpen, tabStop = true, onFocus } = props;
   const stability = card.srs.stability;
 
   const label = ti('a11y.tombstoneDue', {
@@ -49,7 +56,7 @@ export function Tombstone(props: TombstoneProps): h.JSX.Element {
       <g
         class="gr-tombstone"
         role="button"
-        tabindex={0}
+        tabindex={tabStop ? 0 : -1}
         aria-label={label}
         data-card-id={card.id}
         style={{
@@ -59,6 +66,7 @@ export function Tombstone(props: TombstoneProps): h.JSX.Element {
         }}
         onClick={() => onOpen(card)}
         onKeyDown={onKeyDown}
+        onFocus={() => onFocus?.(card)}
       >
         <path class="gr-tombstone__stone" d="M2 52 V18 A18 18 0 0 1 38 18 V52 Z" />
         <path class="gr-tombstone__moss" d="M2 52 V40 Q10 35 14 42 Q22 33 30 42 Q35 38 38 40 V52 Z" />

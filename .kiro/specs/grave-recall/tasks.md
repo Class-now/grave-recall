@@ -195,14 +195,14 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 8–12*
 *Refs: US-24–28, AC-15.1–15.4, AC-17.2–17.3, AC-27.1–27.3, AC-28.1–28.4, NFR (Lighthouse ≥ 90)*
 
-- [ ] Add `axe-core` / `vitest-axe` and run automated accessibility checks on `<GraveyardScene>`, `<SeanceSession>`, `<LedgerView>`, `<SettingsPanel>`, `<CryptList>` — all must pass with zero violations
-- [ ] Audit and fix Tab order across all views; ensure no keyboard traps outside modals
-- [ ] Verify all modal dialogs trap focus and restore focus on close (AC-28.3)
-- [ ] Verify `prefers-reduced-motion` runtime change (via `matchMedia` listener) updates signal without reload (AC-24.4)
-- [ ] Implement caption live region `<div aria-live="polite">` in app root; wire to audio caption display (AC-25.1); implement auto-hide timer (AC-25.3)
-- [ ] Verify WCAG AA contrast ratios for all colour token pairs in §1.3 of spooky-design-system (use automated contrast-check utility or manual audit)
-- [ ] Verify all tombstone and ghost SVG elements have `role` and `aria-label` (AC-17.2, AC-28.2)
-- [ ] Run Lighthouse in CI (or document manual Lighthouse run); achieve accessibility score ≥ 90
+- [x] Add `axe-core` / `vitest-axe` and run automated accessibility checks on `<GraveyardScene>`, `<SeanceSession>`, `<LedgerView>`, `<SettingsPanel>`, `<CryptList>` — all must pass with zero violations
+- [x] Audit and fix Tab order across all views; ensure no keyboard traps outside modals
+- [x] Verify all modal dialogs trap focus and restore focus on close (AC-28.3)
+- [x] Verify `prefers-reduced-motion` runtime change (via `matchMedia` listener) updates signal without reload (AC-24.4)
+- [x] Implement caption live region `<div aria-live="polite">` in app root; wire to audio caption display (AC-25.1); implement auto-hide timer (AC-25.3)
+- [x] Verify WCAG AA contrast ratios for all colour token pairs in §1.3 of spooky-design-system (use automated contrast-check utility or manual audit)
+- [x] Verify all tombstone and ghost SVG elements have `role` and `aria-label` (AC-17.2, AC-28.2)
+- [x] Run Lighthouse in CI (or document manual Lighthouse run); achieve accessibility score ≥ 90
 
 ---
 

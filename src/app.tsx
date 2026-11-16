@@ -1,11 +1,12 @@
 import { h } from 'preact';
 import { useEffect, useState } from 'preact/hooks';
 
-import { activeDeckId } from './store';
+import { activeDeckId, locale } from './store';
 import { markGestureOccurred } from './audio/context';
 import { t } from './i18n';
 import type { TranslationKey } from './i18n/types';
 
+import { CaptionBar } from './components/captions/CaptionBar';
 import { CryptEditor } from './components/deck/CryptEditor';
 import { CryptList } from './components/deck/CryptList';
 import { GraveyardScene } from './components/graveyard/GraveyardScene';
@@ -45,6 +46,13 @@ export function App(): h.JSX.Element {
       for (const type of GESTURE_EVENTS) document.removeEventListener(type, onGesture, true);
     };
   }, []);
+
+  // Keep the page language in step with the UI language so screen readers pick
+  // the right voice (WCAG 3.1.1).
+  const lang = locale.value;
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
 
   function show(next: View): void {
     setSeanceDone(false);
@@ -90,6 +98,7 @@ export function App(): h.JSX.Element {
         {view === 'crypts' && (inCrypt ? <CryptEditor /> : <CryptList />)}
         {view === 'settings' && <SettingsPanel />}
       </main>
+      <CaptionBar />
     </div>
   );
 }

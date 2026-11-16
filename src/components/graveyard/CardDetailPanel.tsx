@@ -44,7 +44,7 @@ export function CardDetailPanel(props: CardDetailPanelProps): h.JSX.Element {
   const retrievabilityPct = Math.round(getCardRetrievability(card, now) * 100);
 
   return (
-    <aside class="gr-detail" role="dialog" aria-labelledby={TITLE_ID}>
+    <div class="gr-detail" role="dialog" aria-labelledby={TITLE_ID}>
       <h3 id={TITLE_ID} class="gr-detail__title">
         {t('graveyard.detailTitle')}
       </h3>
@@ -77,6 +77,6 @@ export function CardDetailPanel(props: CardDetailPanelProps): h.JSX.Element {
       >
         {t('graveyard.close')}
       </button>
-    </aside>
+    </div>
   );
 }
