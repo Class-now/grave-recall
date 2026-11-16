@@ -115,12 +115,12 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Task 5*
 *Refs: US-13, US-14, US-23, US-25, US-26, AC-25.1–25.4, AC-26.1–26.2*
 
-- [ ] Implement `src/audio/context.ts`: lazy `AudioContext` singleton; `ensureContext()` no-op before first gesture; `markGestureOccurred()` to initialise
-- [ ] Implement `src/audio/synth.ts`: low-level helpers `createOscillator`, `createGain`, `createFilter`, `createNoise`, `scheduleEnvelope`
-- [ ] Implement all 8 sounds in `src/audio/sounds.ts`: `ghostScream`, `softChime`, `candleSeal`, `hardThud`, `pageTurn`, `crowCaw`, `sessionEndToll`, `importSuccess` — each routes through master `GainNode`; reads `cowardMode` signal to substitute `ghostScream` → `softChime`
-- [ ] Implement `src/audio/captions.ts` mapping each sound ID to its `TranslationKey`
-- [ ] Write audio unit tests with a mocked `AudioContext`; assert `softChime` is called instead of `ghostScream` when `cowardMode = true`; assert all sounds are no-ops pre-gesture
-- [ ] Verify `audio/` has no imports from `components/`
+- [x] Implement `src/audio/context.ts`: lazy `AudioContext` singleton; `ensureContext()` no-op before first gesture; `markGestureOccurred()` to initialise
+- [x] Implement `src/audio/synth.ts`: low-level helpers `createOscillator`, `createGain`, `createFilter`, `createNoise`, `scheduleEnvelope`
+- [x] Implement all 8 sounds in `src/audio/sounds.ts`: `ghostScream`, `softChime`, `candleSeal`, `hardThud`, `pageTurn`, `crowCaw`, `sessionEndToll`, `importSuccess` — each routes through master `GainNode`; reads `cowardMode` signal to substitute `ghostScream` → `softChime`
+- [x] Implement `src/audio/captions.ts` mapping each sound ID to its `TranslationKey`
+- [x] Write audio unit tests with a mocked `AudioContext`; assert `softChime` is called instead of `ghostScream` when `cowardMode = true`; assert all sounds are no-ops pre-gesture
+- [x] Verify `audio/` has no imports from `components/`
 
 ---
 
