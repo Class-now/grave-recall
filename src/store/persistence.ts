@@ -197,38 +197,30 @@ export function importJson(text: string): boolean {
       return false;
     }
     
-    // Validate and import decks
-    if (data.decks.length > 0) {
-      const decksWithDates = data.decks.map(d => ({
-        ...d,
-        createdAt: new Date(d.createdAt),
-      }));
-      loadDecks(decksWithDates);
-    }
-    
-    // Validate and import cards
-    if (data.cards.length > 0) {
-      const cardsWithDates = data.cards.map(c => ({
-        ...c,
-        createdAt: new Date(c.createdAt),
-        srs: {
-          ...c.srs,
-          dueDate: new Date(c.srs.dueDate),
-          lastReviewed: c.srs.lastReviewed ? new Date(c.srs.lastReviewed) : null,
-        },
-      }));
-      loadCards(cardsWithDates);
-    }
-    
-    // Import review log
-    if (data.reviewLog && data.reviewLog.length > 0) {
-      const logWithDates = data.reviewLog.map(entry => ({
-        ...entry,
-        date: new Date(entry.date),
-      }));
-      loadReviewLog(logWithDates);
-    }
-    
+    // Convert everything first: if any record is malformed this throws before
+    // a single signal changes, so a failed import leaves the state untouched.
+    const decksWithDates = data.decks.map(d => ({
+      ...d,
+      createdAt: new Date(d.createdAt),
+    }));
+    const cardsWithDates = data.cards.map(c => ({
+      ...c,
+      createdAt: new Date(c.createdAt),
+      srs: {
+        ...c.srs,
+        dueDate: new Date(c.srs.dueDate),
+        lastReviewed: c.srs.lastReviewed ? new Date(c.srs.lastReviewed) : null,
+      },
+    }));
+    const logWithDates = data.reviewLog.map(entry => ({
+      ...entry,
+      date: new Date(entry.date),
+    }));
+
+    // An import replaces the current state, including with empty lists.
+    loadDecks(decksWithDates);
+    loadCards(cardsWithDates);
+    loadReviewLog(logWithDates);
     return true;
   } catch (e) {
     console.warn('Import failed:', e);

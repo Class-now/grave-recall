@@ -97,9 +97,9 @@ export function loadPrefs(): void {
     const stored = localStorage.getItem('grave-recall-prefs');
     if (stored) {
       const prefs: Partial<UserPrefs> = JSON.parse(stored);
-      if (prefs.locale) locale.value = prefs.locale;
+      if (prefs.locale === 'en' || prefs.locale === 'ja') locale.value = prefs.locale;
       if (typeof prefs.cowardMode === 'boolean') cowardMode.value = prefs.cowardMode;
-      if (typeof prefs.volume === 'number') volume.value = prefs.volume;
+      if (typeof prefs.volume === 'number' && prefs.volume >= 0 && prefs.volume <= 1) volume.value = prefs.volume;
       if (typeof prefs.dailyGoal === 'number') dailyGoal.value = prefs.dailyGoal;
       if (typeof prefs.reducedMotion === 'boolean') reducedMotionUser.value = prefs.reducedMotion;
       if (typeof prefs.showCaptions === 'boolean') showCaptions.value = prefs.showCaptions;

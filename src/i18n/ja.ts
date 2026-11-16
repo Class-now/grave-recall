@@ -116,7 +116,7 @@ export const ja: Record<TranslationKey, string> = {
   'settings.captionsDesc': '音声のテキストキャプションを表示',
   'settings.appearance': '外観',
   'settings.reducedMotion': 'モーション軽減',
-  'settings.reducedMotionDesc': 'アニメーションを無効化',
+  'settings.reducedMotionDesc': '端末の設定とは別に、このアプリのアニメーションをオフにします。端末の設定も常に反映されます。',
   'settings.language': '言語',
   'settings.data': 'データ',
   'settings.export': 'データをエクスポート',

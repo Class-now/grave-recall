@@ -116,7 +116,7 @@ export const en: Record<TranslationKey, string> = {
   'settings.captionsDesc': 'Display text captions for sounds',
   'settings.appearance': 'Appearance',
   'settings.reducedMotion': 'Reduced Motion',
-  'settings.reducedMotionDesc': 'Disable animations',
+  'settings.reducedMotionDesc': 'Turn off animations in this app, separately from your device setting. Your device setting is always respected too.',
   'settings.language': 'Language',
   'settings.data': 'Data',
   'settings.export': 'Export Data',

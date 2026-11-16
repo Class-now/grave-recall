@@ -180,14 +180,14 @@ Property-test sub-tasks are marked **[property-test]** and must pass before the 
 *Prerequisites: Tasks 5, 7*
 *Refs: US-24–29, AC-24.1–24.4, AC-25.4, AC-26.1–26.5, AC-27.1–27.3, AC-28.1–28.4, AC-29.1–29.4*
 
-- [ ] Implement `<SettingsPanel>`: accessible panel with sections for Audio, Appearance, Language, Data
-- [ ] Implement `<CowardModeToggle>`: checkbox that updates `cowardMode` signal; persisted; visually labelled; independent of `reducedMotion`
-- [ ] Implement reduced-motion user override toggle: sets `reducedMotion` signal override; labelled clearly as separate from OS setting
-- [ ] Implement volume slider: range [0,1]; updates master `GainNode` gain; persisted
-- [ ] Implement show-captions toggle: persisted; described in AC-25.4
-- [ ] Implement `<LanguageSelector>`: radio or select for `en` / `ja`; updates locale signal; UI updates immediately without reload; persisted
-- [ ] Implement `<ExportImport>`: Export button triggers `exportJson()` → downloads file with timestamped name; Import file input triggers `importJson()`; plays `importSuccess()` on success; shows localised error on failure
-- [ ] Write settings tests: coward mode toggle persists to prefs signal; language switch updates rendered text immediately; export produces valid JSON; import with invalid JSON shows error and does not mutate state
+- [x] Implement `<SettingsPanel>`: accessible panel with sections for Audio, Appearance, Language, Data
+- [x] Implement `<CowardModeToggle>`: checkbox that updates `cowardMode` signal; persisted; visually labelled; independent of `reducedMotion`
+- [x] Implement reduced-motion user override toggle: sets `reducedMotion` signal override; labelled clearly as separate from OS setting
+- [x] Implement volume slider: range [0,1]; updates master `GainNode` gain; persisted
+- [x] Implement show-captions toggle: persisted; described in AC-25.4
+- [x] Implement `<LanguageSelector>`: radio or select for `en` / `ja`; updates locale signal; UI updates immediately without reload; persisted
+- [x] Implement `<ExportImport>`: Export button triggers `exportJson()` → downloads file with timestamped name; Import file input triggers `importJson()`; plays `importSuccess()` on success; shows localised error on failure
+- [x] Write settings tests: coward mode toggle persists to prefs signal; language switch updates rendered text immediately; export produces valid JSON; import with invalid JSON shows error and does not mutate state
 
 ---
 

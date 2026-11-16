@@ -68,7 +68,7 @@ describe('first user gesture', () => {
 });
 
 describe('view switcher', () => {
-  it('offers Graveyard, Séance, Ledger and Crypts in a labelled navigation', () => {
+  it('offers Graveyard, Séance, Ledger, Crypts and Settings in a labelled navigation', () => {
     render(h(App, null));
     const nav = screen.getByRole('navigation', { name: 'Main navigation' });
     expect(Array.from(nav.querySelectorAll('button')).map((b) => b.textContent)).toEqual([
@@ -76,6 +76,7 @@ describe('view switcher', () => {
       en['nav.seance'],
       'Ledger of the Dead',
       'Crypts',
+      en['nav.settings'],
     ]);
   });
 

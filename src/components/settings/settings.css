@@ -1,0 +1,108 @@
+/* Settings panel. Every colour and size comes from the tokens in src/index.css.
+   Nothing here animates. */
+
+.gr-settings {
+  font-family: var(--font-ui);
+  color: var(--color-text-primary);
+  max-width: 40rem;
+  margin-inline: auto;
+}
+
+.gr-settings__title {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-display);
+  line-height: 1.1;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.gr-settings__section {
+  background: var(--color-surface-panel);
+  border: 1px solid var(--color-border);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.gr-settings__heading {
+  font-family: var(--font-display);
+  letter-spacing: 0.05em;
+  font-size: var(--text-crypt-name);
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
+}
+
+.gr-settings__fieldset {
+  border: none;
+  margin: 0;
+  padding: 0;
+}
+
+.gr-settings__legend {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.gr-settings__row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  column-gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.gr-settings__row--inline {
+  grid-template-columns: auto 1fr;
+}
+
+.gr-settings__label {
+  font-size: var(--text-label);
+  font-weight: 500;
+}
+
+.gr-settings__desc {
+  grid-column: 2 / -1;
+  font-size: var(--text-label);
+  color: var(--color-text-secondary);
+  margin: 0.25rem 0 0;
+}
+
+.gr-settings__check {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--color-focus-ring);
+}
+
+.gr-settings__range {
+  grid-column: 2;
+  width: 100%;
+  accent-color: var(--color-focus-ring);
+}
+
+/* Volume row: label first, then the slider, then the value. */
+.gr-settings__row:has(.gr-settings__range) {
+  grid-template-columns: 6rem 1fr 3rem;
+}
+
+.gr-settings__value {
+  font-family: var(--font-mono);
+  font-size: var(--text-label);
+  text-align: right;
+}
+
+.gr-settings__check:focus-visible,
+.gr-settings__range:focus-visible {
+  outline: 2px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
+.gr-settings__data {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}

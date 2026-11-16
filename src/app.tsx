@@ -10,17 +10,19 @@ import { CryptEditor } from './components/deck/CryptEditor';
 import { CryptList } from './components/deck/CryptList';
 import { GraveyardScene } from './components/graveyard/GraveyardScene';
 import { SeanceSession } from './components/review/SeanceSession';
+import { SettingsPanel } from './components/settings/SettingsPanel';
 import { LedgerView } from './components/stats/LedgerView';
 
 import './index.css';
 
-type View = 'graveyard' | 'seance' | 'ledger' | 'crypts';
+type View = 'graveyard' | 'seance' | 'ledger' | 'crypts' | 'settings';
 
 const VIEWS: ReadonlyArray<{ view: View; label: TranslationKey }> = [
   { view: 'graveyard', label: 'nav.graveyard' },
   { view: 'seance', label: 'nav.seance' },
   { view: 'ledger', label: 'nav.stats' },
   { view: 'crypts', label: 'nav.crypts' },
+  { view: 'settings', label: 'nav.settings' },
 ];
 
 /** Events that count as the first user gesture for the lazy AudioContext. */
@@ -86,6 +88,7 @@ export function App(): h.JSX.Element {
         )}
         {view === 'ledger' && <LedgerView />}
         {view === 'crypts' && (inCrypt ? <CryptEditor /> : <CryptList />)}
+        {view === 'settings' && <SettingsPanel />}
       </main>
     </div>
   );

@@ -1,9 +1,12 @@
 import { render, h } from 'preact';
 import { App } from './app.js';
-import { loadState, loadStarterCrypts } from './store/index.js';
+import { loadPrefs, loadState, loadStarterCrypts } from './store/index.js';
 
 // Initialize app state
 async function initApp(): Promise<void> {
+  // Preferences are stored separately from the app data, so restore them first.
+  loadPrefs();
+
   // Try to load from localStorage
   const loaded = loadState();
   
