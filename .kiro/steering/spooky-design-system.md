@@ -41,6 +41,9 @@ All tokens are CSS custom properties declared on `:root`. TypeScript constants i
 | `--color-surface-card` | `#1e1a16` | Card face background |
 | `--color-parchment` | `#e9dcc0` | Seance card face (`--color-text-inverse` on it is at least 4.5:1) |
 | `--color-ink-secondary` | `#5a4a36` | Secondary text on the parchment card (at least 4.5:1 on `--color-parchment`) |
+| `--color-chart-moss` | `#6a9a5c` | Ledger chart fill for correct segments (at least 3:1 on `--color-surface-panel`) |
+| `--color-chart-blood` | `#b8322a` | Ledger chart fill for incorrect segments, always drawn with a diagonal hatch so it differs from correct without colour (at least 3:1 on `--color-surface-panel`) |
+| `--color-chart-bone` | `#b9b2a2` | Ledger forecast bars (at least 3:1 on `--color-surface-panel`) |
 | `--color-surface-panel` | `#151210` | Side panel / settings background |
 | `--color-border` | `#3a342e` | Subtle borders |
 | `--color-focus-ring` | `#7eb8f7` | Keyboard focus outline (≥ 3:1 on all backgrounds) |

@@ -1,6 +1,7 @@
 /**
  * Ledger of the Dead: today's reviews, the streak, retention over the last
- * 30 days and the forecast of cards coming due.
+ * 30 days and the forecast of cards coming due. Drawn as a framed, ruled
+ * ledger page; the ornament and ruling are constant decoration (CSS only).
  */
 import { h } from 'preact';
 
@@ -18,6 +19,7 @@ export function LedgerView(): h.JSX.Element {
       <h2 id="gr-ledger-title" class="gr-stats__title">
         {t('stats.title')}
       </h2>
+      <div class="gr-stats__ornament" aria-hidden="true" />
       <dl class="gr-stats__summary">
         <div class="gr-stats__stat">
           <dt>{t('stats.reviewsToday')}</dt>

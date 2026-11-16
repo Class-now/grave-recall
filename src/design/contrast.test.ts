@@ -9,6 +9,9 @@ import { describe, expect, it } from 'vitest';
 
 import { contrastRatio, parseHex, relativeLuminance } from './contrast';
 import {
+  COLOR_CHART_BLOOD,
+  COLOR_CHART_BONE,
+  COLOR_CHART_MOSS,
   COLOR_DANGER,
   COLOR_FOCUS_RING,
   COLOR_FOG_BASE,
@@ -103,6 +106,21 @@ const SEANCE_PAIRS: Pair[] = [
   { name: 'focus-ring on stone-dark (table centre)', fg: COLOR_FOCUS_RING, bg: COLOR_STONE_DARK, min: 3 },
 ];
 
+/** Ledger page and charts (costume-polish CP-49 to CP-51, CP-63). */
+const LEDGER_PAIRS: Pair[] = [
+  { name: 'chart-moss on surface-panel', fg: COLOR_CHART_MOSS, bg: COLOR_SURFACE_PANEL, min: 3 },
+  { name: 'chart-blood on surface-panel', fg: COLOR_CHART_BLOOD, bg: COLOR_SURFACE_PANEL, min: 3 },
+  { name: 'chart-bone on surface-panel', fg: COLOR_CHART_BONE, bg: COLOR_SURFACE_PANEL, min: 3 },
+  // The ledger page is surface-panel with stone-dark ruled lines behind the text.
+  { name: 'text-primary on ledger page', fg: COLOR_TEXT_PRIMARY, bg: COLOR_SURFACE_PANEL, min: 4.5 },
+  { name: 'text-primary on ledger ruling', fg: COLOR_TEXT_PRIMARY, bg: COLOR_STONE_DARK, min: 4.5 },
+  { name: 'text-secondary on ledger page', fg: COLOR_TEXT_SECONDARY, bg: COLOR_SURFACE_PANEL, min: 4.5 },
+  { name: 'text-secondary on ledger ruling', fg: COLOR_TEXT_SECONDARY, bg: COLOR_STONE_DARK, min: 4.5 },
+  // The hatch lines are void drawn over the blood fill.
+  { name: 'void (hatch line) on chart-blood', fg: COLOR_VOID, bg: COLOR_CHART_BLOOD, min: 3 },
+  { name: 'ledger frame border on surface-panel', fg: COLOR_STONE_CRUMBLED, bg: COLOR_SURFACE_PANEL, min: 3 },
+];
+
 describe('contrastRatio', () => {
   it('is 21 for black on white and 1 for identical colours', () => {
     expect(contrastRatio('#000000', '#ffffff')).toBeCloseTo(21, 5);
@@ -127,6 +145,7 @@ describe.each([
   ['component CSS', COMPONENT_PAIRS],
   ['page frame', FRAME_PAIRS],
   ['seance table and parchment card', SEANCE_PAIRS],
+  ['ledger page and charts', LEDGER_PAIRS],
 ])('WCAG AA: %s', (_label, pairs) => {
   it.each(pairs)('$name is at least $min:1', ({ fg, bg, min }) => {
     expect(contrastRatio(fg, bg)).toBeGreaterThanOrEqual(min);

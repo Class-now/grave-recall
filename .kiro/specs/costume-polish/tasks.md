@@ -163,18 +163,18 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Task 1*
 *Refs: CP-49 to CP-52, CP-60, CP-63*
 
-- [ ] Steering first: add `--color-chart-moss`, `--color-chart-blood` and `--color-chart-bone` to the colour table (section 1.1) of `spooky-design-system.md`, with their purpose.
-- [ ] Add the three tokens to `index.css`, `tokens.ts` and `TOKEN_MAP`; add the names to `tokens.test.ts`. If `chart-blood` fails the 3:1 check against `--color-surface-panel`, lighten it until it passes.
-- [ ] `BarChart.tsx`: add a `<defs>` with a diagonal-hatch `<pattern>` whose id is unique per chart instance (for example derived from the chart's `className`). The class `gr-chart__fill--danger` fills with `url(#…)` through an attribute or CSS variable so the hatch shows; keep all existing class names, roles and `aria-label`s.
-- [ ] `stats.css`: `gr-chart__fill--success` uses `--color-chart-moss`; `--danger` uses the hatch over `--color-chart-blood`; `--forecast` uses `--color-chart-bone`; legend swatches use the same colours, and the danger swatch uses a matching `repeating-linear-gradient` hatch. Remove every reference to `--color-success` and `--color-danger` from chart rules.
-- [ ] Ledger page look in `stats.css` and `LedgerView.tsx`: a framed page with a header ornament, ruled lines drawn with a CSS `repeating-linear-gradient` (a constant, not data), display-face section headings, monospace figures, spacing that matches the page frame. No change to the data or to heading structure and `aria-labelledby` ids.
-- [ ] Tests:
+- [x] Steering first: add `--color-chart-moss`, `--color-chart-blood` and `--color-chart-bone` to the colour table (section 1.1) of `spooky-design-system.md`, with their purpose.
+- [x] Add the three tokens to `index.css`, `tokens.ts` and `TOKEN_MAP`; add the names to `tokens.test.ts`. If `chart-blood` fails the 3:1 check against `--color-surface-panel`, lighten it until it passes.
+- [x] `BarChart.tsx`: add a `<defs>` with a diagonal-hatch `<pattern>` whose id is unique per chart instance (for example derived from the chart's `className`). The class `gr-chart__fill--danger` fills with `url(#…)` through an attribute or CSS variable so the hatch shows; keep all existing class names, roles and `aria-label`s.
+- [x] `stats.css`: `gr-chart__fill--success` uses `--color-chart-moss`; `--danger` uses the hatch over `--color-chart-blood`; `--forecast` uses `--color-chart-bone`; legend swatches use the same colours, and the danger swatch uses a matching `repeating-linear-gradient` hatch. Remove every reference to `--color-success` and `--color-danger` from chart rules.
+- [x] Ledger page look in `stats.css` and `LedgerView.tsx`: a framed page with a header ornament, ruled lines drawn with a CSS `repeating-linear-gradient` (a constant, not data), display-face section headings, monospace figures, spacing that matches the page frame. No change to the data or to heading structure and `aria-labelledby` ids.
+- [x] Tests:
   - `stats.test.ts`: `stats.css` text contains `--color-chart-moss`, `--color-chart-blood` and `--color-chart-bone`, and the chart rules contain neither `--color-success` nor `--color-danger`; the rendered retention chart contains a `<pattern>` when incorrect segments exist; the existing bar `aria-label`, role and class assertions pass unchanged.
   - `contrast.test.ts`: each of the three chart tokens on `--color-surface-panel` at least 3:1; `text-primary` on the ledger page background at least 4.5.
   - The stats mapping tests (`retentionSummary`, `reviewsPerDay`, `forecastData`) pass unchanged.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes.
-- [ ] Gate: `npm run build` passes.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes.
+- [x] Gate: `npm run build` passes.
 
 *Owner check: with a few logged reviews (import a backup or grade some cards), the Ledger shows moss-green and blood-red bars with a hatch on the red, bone-coloured forecast bars, and a ruled ledger-page look.*
 

@@ -27,6 +27,9 @@ export interface BarChartProps {
   className?: string;
 }
 
+/** The segment class that is drawn with the diagonal hatch (steering: incorrect is never colour alone). */
+export const DANGER_FILL_CLASS = 'gr-chart__fill--danger';
+
 const BAR_WIDTH = 10;
 const BAR_GAP = 4;
 const PLOT_HEIGHT = 100;
@@ -35,8 +38,16 @@ export function barTotal(bar: Bar): number {
   return bar.segments.reduce((sum, s) => sum + s.value, 0);
 }
 
+/** Id of this chart's hatch pattern, unique per chart because it comes from the chart's class. */
+export function hatchId(className: string | undefined): string {
+  const base = (className ?? 'gr-chart').trim().replace(/[^A-Za-z0-9_-]+/g, '-');
+  return `${base}-hatch`;
+}
+
 export function BarChart(props: BarChartProps): h.JSX.Element {
   const { bars, label, className } = props;
+  const patternId = hatchId(className);
+  const hasDanger = bars.some((bar) => bar.segments.some((s) => s.className === DANGER_FILL_CLASS && s.value > 0));
   const peak = Math.max(1, ...bars.map(barTotal));
   const width = bars.length * (BAR_WIDTH + BAR_GAP) - BAR_GAP;
 
@@ -47,7 +58,16 @@ export function BarChart(props: BarChartProps): h.JSX.Element {
       preserveAspectRatio="none"
       role="group"
       aria-label={label}
+      style={{ '--gr-chart-hatch': `url(#${patternId})` }}
     >
+      {hasDanger ? (
+        <defs>
+          <pattern id={patternId} width={4} height={4} patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+            <rect class="gr-chart__hatch-base" width={4} height={4} />
+            <line class="gr-chart__hatch-line" x1={2} y1={0} x2={2} y2={4} />
+          </pattern>
+        </defs>
+      ) : null}
       <line class="gr-chart__axis" x1={0} y1={PLOT_HEIGHT} x2={Math.max(width, 1)} y2={PLOT_HEIGHT} />
       {bars.map((bar, index) => {
         const x = index * (BAR_WIDTH + BAR_GAP);

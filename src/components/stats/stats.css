@@ -1,11 +1,48 @@
 /* Ledger of the Dead. Every colour and size comes from the tokens in src/index.css.
    Charts use fills only; nothing here animates. */
 
+/* The ledger page: a framed panel with constant ruled lines (stone-dark, 2rem
+   pitch). The ruling is decoration, not data; its line count never varies. */
 .gr-stats {
   font-family: var(--font-ui);
   color: var(--color-text-primary);
   max-width: 48rem;
   margin-inline: auto;
+  padding: 1rem;
+  background-color: var(--color-surface-panel);
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent calc(2rem - 1px),
+    var(--color-stone-dark) calc(2rem - 1px),
+    var(--color-stone-dark) 2rem
+  );
+  border: 1px solid var(--color-stone-crumbled);
+  border-radius: 0.25rem;
+  box-shadow: inset 0 0 0 4px var(--color-surface-panel), inset 0 0 0 5px var(--color-stone-dark);
+}
+
+/* Header ornament: a divider rule with a diamond in the middle. Static, no text. */
+.gr-stats__ornament {
+  position: relative;
+  height: 1rem;
+  margin: 0 0 1rem;
+  pointer-events: none;
+  background:
+    linear-gradient(var(--color-stone-crumbled), var(--color-stone-crumbled)) left center / calc(50% - 1rem) 1px no-repeat,
+    linear-gradient(var(--color-stone-crumbled), var(--color-stone-crumbled)) right center / calc(50% - 1rem) 1px no-repeat;
+}
+
+.gr-stats__ornament::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: 1px solid var(--color-stone-crumbled);
+  background: var(--color-surface-panel);
+  transform: translate(-50%, -50%) rotate(45deg);
 }
 
 .gr-stats__title {
@@ -38,11 +75,11 @@
   font-weight: 700;
 }
 
+/* Sections sit on the page: no fill of their own, so the ruling shows through. */
 .gr-stats__section {
   margin: 0 0 1.5rem;
-  padding: 1rem;
-  background: var(--color-surface-panel);
-  border: 1px solid var(--color-border);
+  padding: 1rem 0 0;
+  border-top: 1px solid var(--color-stone-crumbled);
 }
 
 .gr-stats__heading {
@@ -82,15 +119,25 @@
 }
 
 .gr-chart__fill--success {
-  fill: var(--color-success);
+  fill: var(--color-chart-moss);
 }
 
+/* The hatch pattern id is unique per chart; BarChart sets it as --gr-chart-hatch. */
 .gr-chart__fill--danger {
-  fill: var(--color-danger);
+  fill: var(--gr-chart-hatch, var(--color-chart-blood));
+}
+
+.gr-chart__hatch-base {
+  fill: var(--color-chart-blood);
+}
+
+.gr-chart__hatch-line {
+  stroke: var(--color-void);
+  stroke-width: 1;
 }
 
 .gr-chart__fill--forecast {
-  fill: var(--color-ghost-glow);
+  fill: var(--color-chart-bone);
 }
 
 .gr-chart__axis-labels {
@@ -126,9 +173,17 @@
 }
 
 .gr-chart__swatch--success {
-  background: var(--color-success);
+  background: var(--color-chart-moss);
 }
 
+/* Matches the hatch on the danger bars. */
 .gr-chart__swatch--danger {
-  background: var(--color-danger);
+  background:
+    repeating-linear-gradient(
+      45deg,
+      var(--color-void) 0,
+      var(--color-void) 1px,
+      var(--color-chart-blood) 1px,
+      var(--color-chart-blood) 4px
+    );
 }

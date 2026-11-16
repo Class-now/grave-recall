@@ -2,6 +2,10 @@
  * Ledger of the Dead tests (Task 11): derived stats signals and the three views.
  * Time is pinned to local noon so day boundaries never fall inside a test.
  */
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { h } from 'preact';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import * as fc from 'fast-check';
@@ -310,5 +314,80 @@ describe('<LedgerView>', () => {
     expect(screen.getByRole('heading', { level: 2, name: ja['stats.title'] })).toBeTruthy();
     expect(screen.getByText('100%の記憶率')).toBeTruthy();
     expect(screen.getByRole('img', { name: `${formatDay(startOfDay(NOW))}: 復習1回、正解1回` })).toBeTruthy();
+  });
+});
+
+describe('ledger palette and hatch (costume-polish CP-49, CP-50, CP-51)', () => {
+  const css = readFileSync(resolve(dirname(fileURLToPath(import.meta.url)), 'stats.css'), 'utf8');
+
+  it('stats.css uses the three chart tokens', () => {
+    expect(css).toContain('--color-chart-moss');
+    expect(css).toContain('--color-chart-blood');
+    expect(css).toContain('--color-chart-bone');
+  });
+
+  it('stats.css uses neither --color-success nor --color-danger', () => {
+    expect(css).not.toContain('--color-success');
+    expect(css).not.toContain('--color-danger');
+  });
+
+  it('each chart fill and swatch rule uses its chart token', () => {
+    const rule = (selector: string): string => {
+      const start = css.indexOf(`${selector} {`);
+      expect(start, `${selector} rule exists`).toBeGreaterThanOrEqual(0);
+      return css.slice(start, css.indexOf('}', start));
+    };
+    expect(rule('.gr-chart__fill--success')).toContain('var(--color-chart-moss)');
+    expect(rule('.gr-chart__fill--danger')).toContain('var(--color-chart-blood)');
+    expect(rule('.gr-chart__fill--forecast')).toContain('var(--color-chart-bone)');
+    expect(rule('.gr-chart__swatch--success')).toContain('var(--color-chart-moss)');
+    expect(rule('.gr-chart__swatch--danger')).toContain('repeating-linear-gradient');
+    expect(rule('.gr-chart__swatch--danger')).toContain('var(--color-chart-blood)');
+  });
+
+  it('the retention chart defines a hatch <pattern> when incorrect segments exist', () => {
+    logReview(0, true);
+    logReview(0, false);
+    const { container } = render(h(RetentionChart, null));
+    const svg = container.querySelector('svg.gr-chart--retention')!;
+    const pattern = svg.querySelector('defs > pattern');
+    expect(pattern).toBeTruthy();
+    const id = pattern!.getAttribute('id')!;
+    expect(id).toContain('gr-chart--retention');
+    expect(svg.getAttribute('style')).toContain(`url(#${id})`);
+    expect(container.querySelectorAll(`[id="${id}"]`)).toHaveLength(1);
+  });
+
+  it('has no hatch <pattern> when every review is correct', () => {
+    logReview(0, true);
+    const { container } = render(h(RetentionChart, null));
+    expect(container.querySelector('pattern')).toBeNull();
+  });
+
+  it('gives the two charts on the Ledger page different pattern ids', () => {
+    logReview(0, false);
+    const { container } = render(h(LedgerView, null));
+    const ids = Array.from(container.querySelectorAll('pattern')).map((p) => p.id);
+    expect(ids.length).toBeGreaterThan(0);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
+  it('keeps bar roles, labels and class names beside the new defs', () => {
+    logReview(0, true);
+    logReview(0, false);
+    const { container } = render(h(RetentionChart, null));
+    const today = bars(container)[29]!;
+    expect(today.getAttribute('role')).toBe('img');
+    expect(today.getAttribute('aria-label')).toBe(`${formatDay(NOW)}: 2 reviews, 1 correct`);
+    expect(today.querySelector('rect.gr-chart__fill--danger')).toBeTruthy();
+  });
+
+  it('the Ledger page has a constant, inert header ornament', () => {
+    const { container } = render(h(LedgerView, null));
+    const ornament = container.querySelector('.gr-stats__ornament')!;
+    expect(ornament.getAttribute('aria-hidden')).toBe('true');
+    expect(ornament.textContent).toBe('');
+    expect(ornament.getAttribute('tabindex')).toBeNull();
+    expect(screen.getByRole('heading', { level: 2, name: en['stats.title'] }).id).toBe('gr-ledger-title');
   });
 });

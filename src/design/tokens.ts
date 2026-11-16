@@ -33,6 +33,9 @@ export const COLOR_BORDER = '#3a342e' as const;
 export const COLOR_FOCUS_RING = '#7eb8f7' as const;
 export const COLOR_PARCHMENT = '#e9dcc0' as const;
 export const COLOR_INK_SECONDARY = '#5a4a36' as const;
+export const COLOR_CHART_MOSS = '#6a9a5c' as const;
+export const COLOR_CHART_BLOOD = '#b8322a' as const;
+export const COLOR_CHART_BONE = '#b9b2a2' as const;
 
 // ---------------------------------------------------------------------------
 // Decorative backdrop palette (spooky-design-system section 6.2)
@@ -92,6 +95,9 @@ export const TOKEN_MAP = {
   '--color-focus-ring': COLOR_FOCUS_RING,
   '--color-parchment': COLOR_PARCHMENT,
   '--color-ink-secondary': COLOR_INK_SECONDARY,
+  '--color-chart-moss': COLOR_CHART_MOSS,
+  '--color-chart-blood': COLOR_CHART_BLOOD,
+  '--color-chart-bone': COLOR_CHART_BONE,
   '--color-sky-top': COLOR_SKY_TOP,
   '--color-sky-horizon': COLOR_SKY_HORIZON,
   '--color-hill-far': COLOR_HILL_FAR,

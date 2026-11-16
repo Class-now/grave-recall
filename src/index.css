@@ -35,6 +35,9 @@
   --color-focus-ring:     #7eb8f7;
   --color-parchment:      #e9dcc0;
   --color-ink-secondary:  #5a4a36;
+  --color-chart-moss:     #6a9a5c;
+  --color-chart-blood:    #b8322a;
+  --color-chart-bone:     #b9b2a2;
 
   /* Decorative backdrop palette (spooky-design-system section 6.2) */
   --color-sky-top:        #05060c;
