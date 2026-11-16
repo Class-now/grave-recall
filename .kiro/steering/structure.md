@@ -53,6 +53,7 @@ grave-recall/
 │   │   │
 │   │   ├── graveyard/           # The main graveyard SVG scene
 │   │   │   ├── GraveyardScene.tsx
+│   │   │   ├── Backdrop.tsx     # Static sky, hills, trees, fence, ground (no data; section 6)
 │   │   │   ├── Tombstone.tsx    # Per-card grave, visual state from stability
 │   │   │   ├── Ghost.tsx        # Per-overdue-card ghost, opacity from retrievability
 │   │   │   ├── FogLayer.tsx     # Fog SVG filter, intensity from overdue count

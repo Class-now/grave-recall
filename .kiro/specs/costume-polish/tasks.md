@@ -73,14 +73,14 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
 *Prerequisites: Task 2*
 *Refs: CP-01 to CP-04, CP-27 to CP-29, CP-60, CP-62, CP-63*
 
-- [ ] Create `src/components/graveyard/Backdrop.tsx` with two components, `BackdropBack` and `BackdropFront`, built from module-level constants only (hand-authored path strings, fixed counts). Each root is `<g aria-hidden="true" class="gr-backdrop">` with `pointer-events: none` in CSS.
+- [x] Create `src/components/graveyard/Backdrop.tsx` with two components, `BackdropBack` and `BackdropFront`, built from module-level constants only (hand-authored path strings, fixed counts). Each root is `<g aria-hidden="true" class="gr-backdrop">` with `pointer-events: none` in CSS.
   - `BackdropBack`: night-sky gradient (`linearGradient` from `--color-sky-top` to `--color-sky-horizon`), moon halo (one `radialGradient` circle in `--color-halo` at a constant opacity of 0.35 or less, centred on the moon), two hill paths, at least three bare-tree paths, an iron fence (fixed picket count), the ground fill.
   - `BackdropFront`: the foreground ground strip in the bottom clear zone, with an irregular top edge drawn from a constant path.
   - No `Math.random`, no `Date`, no store imports, no text, no `role`, no `tabindex`. Colours via palette tokens through CSS classes or `var(--color-…)`; none of the data-reserved colours.
-- [ ] Update `GraveyardScene.tsx` to the paint order in design section 3 for the parts that exist now: `BackdropBack`, `MoonPhase`, gate and crow, graves, `BackdropFront`. Remove the old sky and ground rects.
-- [ ] Moon: render `MoonPhase` with props for a radius of at least 56 units at about (230, 130). Keep `moonArcPath`, the `aria-label`, `data-progress` and the `moon-wax` behaviour. Strengthen the disc rim so the unlit disc reads against the halo.
-- [ ] Gate: redraw the `.gr-gate` group in `CrowKeeper.tsx` with two stone posts with caps, a top rail with a small arch, and vertical bars, scaled for the new scene and placed on the fence line at the right. The crow keeps its class names, `data-streak`, hop, eye-glow rule and `crowCaw()` call, and perches on the top rail. Colours from `--color-iron` and the stone tokens.
-- [ ] Tests in `graveyard.test.ts`:
+- [x] Update `GraveyardScene.tsx` to the paint order in design section 3 for the parts that exist now: `BackdropBack`, `MoonPhase`, gate and crow, graves, `BackdropFront`. Remove the old sky and ground rects.
+- [x] Moon: render `MoonPhase` with props for a radius of at least 56 units at about (230, 130). Keep `moonArcPath`, the `aria-label`, `data-progress` and the `moon-wax` behaviour. Strengthen the disc rim so the unlit disc reads against the halo.
+- [x] Gate: redraw the `.gr-gate` group in `CrowKeeper.tsx` with two stone posts with caps, a top rail with a small arch, and vertical bars, scaled for the new scene and placed on the fence line at the right. The crow keeps its class names, `data-streak`, hop, eye-glow rule and `crowCaw()` call, and perches on the top rail. Colours from `--color-iron` and the stone tokens.
+- [x] Tests in `graveyard.test.ts`:
   - The serialised `.gr-backdrop` markup is identical when rendered with: no cards; 150 cards with mixed stability and overdue; a populated review log with a streak; locale `ja`.
   - Every `.gr-backdrop` element has `aria-hidden="true"`, and none contains a `role`, `tabindex`, `<text>` or `<title>`.
   - Source scan: `Backdrop.tsx` contains none of `Math.random`, `Date`, `@preact/signals`, `from '../../store`.
@@ -89,10 +89,10 @@ Baseline before Task 1: 411 tests pass, JavaScript is 28.3 KB gzipped (budget 15
   - The moon radius is at least 56; the `moonArcPath` result for the displayed progress is unchanged.
   - `contrast.test.ts`: `moon-full` on `moon-new` at least 3:1.
   - Existing `<CrowKeeper>` and `<MoonPhase>` tests pass unchanged.
-- [ ] Steering: add `Backdrop.tsx` to the graveyard folder in `structure.md`.
-- [ ] Gate: `npm run typecheck` passes.
-- [ ] Gate: `npm run test -- --run` passes.
-- [ ] Gate: `npm run build` passes.
+- [x] Steering: add `Backdrop.tsx` to the graveyard folder in `structure.md`.
+- [x] Gate: `npm run typecheck` passes.
+- [x] Gate: `npm run test -- --run` passes.
+- [x] Gate: `npm run build` passes.
 
 *Owner check: the scene now has a night sky, distant hills, dead trees on the horizon, an iron fence, a drawn gate with the crow on it, and a large moon with a soft halo. Nothing in the backdrop moves.*
 

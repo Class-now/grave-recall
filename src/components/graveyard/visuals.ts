@@ -123,6 +123,16 @@ export const TOMBSTONE_HEIGHT = 52;
 /** Where the sky meets the grave field. Static scene geometry, not data. */
 export const HORIZON_Y = 300;
 
+/** Moon disc centre and radius in scene units; the halo is drawn around the same centre. */
+export const MOON_CX = 230;
+export const MOON_CY = 130;
+export const MOON_RADIUS = 64;
+export const MOON_HALO_RADIUS = 160;
+
+/** Gate position in scene units (the crow perches on its top rail). */
+export const GATE_X = 1050;
+export const GATE_Y = 258;
+
 /** Baseline (bottom edge) of the back row and of the front row. */
 export const BACK_Y = 330;
 export const FRONT_Y = 548;

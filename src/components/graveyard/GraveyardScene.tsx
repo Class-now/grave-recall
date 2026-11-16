@@ -13,6 +13,7 @@ import { activeDeckId, cards, overdueCards, type Card } from '../../store';
 import type { DeckId } from '../../scheduler/types';
 import { t } from '../../i18n';
 
+import { BackdropBack, BackdropFront } from './Backdrop';
 import { CardDetailPanel } from './CardDetailPanel';
 import { CrowKeeper } from './CrowKeeper';
 import { FogLayer } from './FogLayer';
@@ -20,11 +21,18 @@ import { Ghost } from './Ghost';
 import { MoonPhase } from './MoonPhase';
 import { Tombstone } from './Tombstone';
 import { useDocumentHidden } from './useDocumentHidden';
-import { HORIZON_Y, layoutYard, YARD_HEIGHT, YARD_WIDTH } from './visuals';
+import {
+  GATE_X,
+  GATE_Y,
+  layoutYard,
+  MOON_CX,
+  MOON_CY,
+  MOON_RADIUS,
+  YARD_HEIGHT,
+  YARD_WIDTH,
+} from './visuals';
 
 import './graveyard.css';
-
-const SKY_GRADIENT_ID = 'gr-sky-gradient';
 
 export interface GraveyardSceneProps {
   /** Crypt to show. Omit to follow the active crypt (all cards when none is active). */
@@ -117,29 +125,9 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
             aria-describedby={visible.length > 0 ? 'gr-graveyard-hint' : undefined}
             onKeyDown={onSceneKeyDown}
           >
-            <defs>
-              <linearGradient id={SKY_GRADIENT_ID} x1="0" y1="0" x2="0" y2="1">
-                <stop class="gr-scene__sky-stop gr-scene__sky-stop--top" offset="0" />
-                <stop class="gr-scene__sky-stop gr-scene__sky-stop--horizon" offset="1" />
-              </linearGradient>
-            </defs>
-            <rect
-              class="gr-scene__sky"
-              x="0"
-              y="0"
-              width={YARD_WIDTH}
-              height={HORIZON_Y}
-              fill={`url(#${SKY_GRADIENT_ID})`}
-            />
-            <rect
-              class="gr-scene__ground"
-              x="0"
-              y={HORIZON_Y}
-              width={YARD_WIDTH}
-              height={YARD_HEIGHT - HORIZON_Y}
-            />
-            <MoonPhase cx={230} cy={130} r={40} />
-            <CrowKeeper x={1060} y={270} />
+            <BackdropBack />
+            <MoonPhase cx={MOON_CX} cy={MOON_CY} r={MOON_RADIUS} />
+            <CrowKeeper x={GATE_X} y={GATE_Y} />
             {visible.map((card, i) => {
               const pos = layout.positions[i];
               return pos === undefined ? null : (
@@ -157,6 +145,7 @@ export function GraveyardScene(props: GraveyardSceneProps): h.JSX.Element {
                 />
               );
             })}
+            <BackdropFront />
             {visible.map((card, i) => {
               const pos = layout.positions[i];
               return pos === undefined || !overdueIds.has(card.id) ? null : (

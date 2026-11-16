@@ -15,6 +15,9 @@ import './graveyard.css';
 /** Streak length at which the crow's eye starts to glow. */
 export const CROW_EYE_GLOW_STREAK = 3;
 
+/** Vertical bars of the gate: a fixed set, local to the gate origin. */
+const GATE_BAR_XS: readonly number[] = [-24, -16, -8, 0, 8, 16, 24];
+
 /**
  * Streak seen by the previous crow. Module-level so a streak earned during a
  * review session is noticed when the graveyard mounts again afterwards.
@@ -50,10 +53,16 @@ export function CrowKeeper(props: CrowKeeperProps): h.JSX.Element {
 
   return (
     <g transform={`translate(${x} ${y})`} data-streak={streak}>
-      <g class="gr-gate" aria-hidden="true">
-        <rect class="gr-gate__post" x="-34" y="0" width="8" height="66" />
-        <rect class="gr-gate__post" x="26" y="0" width="8" height="66" />
-        <rect class="gr-gate__post" x="-34" y="0" width="68" height="6" />
+      <g class="gr-backdrop gr-gate" aria-hidden="true">
+        {GATE_BAR_XS.map((bx) => (
+          <path key={bx} class="gr-gate__bar" d={`M${bx} 4 V68`} />
+        ))}
+        <path class="gr-gate__rail" d="M-30 50 H30" />
+        <path class="gr-gate__rail gr-gate__rail--top" d="M-32 6 Q0 -6 32 6" />
+        <rect class="gr-gate__post" x="-39" y="-2" width="9" height="72" />
+        <rect class="gr-gate__post" x="30" y="-2" width="9" height="72" />
+        <rect class="gr-gate__cap" x="-41" y="-8" width="13" height="6" />
+        <rect class="gr-gate__cap" x="28" y="-8" width="13" height="6" />
       </g>
       {streak >= 1 && (
         <g

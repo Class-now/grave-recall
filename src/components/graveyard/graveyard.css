@@ -63,17 +63,68 @@
   height: 100%;
 }
 
-.gr-scene__sky-stop--top {
+/* Backdrop ----------------------------------------------------------------- */
+/* Static, data-free scenery (spooky-design-system section 6). Colours come only from
+   the section 6.2 palette. Nothing here animates, and nothing receives pointer input. */
+
+.gr-backdrop {
+  pointer-events: none;
+}
+
+.gr-backdrop__sky-stop--top {
   stop-color: var(--color-sky-top);
 }
 
-.gr-scene__sky-stop--horizon {
+.gr-backdrop__sky-stop--horizon {
   stop-color: var(--color-sky-horizon);
 }
 
-.gr-scene__ground {
-  fill: var(--color-grave-soil);
+.gr-backdrop__halo-stop {
+  stop-color: var(--color-halo);
 }
+
+.gr-backdrop__ground-stop--top {
+  stop-color: var(--color-hill-near);
+}
+
+.gr-backdrop__ground-stop--bottom {
+  stop-color: var(--color-ground-fore);
+}
+
+.gr-backdrop__hill--far {
+  fill: var(--color-hill-far);
+}
+
+.gr-backdrop__hill--near {
+  fill: var(--color-hill-near);
+}
+
+.gr-backdrop__trunk {
+  fill: var(--color-tree);
+}
+
+.gr-backdrop__branches {
+  fill: none;
+  stroke: var(--color-tree);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.gr-backdrop__fence-pickets {
+  fill: var(--color-iron);
+}
+
+.gr-backdrop__fence-rails {
+  fill: none;
+  stroke: var(--color-iron);
+  stroke-width: 3;
+}
+
+.gr-backdrop__front-strip {
+  fill: var(--color-ground-fore);
+}
+
 /* Tombstone ---------------------------------------------------------------- */
 
 .gr-tombstone {
@@ -178,10 +229,11 @@
 
 /* Moon --------------------------------------------------------------------- */
 
+/* The rim keeps the unlit disc readable against the halo. */
 .gr-moon__disc {
   fill: var(--color-moon-new);
-  stroke: var(--color-border);
-  stroke-width: 1;
+  stroke: var(--color-stone-crumbled);
+  stroke-width: 2;
 }
 
 .gr-moon__lit {
@@ -200,8 +252,25 @@
 
 /* Gate and crow ------------------------------------------------------------ */
 
-.gr-gate__post {
-  fill: var(--color-stone-dark);
+.gr-gate__post,
+.gr-gate__cap {
+  fill: var(--color-iron);
+}
+
+.gr-gate__rail,
+.gr-gate__bar {
+  fill: none;
+  stroke: var(--color-iron);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.gr-gate__rail--top {
+  stroke-width: 5;
+}
+
+.gr-gate__bar {
+  stroke-width: 2;
 }
 
 .gr-crow__body {

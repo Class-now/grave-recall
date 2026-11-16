@@ -704,8 +704,151 @@ describe('<CrowKeeper>', () => {
   });
 });
 
-describe('card detail panel', () => {
-  function openFirstGrave(container: Element): HTMLElement {
+describe('backdrop (spooky-design-system section 6)', () => {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const backdropSource = readFileSync(resolve(here, 'Backdrop.tsx'), 'utf8');
+  const stageCss = readFileSync(resolve(here, 'graveyard.css'), 'utf8');
+
+  /** Renders the scene after `setup` and returns the serialised `.gr-backdrop` markup. */
+  function backdropMarkup(setup: () => void): string {
+    resetState();
+    setup();
+    const { container, unmount } = render(h(GraveyardScene, null));
+    const markup = Array.from(container.querySelectorAll('.gr-backdrop'))
+      .map((el) => el.outerHTML)
+      .join('\n');
+    unmount();
+    resetState();
+    return markup;
+  }
+
+  function populate150(): void {
+    const deck = createDeck('Many');
+    for (let i = 0; i < 150; i++) {
+      const card = addCard(deck.id, `w${i}`, 'x', null);
+      const overdue = i % 3 === 0;
+      updateCardSrs(card.id, {
+        ...card.srs,
+        stability: (i * 7) % 90,
+        dueDate: addDays(new Date(), overdue ? -4 : 6),
+        lastReviewed: addDays(new Date(), overdue ? -8 : -1),
+      });
+    }
+  }
+
+  it('renders identical backdrop markup for an empty store, 150 cards, a streak and Japanese', () => {
+    const empty = backdropMarkup(() => undefined);
+    const many = backdropMarkup(populate150);
+    const streak = backdropMarkup(() => {
+      populate150();
+      logReviewsOnDaysAgo([0, 1, 2, 3, 4]);
+    });
+    const japanese = backdropMarkup(() => {
+      populate150();
+      locale.value = 'ja';
+    });
+    expect(empty).not.toBe('');
+    expect(many).toBe(empty);
+    expect(streak).toBe(empty);
+    expect(japanese).toBe(empty);
+  });
+
+  it('marks every backdrop element inert: aria-hidden, no role, tabindex, text or title', () => {
+    populate150();
+    logReviewsOnDaysAgo([0, 1, 2]);
+    const { container } = render(h(GraveyardScene, null));
+    const roots = Array.from(container.querySelectorAll('.gr-backdrop'));
+    expect(roots.length).toBeGreaterThanOrEqual(3); // back, front, gate
+    for (const root of roots) {
+      expect(root.getAttribute('aria-hidden')).toBe('true');
+      expect(root.hasAttribute('role')).toBe(false);
+      expect(root.querySelector('[role], [tabindex], text, title')).toBeNull();
+      expect(root.hasAttribute('tabindex')).toBe(false);
+      expect(root.textContent).toBe('');
+    }
+  });
+
+  it('keeps Backdrop.tsx free of randomness, clocks and store reads', () => {
+    for (const banned of ['Math.random', 'Date', '@preact/signals', "from '../../store"]) {
+      expect(backdropSource, banned).not.toContain(banned);
+    }
+  });
+
+  it('keeps data-reserved colours out of the backdrop and gate CSS rules', () => {
+    const reserved = [
+      '--color-ghost-body',
+      '--color-ghost-glow',
+      '--color-fog-base',
+      '--color-crow-eye',
+      '--color-candle-flame',
+      '--color-moon-full',
+      '--color-danger',
+      '--color-warning',
+      '--color-success',
+    ];
+    const rules = [...stageCss.matchAll(/([^{}]+)\{([^}]*)\}/g)].filter(([, selector]) =>
+      /\.gr-backdrop|\.gr-gate/.test(selector ?? ''),
+    );
+    expect(rules.length).toBeGreaterThan(5);
+    for (const [, selector, body] of rules) {
+      for (const token of reserved) expect(body, `${selector?.trim()} uses ${token}`).not.toContain(token);
+    }
+    expect(stageCss).toMatch(/\.gr-backdrop\s*\{[^}]*pointer-events:\s*none/);
+  });
+
+  it('draws one sky gradient, two hills, at least three trees, a fence and the gate', () => {
+    const { container } = render(h(GraveyardScene, null));
+    expect(container.querySelectorAll('linearGradient#gr-sky-gradient')).toHaveLength(1);
+    expect(container.querySelectorAll('.gr-backdrop__hill')).toHaveLength(2);
+    expect(container.querySelectorAll('.gr-backdrop__tree').length).toBeGreaterThanOrEqual(3);
+    expect(container.querySelector('.gr-backdrop__fence')).not.toBeNull();
+    expect(container.querySelector('.gr-gate')).not.toBeNull();
+  });
+
+  it('paints the backdrop behind the graves and the foreground strip in front of them', () => {
+    makeCard('one');
+    const { container } = render(h(GraveyardScene, null));
+    const all = Array.from(container.querySelectorAll('svg.gr-scene *'));
+    const back = container.querySelector('.gr-backdrop--back') as Element;
+    const front = container.querySelector('.gr-backdrop--front') as Element;
+    const grave = container.querySelector('.gr-tombstone') as Element;
+    expect(all.indexOf(back)).toBeLessThan(all.indexOf(grave));
+    expect(all.indexOf(front)).toBeGreaterThan(all.indexOf(grave));
+  });
+
+  it('draws a moon of radius 56 or more whose wedge still comes from moonArcPath', () => {
+    makeCard('seed');
+    dailyGoal.value = 10;
+    logReviewsOnDaysAgo([0, 0, 0, 0, 0]);
+    const { container } = render(h(GraveyardScene, null));
+    const disc = container.querySelector('.gr-moon__disc');
+    expect(Number(disc?.getAttribute('r'))).toBeGreaterThanOrEqual(56);
+    expect(container.querySelector('.gr-moon')?.getAttribute('data-progress')).toBe('50');
+    expect(container.querySelector('.gr-moon__lit')?.getAttribute('d')).toBe(
+      moonArcPath(
+        0.5,
+        Number(disc?.getAttribute('cx')),
+        Number(disc?.getAttribute('cy')),
+        Number(disc?.getAttribute('r')),
+      ),
+    );
+  });
+
+  it('centres the halo on the moon with a constant opacity of at most 0.35', () => {
+    const { container } = render(h(GraveyardScene, null));
+    const halo = container.querySelector('.gr-backdrop__halo');
+    const disc = container.querySelector('.gr-moon__disc');
+    expect(halo?.getAttribute('cx')).toBe(disc?.getAttribute('cx'));
+    expect(halo?.getAttribute('cy')).toBe(disc?.getAttribute('cy'));
+    const opacities = Array.from(container.querySelectorAll('.gr-backdrop__halo-stop')).map((s) =>
+      Number(s.getAttribute('stop-opacity')),
+    );
+    expect(opacities.length).toBeGreaterThan(1);
+    expect(Math.max(...opacities)).toBeLessThanOrEqual(0.35);
+  });
+});
+
+describe('card detail panel', () => {  function openFirstGrave(container: Element): HTMLElement {
     const grave = graves(container)[0] as HTMLElement;
     grave.focus();
     fireEvent.keyDown(grave, { key: 'Enter' });

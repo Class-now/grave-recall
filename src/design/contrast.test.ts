@@ -12,6 +12,13 @@ import {
   COLOR_DANGER,
   COLOR_FOCUS_RING,
   COLOR_GRAVE_SOIL,
+  COLOR_GROUND_FORE,
+  COLOR_HILL_FAR,
+  COLOR_HILL_NEAR,
+  COLOR_IRON,
+  COLOR_MOON_FULL,
+  COLOR_MOON_NEW,
+  COLOR_TREE,
   COLOR_STONE_CRUMBLED,
   COLOR_STONE_DARK,
   COLOR_STONE_MID,
@@ -110,6 +117,23 @@ describe.each([
   });
 });
 
+describe('graveyard backdrop and moon (costume-polish CP-28, steering 6.2)', () => {
+  it('moon-full on moon-new is at least 3:1, so the lit wedge reads against the unlit disc', () => {
+    expect(contrastRatio(COLOR_MOON_FULL, COLOR_MOON_NEW)).toBeGreaterThanOrEqual(3);
+  });
+
+  it.each([
+    ['sky-top', COLOR_SKY_TOP],
+    ['sky-horizon', COLOR_SKY_HORIZON],
+    ['hill-far', COLOR_HILL_FAR],
+    ['hill-near', COLOR_HILL_NEAR],
+    ['tree', COLOR_TREE],
+    ['iron', COLOR_IRON],
+    ['ground-fore', COLOR_GROUND_FORE],
+  ])('%s is darker than stone-dark, so tombstones stay in the foreground', (_name, colour) => {
+    expect(relativeLuminance(colour)).toBeLessThan(relativeLuminance(COLOR_STONE_DARK));
+  });
+});
 describe('stone-slab tab pairs', () => {
   const known = new Set([...SECTION_1_3, ...COMPONENT_PAIRS].map((p) => `${p.fg}/${p.bg}/${p.min}`));
 
