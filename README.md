@@ -1,5 +1,9 @@
 # Grave Recall
 
+**Live app:** https://grave-recall.pages.dev/ · **Demo video (2:05):** https://youtu.be/oWstLmleS7A · **License:** MIT
+
+Built with Kiro CLI for the Kiroween 2026 hackathon (Costume Contest). The steering files, both specs, the custom agents and the MCP config are in [`/.kiro`](.kiro); the hook scripts are in [`scripts/kiro-hooks`](scripts/kiro-hooks) and the power is in [`powers`](powers).
+
 A spaced-repetition vocabulary app where every word is a grave in a procedurally generated graveyard. Each spooky element shows a real memory-model value:
 
 | You see | It means |
